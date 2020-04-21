@@ -22,7 +22,7 @@ dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
 
-dconf write /org/gnome/shell/favorite-apps "['FirefoxDeveloperEdition.desktop', 'com.alacritty.Alacritty.desktop', 'org.gnome.Nautilus.desktop', 'code.desktop', 'virt-manager.desktop']"
+dconf write /org/gnome/shell/favorite-apps "['firefox-developer-edition.desktop', 'Alacritty.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop']"
 
 
 # # TODO arch linux arc-gtk-theme
