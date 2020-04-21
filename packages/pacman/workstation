@@ -73,3 +73,5 @@ stern-bin
 minecraft-launcher
 mongodb-bin
 mongodb-tools-bin
+xclip
+xsel

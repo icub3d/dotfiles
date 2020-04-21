@@ -13,7 +13,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package)))
+	(rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package)))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -52,6 +52,18 @@
 ;; General Key Bindings
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
+
+;; theme
+(use-package monokai-pro-theme
+  :ensure t
+  :config
+  (load-theme 'monokai-pro t))
+
+;; colors
+(use-package rainbow-mode
+  :ensure t
+  :hook prog-mode :hook text-mode :hook conf-mode)
+  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ivy, swiper, counsel
@@ -95,8 +107,8 @@
   :commands lsp
   :config
   (require 'lsp-clients))
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package company-lsp :commands company-lsp)
+(use-package lsp-ui :ensure t :commands lsp-ui-mode)
+(use-package company-lsp :ensure t :commands company-lsp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company, tabnine
@@ -339,22 +351,29 @@
   ) ;; end of use-package
 
 
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(company-tooltip ((t (:background "magenta" :foreground "black"))))
+;;  '(go-coverage-0 ((t (:foreground "red"))))
+;;  '(go-coverage-1 ((t (:foreground "green"))))
+;;  '(go-coverage-10 ((t (:foreground "green"))))
+;;  '(go-coverage-2 ((t (:foreground "green"))))
+;;  '(go-coverage-3 ((t (:foreground "green"))))
+;;  '(go-coverage-4 ((t (:foreground "green"))))
+;;  '(go-coverage-5 ((t (:foreground "green"))))
+;;  '(go-coverage-6 ((t (:foreground "green"))))
+;;  '(go-coverage-7 ((t (:foreground "green"))))
+;;  '(go-coverage-8 ((t (:foreground "green"))))
+;;  '(go-coverage-9 ((t (:foreground "green"))))
+;;  '(go-coverage-covered ((t (:foreground "green"))))
+;;  '(go-coverage-untracked ((t (:foreground "white"))))
+;;  '(lsp-ui-doc-background ((t (:background "#060606")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip ((t (:background "magenta" :foreground "black"))))
- '(go-coverage-0 ((t (:foreground "red"))))
- '(go-coverage-1 ((t (:foreground "green"))))
- '(go-coverage-10 ((t (:foreground "green"))))
- '(go-coverage-2 ((t (:foreground "green"))))
- '(go-coverage-3 ((t (:foreground "green"))))
- '(go-coverage-4 ((t (:foreground "green"))))
- '(go-coverage-5 ((t (:foreground "green"))))
- '(go-coverage-6 ((t (:foreground "green"))))
- '(go-coverage-7 ((t (:foreground "green"))))
- '(go-coverage-8 ((t (:foreground "green"))))
- '(go-coverage-9 ((t (:foreground "green"))))
- '(go-coverage-covered ((t (:foreground "green"))))
- '(go-coverage-untracked ((t (:foreground "white")))))
+ )

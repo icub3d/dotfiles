@@ -1,6 +1,6 @@
 #!/usr/bin/fish
 
-if test (hostname) = "work"
+if test (cat /etc/hostname) = "work"
    set -x OSE_USER jmars23
    set -x GIT_AUTHOR_NAME 'Joshua Marsh'
    set -x GIT_AUTHOR_EMAIL 'josh.marsh@optum.com'
