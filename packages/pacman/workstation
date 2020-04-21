@@ -17,6 +17,7 @@ docker-machine
 ebtables
 emacs
 ffmpeg
+firefox-developer-edition
 gcc
 gdb
 gimp

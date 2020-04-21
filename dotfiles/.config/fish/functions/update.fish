@@ -1,20 +1,9 @@
-function update
-	pushd ~/dev/dotfiles
-	
-	# create directories for dotfiles
-	mkdir -p (/usr/bin/find dotfiles -type f | /usr/bin/sed -e "s#dotfiles/#$HOME/#g" | xargs -n1 dirname | sort | uniq)
-	chmod 700 $HOME/.ssh $HOME/.gnupg
+source 'dotfiles.fish'
 
-	# create the symlinks
-	for DOTFILE in (/usr/bin/find dotfiles -type f | /usr/bin/sed -e 's#dotfiles/##g')
-		if test -L "$HOME/$DOTFILE" -a (readlink -f "$HOME/$DOTFILE") != "$PWD/dotfiles/$DOTFILE"
-			echo "old link found for $HOME/$DOTFILE, removing"
-			unlink "$HOME/$DOTFILE"
-		else if test -f "$HOME/$DOTFILE"
-			mv "$HOME/$DOTFILE" "$HOME/$DOTFILE.backup"
-		end
-		ln -s "$PWD/dotfiles/$DOTFILE" "$HOME/$DOTFILE"
-	end
+function update
+	dotfiles
+
+	pushd ~/dev/dotfiles
 
 	# Make sure we have the latest from fish
 	source $HOME/.config/fish/config.fish
