@@ -25,9 +25,9 @@ function update
 
 	if not grep marshians-aur /etc/pacman.conf >/dev/null ^/dev/null 
 		echo -e "[marshians-aur]
-		SigLevel = Option TrustAll
+		SigLevel = Optional TrustAll
 		Server = https://arch.marsh.gg
-		" | sudo tee >/etc/pacman.conf
+		" | sudo tee -a /etc/pacman.conf >/dev/null
 	end
 
 	# Figure out which groups we are going to install.
@@ -46,7 +46,10 @@ function update
 
 	# Install any packages we need.
 	set PACKAGES (begin; pushd packages/pacman; cat $SELECTED ^/dev/null; popd; end | sort | uniq)
-	pacman -Syu --needed --noconfirm $PACKAGES
+	sudo pacman -Syu --needed --noconfirm $PACKAGES
+
+	# Make sure we have the latest from fish
+	source $HOME/.config/fish/config.fish
 
 	for i in $SELECTED
 		if test -f "packages/post-install/$i.fish"
@@ -60,6 +63,10 @@ function update
 			. ./packages/post-install/$i
 		end
 	end
+
+	# Make sure we have the latest from fish
+	echo "you may want to resource the config"
+	echo source $HOME/.config/fish/config.fish
 
 	popd
 end
