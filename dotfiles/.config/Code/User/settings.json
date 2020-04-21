@@ -1,0 +1,89 @@
+{
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true
+  },
+  "bracket-pair-colorizer-2.colors": [
+    "#fc9867",
+    "#ab9df2",
+    "#78dce8",
+    "#a9dc76",
+    "#ff6188",
+    "#F8F8F2"
+  ],
+  "breadcrumbs.enabled": true,
+  "cSpell.userWords": [
+    "Marshian's",
+    "alacritty",
+    "destructure",
+    "marshian",
+    "nltk",
+    "themarshians"
+  ],
+  "debug.console.fontFamily": "Fira Code",
+  "editor.colorDecorators": false,
+  "editor.cursorBlinking": "expand",
+  "editor.folding": false,
+  "editor.fontFamily": "Fira Code, Inconsolata Bold, Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "500",
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "on",
+  "explorer.confirmDelete": false,
+  "files.autoSave": "off",
+  "git.autofetch": true,
+  "go.goroot": "/usr/lib/go",
+  "go.useLanguageServer": true,
+  "javascript.format.enable": true,
+  "python.pythonPath": "/home/jmarsh/dev/ai-az/anaconda3",
+  "terminal.integrated.allowChords": false,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.fontFamily": "Fira Code",
+  "terminal.integrated.macOptionIsMeta": true,
+  "terminal.integrated.shellArgs.linux": [
+    "-C",
+    "set -x SIMPLE_PROMPT true; clear"
+  ],
+  "terminal.integrated.shellArgs.osx": [
+    "-C",
+    "set -x SIMPLE_PROMPT true; clear"
+  ],
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatter.html": "prettier",
+  "window.zoomLevel": 0,
+  "workbench.colorCustomizations": {
+    "activityBarBadge.background": "#a9dc76",
+    "breadcrumb.activeSelectionForeground": "#a9dc76",
+    "editorSuggestWidget.highlightForeground": "#a9dc76",
+    "editorWidget.border": "#a9dc76",
+    "editorWidget.resizeBorder": "#a9dc76",
+    "list.activeSelectionForeground": "#a9dc76",
+    "list.highlightForeground": "#a9dc76",
+    "list.inactiveSelectionForeground": "#a9dc76",
+    "menu.selectionForeground": "#a9dc76",
+    "menubar.selectionForeground": "#a9dc76",
+    "notificationLink.foreground": "#a9dc76",
+    "panelTitle.activeBorder": "#a9dc76",
+    "pickerGroup.foreground": "#a9dc76",
+    "progressBar.background": "#a9dc76",
+    "scrollbarSlider.activeBackground": "#a9dc7650",
+    "settings.headerForeground": "#a9dc76",
+    "settings.modifiedItemIndicator": "#a9dc76",
+    "tab.activeBorder": "#a9dc76",
+    "textLink.foreground": "#a9dc76"
+  },
+  "workbench.colorTheme": "Monokai Pro",
+  "workbench.iconTheme": "Monokai Pro Icons",
+  "liveServer.settings.donotVerifyTags": true,
+  "remote.SSH.showLoginTerminal": true,
+  "remote.SSH.useLocalServer": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "remote.SSH.remotePlatform": {
+    "srv2": "linux"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
+}

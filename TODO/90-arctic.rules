@@ -1,0 +1,1 @@
+ATTRS{idVendor}=="256c", ATTRS{idProduct}=="006e", ENV{PULSE_PROFILE_SET}="steelseries-arctis-7-usb-audio.conf"

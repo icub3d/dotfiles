@@ -1,0 +1,11 @@
+[Unit]
+Description=Go Documentation
+
+[Service]
+Environment=GOPATH=/home/jmarsh/go GOROOOT=/usr/lib/go
+ExecStart=/home/jmarsh/go/bin/godoc -http=:6060
+RestartSec=30
+Restart=always
+
+[Install]
+WantedBy=default.target

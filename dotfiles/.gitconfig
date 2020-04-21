@@ -1,0 +1,35 @@
+[user]
+	name = Joshua Marsh (icub3d)
+	email = joshua@themarshians.com
+
+[core]
+	editor = code --wait
+	# pager = delta --dark --minus-color="#951644" --minus-emph-color="#975A12" --plus-emph-color="#975A12" --plus-color="#63871B"
+	
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[alias]
+	unstage = reset HEAD --
+	last = log -1 HEAD
+
+[push]
+	default = simple

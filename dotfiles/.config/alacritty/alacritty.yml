@@ -1,0 +1,48 @@
+# Font configuration
+font:
+  size: 12
+
+  # The normal (roman) font face to use.
+  normal:
+    family: Fira Code
+    style: Regular
+
+  # The bold font face
+  bold:
+    family: Fira Code
+    style: Bold
+
+  # The italic font face
+  italic:
+    family: Fira Code
+    style: Italic
+
+# Colors (Monokai Dark)
+colors:
+  # Default colors
+  primary:
+    background: "#2d2a2e"
+    foreground: "#F8F8F2"
+
+  # Monokai colors: https://www.color-hex.com/color-palette/59231
+  # Normal colors
+  normal:
+    black: "#2d2a2e"
+    red: "#ff6188"
+    green: "#a9dc76"
+    yellow: "#fc9867"
+    blue: "#78dce8"
+    magenta: "#ab9df2"
+    cyan: "#A1EFE4"
+    white: "#F8F8F2"
+
+  # Bright colors
+  bright:
+    black: "#2d2a2e20"
+    red: "#ff6188"
+    green: "#a9dc76"
+    yellow: "#fc9867"
+    blue: "#78dce8"
+    magenta: "#ab9df2"
+    cyan: "#A1EFE4"
+    white: "#F8F8F2"
