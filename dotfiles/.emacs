@@ -13,7 +13,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package)))
+	(groovy-mode rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package)))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -189,7 +189,10 @@
   :config
   (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
   (add-to-list 'auto-mode-alist '("\\.tml$" . toml-mode)))
-
+(use-package groovy-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("Jenkinsfile" . groovy-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other Languages
