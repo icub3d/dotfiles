@@ -40,6 +40,32 @@ set -g __fish_git_prompt_char_upstream_equal ' 📘 '
 # Fix the colors that don't seem to work right
 set -x fish_color_param green
 
+# Figure out where we with some important binaries and our host.
+if command -vq hostname
+   set HOSTNAME (hostname)
+else if test -f /etc/hostname
+   set HOSTNAME (cat /etc/hostname)
+end
+if test $HOSTNAME = "work" -o $HOSTNAME = "LAMU02Z83C7LVCG.uhc.com."
+   set -U ATWORK true
+end
+
+set -U EMACSBIN /usr/bin/emacs
+if test -f /usr/local/bin/emacs
+	set -U EMACSBIN /usr/local/bin/emacs
+end
+
+set -U EMACSCLIENTBIN /usr/bin/emacsclient
+if test -f /usr/local/bin/emacsclient
+	set -U EMACSCLIENTBIN /usr/local/bin/emacsclient
+end
+
+
+set -U FISHBIN /usr/bin/fish
+if test -f /usr/local/bin/fish
+	set -U FISHBIN /usr/local/bin/fish
+end
+
 # Run all of our sub scripts.
 for SCRIPT in $HOME/.config/fish/config.d/*.fish
 	source $SCRIPT
