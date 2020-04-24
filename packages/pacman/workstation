@@ -1,5 +1,4 @@
 aircrack-ng
-alacritty
 asciinema
 audacity
 blender
@@ -18,6 +17,7 @@ hydra
 imagemagick
 inkscape
 john
+kitty
 lastpass-cli
 obs-studio
 octave
