@@ -23,6 +23,7 @@ qemu
 terraform
 texinfo
 ttf-fira-code
+noto-fonts-emoji
 ttf-inconsolata
 valgrind
 stern-bin
