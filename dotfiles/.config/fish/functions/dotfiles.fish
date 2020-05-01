@@ -7,10 +7,14 @@ function dotfiles
 
 	# create the symlinks
 	for DOTFILE in (/usr/bin/find dotfiles -type f | /usr/bin/sed -e 's#dotfiles/##g')
-		if test -L "$HOME/$DOTFILE" -a (readlink -f "$HOME/$DOTFILE") != "$PWD/dotfiles/$DOTFILE"
-			echo "old link found for $HOME/$DOTFILE, removing"
+		# Skip if we already have the one we want.
+		if test -L "$HOME/$DOTFILE" -a (readlink -f "$HOME/$DOTFILE") = "$PWD/dotfiles/$DOTFILE"
+			continue
+		end
+			
+		if test -L "$HOME/$DOTFILE" # unlink non-dotfile links
 			unlink "$HOME/$DOTFILE"
-		else if test -f "$HOME/$DOTFILE"
+		else if test -f "$HOME/$DOTFILE" # make a backup of others
 			mv "$HOME/$DOTFILE" "$HOME/$DOTFILE.backup"
 		end
 		ln -s "$PWD/dotfiles/$DOTFILE" "$HOME/$DOTFILE"
