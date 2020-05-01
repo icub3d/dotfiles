@@ -14,10 +14,17 @@ function update
 
 	if not grep marshians-aur /etc/pacman.conf >/dev/null ^/dev/null 
 		echo -e "[marshians-aur]
-		SigLevel = Optional TrustAll
-		Server = https://arch.marsh.gg
-		" | sudo tee -a /etc/pacman.conf >/dev/null
+SigLevel = Optional TrustAll
+Server = https://arch.marsh.gg
+" | sudo tee -a /etc/pacman.conf >/dev/null
 	end
+
+	if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null ^/dev/null 
+		echo -e "[multilib]
+Include = /etc/pacman.d/mirrorlist
+" | sudo tee -a /etc/pacman.conf >/dev/null
+	end
+
 
 	# Figure out which groups we are going to install.
 	set SELECTED ""

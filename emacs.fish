@@ -6,6 +6,7 @@ if not test -d ~/dev/emacs
 end
 
 pushd ~/dev/emacs
+git checkout emacs-27
 ./configure --without-mailutils -with-x-toolkit=lucid
 make
 sudo make install
