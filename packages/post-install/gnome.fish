@@ -14,6 +14,8 @@ gsettings set org.gnome.desktop.background show-desktop-icons 'false'
 gsettings set org.gnome.desktop.session idle-delay 0
 gsettings set org.gnome.desktop.background picture-uri 'file:///home/jmarsh/Pictures/marshians-text-background-4k.png'
 gsettings set org.gnome.desktop.screensaver picture-uri 'file:///home/jmarsh/Pictures/marshians-text-background-4k.png'
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'suspend'
 
 # TODO these aren't the same in arch linux.
 # gsettings set org.gnome.settings-daemon.plugins.power lid-close-suspend-with-external-monitor 'false'
