@@ -24,4 +24,4 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
-dconf write /org/gnome/shell/favorite-apps "['firefox-developer-edition.desktop', 'kitty.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop']"
+dconf write /org/gnome/shell/favorite-apps "['google-chrome.desktop', 'firefox-developer-edition.desktop', 'kitty.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop']"
