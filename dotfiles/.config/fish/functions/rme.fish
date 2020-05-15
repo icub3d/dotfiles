@@ -1,3 +1,3 @@
 function rme
-	command find -name "*~" -delete
+	find -IH '~$' -x rm {} \;
 end
