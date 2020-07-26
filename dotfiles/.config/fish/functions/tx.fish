@@ -10,6 +10,7 @@ function tx
 	else
 		command tmux new-session -d -c ~ -s srv -n srv1
 		command tmux new-window -d -c ~ -t srv: -n srv2
+		command tmux new-session -d -c ~/dev/icub3d-addon -s wow -n wow
 	end
 	command tmux attach -t home
 end

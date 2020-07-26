@@ -5,16 +5,18 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   '("bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default))
+   (quote
+	("bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
  '(global-linum-mode 1)
  '(go-gen-test-default-functions "-all")
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(lua-mode groovy-mode rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   (quote
+	(lua-mode groovy-mode rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime pyvenv company-jedi company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package)))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
- '(scroll-bar-mode 'right)
+ '(scroll-bar-mode (quote right))
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tooltip-mode nil)
