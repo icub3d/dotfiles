@@ -3,8 +3,8 @@
 	email = joshua@themarshians.com
 
 [core]
-	editor = TERM=xterm-24bit /usr/bin/emacsclient -nw
 	pager = delta --dark --minus-color="#CC2E55" --minus-emph-color="#B04C1B" --plus-emph-color="#B04C1B" --plus-color="#5D902A"
+	editor = env TERM=xterm-24bit /usr/bin/emacsclient -nw
 	
 [color]
 	branch = auto

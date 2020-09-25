@@ -98,7 +98,7 @@
   :ensure t)
 
 (use-package lua-mode
-  :ensure t 
+  :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode)))
 
@@ -109,8 +109,8 @@
   :ensure t
   :commands lsp
   :config
-  (setq lsp-file-watch-threshold 8192)
-  (require 'lsp-clients))
+  (setq lsp-file-watch-threshold 8192))
+;;  (require 'lsp-clients))
 (use-package lsp-ui :ensure t :commands lsp-ui-mode)
 (use-package company-lsp :ensure t :commands company-lsp)
 

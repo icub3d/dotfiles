@@ -10,6 +10,7 @@ ebtables
 ffmpeg
 gcc
 gdb
+github-cli
 go
 libvirt
 llvm
@@ -19,6 +20,7 @@ man-pages
 nikto
 nmap
 nodejs
+npm
 qemu
 terraform
 texinfo
