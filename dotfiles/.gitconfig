@@ -3,7 +3,7 @@
 	email = joshua@themarshians.com
 
 [core]
-	editor = code --wait
+	editor = TERM=xterm-24bit /usr/bin/emacsclient -nw
 	pager = delta --dark --minus-color="#CC2E55" --minus-emph-color="#B04C1B" --plus-emph-color="#B04C1B" --plus-color="#5D902A"
 	
 [color]
@@ -30,6 +30,11 @@
 [alias]
 	unstage = reset HEAD --
 	last = log -1 HEAD
+	ff = flow feature
+	fr = flow release
+	fh = flow hotfix
+	fs = flow support
+	fb = flow bugfix
 
 [push]
 	default = simple

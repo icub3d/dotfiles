@@ -17,11 +17,12 @@ function fish_prompt --description 'Write out the prompt'
             set color_cwd $fish_color_cwd
             set suffix '>'
     end
-	
+
+	echo
 	if not set -q SIMPLE_PROMPT
 		set git (__fish_git_prompt | sd '[)|(]' '')
 		echo -s (set_color yellow) "$USER" $normal @ (set_color purple) (prompt_hostname) $normal ' ' (set_color $color_cwd) (prompt_pwd) $normal $git $normal
 	end
-	
+
     echo -n -s (set_color green) λ $normal " "
 end

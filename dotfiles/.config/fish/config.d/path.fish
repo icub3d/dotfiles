@@ -10,3 +10,7 @@ end
 if test -d $HOME/.neovim/bin
 	set PATH $HOME/.neovim/bin $PATH
 end
+
+if test -d $HOME/dev/fortify/bin
+	set PATH $HOME/dev/fortify/bin $PATH
+end
