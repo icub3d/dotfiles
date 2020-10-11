@@ -248,7 +248,8 @@
 			  (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
   (add-hook 'rust-mode-hook #'racer-mode)
   (add-hook 'racer-mode-hook #'eldoc-mode)
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+  (define-key rust-mode-map (kbd "M-g M-t") 'rust-test))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
