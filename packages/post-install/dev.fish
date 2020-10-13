@@ -5,8 +5,10 @@ if test ! -e ~/.cargo/bin/rustc
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 	set -x PATH $HOME/.cargo/bin $PATH
 	rustup toolchain add nightly
-	cargo +nightly install racer
 	rustup component add rls rust-analysis rust-src
 else
 	rustup update
 end
+
+cargo +nightly install racer
+cargo install cargo-outdated cargo-tree 

@@ -3,7 +3,16 @@ source 'dotfiles.fish'
 function update
 	dotfiles
 
+	#install yay
+	if test ! -d ~/dev/yay
+		mkdir -p ~/dev/
+		git clone https://aur.archlinux.org/yay.git ~/dev/yay
+		pushd ~/dev/yay
+		makepkg -si --noconfirm
+	end
+
 	pushd ~/dev/dotfiles
+
 
 	# Make sure we have the latest from fish
 	source $HOME/.config/fish/config.fish
@@ -11,13 +20,6 @@ function update
 	# Pacman/Makepkg configurations
 	sudo sed -i -e 's/#Color/Color/g' /etc/pacman.conf
 	sudo sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
-
-	if not grep marshians-aur /etc/pacman.conf >/dev/null ^/dev/null 
-		echo -e "[marshians-aur]
-SigLevel = Optional TrustAll
-Server = https://arch.marsh.gg
-" | sudo tee -a /etc/pacman.conf >/dev/null
-	end
 
 	if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null ^/dev/null 
 		echo -e "[multilib]
@@ -42,7 +44,7 @@ Include = /etc/pacman.d/mirrorlist
 
 	# Install any packages we need.
 	set PACKAGES (begin; pushd packages/pacman; cat $SELECTED ^/dev/null; popd; end | sort | uniq)
-	sudo pacman -Syu --needed --noconfirm $PACKAGES
+	yay -Syu --needed --noconfirm $PACKAGES
 
 	# Make sure we have the latest from fish
 	source $HOME/.config/fish/config.fish

@@ -20,3 +20,7 @@ usbutils
 wireguard-tools
 wmctrl
 xdotool
+networkmanager
+wpa_supplicant
+dhcpcd
+dialog

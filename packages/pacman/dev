@@ -31,6 +31,4 @@ valgrind
 stern-bin
 mongodb-bin
 mongodb-tools-bin
-xclip
-xsel
 gitflow-avh
