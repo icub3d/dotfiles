@@ -47,7 +47,8 @@ else if test -f /etc/hostname
    set HOSTNAME (cat /etc/hostname)
 end
 if test $HOSTNAME = "work" -o $HOSTNAME = "LAMU02Z83C7LVCG.uhc.com."
-   set -U ATWORK true
+	set -Ux ATWORK true
+	set -Ux AA_CONFIG /home/jmarsh/aa
 end
 
 set -U EMACSBIN /usr/bin/emacs
