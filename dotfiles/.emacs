@@ -20,6 +20,8 @@
  '(tooltip-mode nil)
  '(vc-follow-symlinks t))
 
+
+
 ;; general configuration
 (setq-default tab-width 4)
 (put 'upcase-region 'disabled nil)
@@ -231,26 +233,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rust
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun rust-doc ()
+  (interactive)
+  (shell-command-to-string "cargo doc --open"))
+
 (use-package rust-mode
-  :ensure rust-mode :ensure cargo :ensure racer :ensure flycheck-rust
+  :ensure rust-mode :ensure flycheck-rust :ensure cargo
   :hook (rust-mode . lsp)
   :hook (rust-mode . cargo-minor-mode)
   :config
   (setq exec-path (cons "/home/jmarsh/.cargo/bin" exec-path))
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
   (setq rust-format-on-save t)
-  (add-hook 'racer-mode-hook #'company-mode)
   (add-hook 'rust-mode-hook 'cargo-minor-mode)
   (add-hook 'rust-mode-hook
 			(lambda () (setq indent-tabs-mode nil)))
   (add-hook 'rust-mode-hook
 			(lambda ()
+			  (local-set-key (kbd "M-g M-d") 'rust-doc)
 			  (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
-  (add-hook 'rust-mode-hook #'racer-mode)
-  (add-hook 'racer-mode-hook #'eldoc-mode)
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
   (define-key rust-mode-map (kbd "M-g M-t") 'rust-test))
-
+(use-package lsp-rust
+    :after lsp-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Go
