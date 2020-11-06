@@ -12,6 +12,7 @@ gcc
 gdb
 github-cli
 go
+jupyter
 libvirt
 llvm
 make
@@ -21,6 +22,7 @@ nikto
 nmap
 nodejs
 npm
+python-jedi
 qemu
 terraform
 texinfo

@@ -71,4 +71,3 @@ end
 for SCRIPT in $HOME/.config/fish/config.d/*.fish
 	source $SCRIPT
 end
-
