@@ -25,3 +25,4 @@ networkmanager
 wpa_supplicant
 dhcpcd
 dialog
+docker-credential-secretservice
