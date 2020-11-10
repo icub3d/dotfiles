@@ -11,7 +11,7 @@
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode company-lsp lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   '(company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
@@ -28,6 +28,9 @@
 (if window-system
     (tool-bar-mode -1))
 (menu-bar-mode -1)
+(setq exec-path (cons "/home/jmarsh/.cargo/bin" exec-path))
+(setq exec-path (cons "/home/jmarsh/go/bin" exec-path))
+(setq exec-path (cons "/home/jmarsh/bin" exec-path))
 
 ;; MELPA
 (require 'package)
@@ -110,8 +113,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package lsp-mode
   :ensure t
-  :commands lsp
+  :commands (lsp lsp-deferred)
+  :hook (go-mode . lsp-deferred)
+  :hook (rust-mode . lsp-deferred)
   :config
+  (setq lsp-auto-configure t)
   (setq lsp-file-watch-threshold 8192))
 ;;  (require 'lsp-clients))
 (use-package lsp-ui :ensure t :commands lsp-ui-mode)
@@ -220,14 +226,14 @@
   :ensure terraform-mode :ensure company-terraform)
 
 ;; Python
-(use-package lsp-jedi
-  :ensure t :ensure company-jedi
-  :config
-  (add-to-list 'company-backends #'company-jedi)
-  (with-eval-after-load "lsp-mode"
-    (add-to-list 'lsp-disabled-clients 'pyls)
-    (add-to-list 'lsp-enabled-clients 'jedi)))
-(use-package jupyter :ensure jupyter)
+;; (use-package lsp-jedi
+;;   :ensure t :ensure company-jedi
+;;   :config
+;;   (add-to-list 'company-backends #'company-jedi)
+;;   (with-eval-after-load "lsp-mode"
+;;     (add-to-list 'lsp-disabled-clients 'pyls)
+;;     (add-to-list 'lsp-enabled-clients 'jedi)))
+;; (use-package jupyter :ensure jupyter)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LISP
