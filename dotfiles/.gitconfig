@@ -35,6 +35,8 @@
 	fh = flow hotfix
 	fs = flow support
 	fb = flow bugfix
+	co = checkout
+	p = pull
 
 [push]
 	default = simple
