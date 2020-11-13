@@ -20,7 +20,12 @@
  '(tooltip-mode nil)
  '(vc-follow-symlinks t))
 
-
+;; save-copies, etc.
+(if (not (file-exists-p "~/.emacs.d/backups/"))
+        (make-directory "~/.emacs.d/backups/" t))
+(setq backup-directory-alist `(("." . ,"~/.emacs.d/backups/")))
+(setq auto-save-file-name-transforms
+	  `((".*" "~/.emacs.d/backups/" t)))
 
 ;; general configuration
 (setq-default tab-width 4)
