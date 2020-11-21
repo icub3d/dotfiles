@@ -8,15 +8,18 @@ function rust-binaries
 		cargo-tree \
 		cargo-outdated \
 		cargo-upgrades \
+		exa \
 		ripgrep \
 		git-delta \
 		sd \
 		hx \
 		hyperfine \
 		licensor \
+		procs \
 		ytop \
 		du-dust \
 		fd-find \
 		wasm-pack \
 		funzzy
+	cargo install-update -a
 end
