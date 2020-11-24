@@ -36,3 +36,4 @@ mongodb-tools-bin
 mongodb-shell-bin
 gitflow-avh
 minikube
+k9s

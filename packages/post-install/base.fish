@@ -8,7 +8,7 @@ echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-inotify.co
 sudo sysctl --system
 
 # update cli-tools
-get-cli-tools
+#get-cli-tools
 
 # install spark
 sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o ~/bin/spark && chmod +x ~/bin/spark"

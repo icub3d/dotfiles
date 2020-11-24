@@ -1,0 +1,40 @@
+[user]
+	name = Joshua Marsh (icub3d)
+	email = joshua@themarshians.com
+
+[core]
+	pager = delta --dark --minus-color="#CC2E55" --minus-emph-color="#B04C1B" --plus-emph-color="#B04C1B" --plus-color="#5D902A"
+	editor = env TERM=xterm-24bit /usr/bin/emacsclient -nw
+	
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[alias]
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	ff = flow feature
+	fr = flow release
+	fh = flow hotfix
+	fs = flow support
+	fb = flow bugfix
+
+[push]
+	default = simple
