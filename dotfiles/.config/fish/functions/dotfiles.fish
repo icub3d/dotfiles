@@ -20,6 +20,10 @@ function dotfiles
 		ln -s "$PWD/dotfiles/$DOTFILE" "$HOME/$DOTFILE"
 	end
 
+	if test  "$XDG_SESSION_TYPE" != "wayland"
+		unlink $HOME/.config/environment.d/wayland.conf
+	end
+
 	# Make sure we have the latest from fish
 	source $HOME/.config/fish/config.fish
 

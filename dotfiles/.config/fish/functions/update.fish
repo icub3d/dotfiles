@@ -1,6 +1,6 @@
-source 'dotfiles.fish'
-
 function update
+	source "$HOME/.config/fish/functions/dotfiles.fish"
+
 	dotfiles
 
 	#install yay

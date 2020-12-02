@@ -85,5 +85,11 @@
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "python.defaultInterpreterPath": "/home/jmarsh/dev/ai-az/anaconda3"
+  "python.defaultInterpreterPath": "/home/jmarsh/dev/ai-az/anaconda3",
+  "workbench.editorAssociations": [
+    {
+      "viewType": "jupyter.notebook.ipynb",
+      "filenamePattern": "*.ipynb"
+    }
+  ]
 }
