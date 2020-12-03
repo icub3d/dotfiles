@@ -12,7 +12,7 @@
  '(inhibit-startup-screen t)
  '(org-agenda-files '("~/Downloads/orgmode-coursefiles/sec-2.4-end-mylife.org"))
  '(package-selected-packages
-   '(org pkgbuild-mode rjsx-mode company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   '(adaptive-wrap org pkgbuild-mode rjsx-mode company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
@@ -384,6 +384,29 @@
 	(local-set-key (kbd "M-g M-m") 'go-meta-linter))
   (add-hook 'go-mode-hook #'go-mode-bindings)
   ) ;; end of use-package
+
+
+;; adaptive wrapping for visual mode
+(use-package adaptive-wrap :ensure t
+  :config
+  (setq-default adaptive-wrap-extra-indent 4)
+  (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode))
+
+;; splunk highlighting
+(setq splunk-keywords
+	  '(("time" . font-lock-type-face)
+		("level" . font-lock-type-face)
+		("msg" . font-lock-type-face)
+		("submissionid" . font-lock-type-face)
+		("info" . font-lock-warning-face)
+		("debug" . font-lock-comment-face)))
+(define-derived-mode splunk-highlight-mode fundamental-mode
+  (setq font-lock-defaults '(splunk-keywords))
+  (setq mode-name "splunk"))
+(defun splunk-mode ()
+  (splunk-highlight-mode)
+  (visual-line-mode))
+(add-to-list 'auto-mode-alist '("\\.splunk$" . splunk-mode))
 
 
 ;; (custom-set-faces
