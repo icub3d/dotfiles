@@ -16,4 +16,5 @@ function scan-help
 		kill -9 $PID
 	end
 	popd
+	open $argv[1]
 end
