@@ -1,3 +1,3 @@
 function strongbox
-	command java -Dsun.java2d.uiScale=2 -jar ~/dev/strongbox.jar
+	command env GDK_SCALE=2 java -jar ~/dev/strongbox.jar
 end

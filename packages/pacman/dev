@@ -27,6 +27,8 @@ qemu
 terraform
 texinfo
 ttf-fira-code
+noto-fonts
+noto-fonts-extra
 noto-fonts-emoji
 ttf-inconsolata
 valgrind
