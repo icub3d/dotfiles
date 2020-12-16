@@ -12,5 +12,5 @@ make
 sudo make install
 popd
 
-rm -rf ~/.emacs.d
+rm -rf ~/.emacs.d/auto-save-list/  ~/.emacs.d/backups/  ~/.emacs.d/elpa
 /usr/local/bin/emacs -batch -l $HOME/.emacs >/dev/null ^/dev/null

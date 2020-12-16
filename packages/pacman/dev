@@ -27,6 +27,7 @@ qemu
 terraform
 texinfo
 ttf-fira-code
+ttf-jetbrains-mono
 noto-fonts
 noto-fonts-extra
 noto-fonts-emoji

@@ -1,6 +1,6 @@
 #!/usr/bin/fish
 
 # pre-install our emacs packages.
-if not test -d $HOME/.emacs.d
-    $EMACSBIN -batch -l $HOME/.emacs >/dev/null ^/dev/null
+if not test -d $HOME/.emacs.d/elpa
+    $EMACSBIN -batch -l $HOME/emacs.d/init.el >/dev/null ^/dev/null
 end

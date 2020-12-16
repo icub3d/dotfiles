@@ -51,7 +51,7 @@
   ],
   "vetur.format.defaultFormatter.js": "prettier",
   "vetur.format.defaultFormatter.html": "prettier",
-  "window.zoomLevel": 3,
+  "window.zoomLevel": 1,
   "workbench.colorCustomizations": {
     "activityBarBadge.background": "#a9dc76",
     "breadcrumb.activeSelectionForeground": "#a9dc76",
@@ -91,5 +91,6 @@
       "viewType": "jupyter.notebook.ipynb",
       "filenamePattern": "*.ipynb"
     }
-  ]
+  ],
+  "tabnine.experimentalAutoImports": true
 }
