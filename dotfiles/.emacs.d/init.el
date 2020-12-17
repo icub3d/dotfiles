@@ -12,7 +12,7 @@
  '(inhibit-startup-screen t)
  '(org-agenda-files '("~/Downloads/orgmode-coursefiles/sec-2.4-end-mylife.org"))
  '(package-selected-packages
-   '(adaptive-wrap org pkgbuild-mode rjsx-mode company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   '(git-link adaptive-wrap org pkgbuild-mode rjsx-mode company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
@@ -74,6 +74,9 @@
   :hook prog-mode :hook text-mode :hook conf-mode)
   
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+
+;; git
+(use-package git-link :ensure t)
 
 ;; org
 (use-package org :ensure t)
