@@ -2,7 +2,7 @@
 
 mkdir -p ~/dev
 if not test -f ~/dev/strongbox.jar
-	http -F https://github.com/ogri-la/strongbox/releases/download/3.1.1/strongbox-3.1.1-standalone.jar > ~/dev/strongbox.jar
+	http -F https://github.com/ogri-la/strongbox/releases/download/3.2.0/strongbox-3.2.0-standalone.jar > ~/dev/strongbox.jar
 end
 
 if not test -d ~/WoW-Cache
