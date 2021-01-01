@@ -5,15 +5,15 @@ if not test -f ~/dev/strongbox.jar
 	http -F https://github.com/ogri-la/strongbox/releases/download/3.2.0/strongbox-3.2.0-standalone.jar > ~/dev/strongbox.jar
 end
 
-if not test -d ~/WoW-Cache
-	git clone https://github.com/Bromeego/WoW-Cache ~/WoW-Cache
+if not test -d ~/dev/WoW-Cache
+	git clone https://github.com/Bromeego/WoW-Cache ~/dev/WoW-Cache
 end
 
-pushd ~/WoW-Cache
+pushd ~/dev/WoW-Cache
 git pull
 popd
 
-pushd ~/Games/wow-game/World\ of\ Warcraft/_retail_/
+pushd "~/Games/world-of-warcraft/drive_c/Program Files (x86)/World of Warcraft/_retail_"
 rm -rf Cache
-unzip ~/WoW-Cache/Retail-Cache.zip
+unzip ~/dev/WoW-Cache/Retail-Cache.zip
 popd
