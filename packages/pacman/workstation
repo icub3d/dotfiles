@@ -91,3 +91,5 @@ snapd
 visual-studio-code-bin
 istio-bin
 xorg-xinput
+jack2
+realtime-privileges

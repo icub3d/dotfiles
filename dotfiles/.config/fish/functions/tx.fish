@@ -1,4 +1,5 @@
 function tx
+	command tmux new-session -d -c ~ -s top $FISHBIN -c 'env TERM=xterm-24bit bpytop'
 	command tmux new-session -d -c ~/dev/dotfiles -s dot
 	command tmux new-session -d -c ~ -s home
 	
