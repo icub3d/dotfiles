@@ -20,7 +20,6 @@ function up-or-search --description 'Depending on cursor position and current mo
     switch $lineno
         case 1
             commandline -f history-search-backward
-			history merge
         case '*'
             commandline -f up-line
     end
