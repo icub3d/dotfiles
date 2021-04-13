@@ -278,6 +278,7 @@
 			  (local-set-key (kbd "M-g M-d") 'rust-doc)
 			  (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+  (define-key rust-mode-map (kbd "M-g M-r") 'rust-run)
   (define-key rust-mode-map (kbd "M-g M-t") 'rust-test))
 (use-package lsp-rust
     :after lsp-mode)
