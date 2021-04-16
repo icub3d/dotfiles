@@ -2,6 +2,7 @@
 
 function rust-binaries
 	cargo install bandwhich \
+		my-ip \
 		bat \
 		bingrep \
 		cargo-update \
