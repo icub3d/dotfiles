@@ -68,6 +68,9 @@
   :config
   (load-theme 'monokai-pro t))
 
+;; vterm
+(use-package vterm :ensure t)
+
 ;; colors
 (use-package rainbow-mode
   :ensure t
