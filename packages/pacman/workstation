@@ -4,6 +4,7 @@ audacity
 blender
 brother-hll2350dw
 ccid
+cmake
 cups
 cups-pdf
 discord
@@ -21,7 +22,7 @@ imagemagick
 inkscape
 john
 kitty
-lastpass-cli
+libvterm
 lolcat
 minecraft-launcher
 nerd-fonts-fira-code

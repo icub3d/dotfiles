@@ -8,10 +8,8 @@ function tx
 		command tmux new-session -d -c ~/dev/oti -s oti
 		command tmux new-session -d -c ~/dev/oti-azure -s oti-az
 	else
-		command tmux new-session -d -c ~ -s srv -n srv1
-		command tmux new-window -d -c ~ -t srv: -n srv2
+		command tmux new-session -d -c ~ -s srv -n srv2
 		command tmux new-session -d -c ~/dev/dinglebit -s db -n db
-		command tmux new-session -d -c ~/dev/icub3d/icub3d-addon/ -s wow
 
 	end
 	command tmux attach -t home
