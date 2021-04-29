@@ -12,7 +12,7 @@
  '(inhibit-startup-screen t)
  '(org-agenda-files '("~/Downloads/orgmode-coursefiles/sec-2.4-end-mylife.org"))
  '(package-selected-packages
-   '(vterm git-link adaptive-wrap org pkgbuild-mode rjsx-mode company-lsp monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   '(company-capf vterm git-link adaptive-wrap org pkgbuild-mode rjsx-mode monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
@@ -136,7 +136,6 @@
   (setq lsp-file-watch-threshold 8192))
 ;;  (require 'lsp-clients))
 (use-package lsp-ui :ensure t :commands lsp-ui-mode)
-(use-package company-lsp :ensure t :commands company-lsp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company, tabnine
@@ -157,6 +156,8 @@
   (setq company-show-numbers t)) ;; smow numbers
 
 (use-package company-tabnine
+  :ensure t)
+(use-package company-capf
   :ensure t)
 (use-package company-shell
   :ensure t)
@@ -183,14 +184,8 @@
   :ensure t
   :config
   (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
   (setq prettier-js-args '("--trailing-comma" "all")))
-
-(use-package js2-mode
-  :ensure t
-  :config
-  (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)))
-  (add-to-list 'auto-mode-alist '("\\.mjs$" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
 
 (use-package json-mode
   :ensure t
@@ -200,6 +195,15 @@
 (use-package web-mode
   :ensure t
   :config
+  (add-hook 'web-mode-hook
+			(lambda ()
+			  (if (equal web-mode-content-type "javascript")
+				  (web-mode-set-content-type "jsx"))))
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.css$" . web-mode)))
 
