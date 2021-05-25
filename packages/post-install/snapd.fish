@@ -6,6 +6,6 @@ end
 
 sudo snap install microk8s --classic
 
-usermod -aG microk8s jmarsh
+sudo usermod -aG microk8s jmarsh
 
 sudo systemctl enable --now snapd.socket
