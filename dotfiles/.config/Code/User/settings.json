@@ -84,12 +84,10 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "python.defaultInterpreterPath": "/home/jmarsh/dev/ai-az/anaconda3",
-  "workbench.editorAssociations": [
-    {
-      "viewType": "jupyter.notebook.ipynb",
-      "filenamePattern": "*.ipynb"
-    }
-  ],
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
   "tabnine.experimentalAutoImports": true,
-  "terminal.integrated.shell.linux": "/usr/bin/fish"
+  "terminal.integrated.shell.linux": "/usr/bin/fish",
+  "window.zoomLevel": 1
 }

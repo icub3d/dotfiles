@@ -1,6 +1,7 @@
 #!/usr/bin/fish
 
 function rust-binaries
+	set -lx RUSTFLAGS -C target-cpu=native
 	cargo install bandwhich \
 		my-ip \
 		bat \

@@ -88,10 +88,6 @@
     "when": "editorTextFocus"
   },
   {
-    "key": "ctrl+x f",
-    "command": "workbench.action.files.openFolder"
-  },
-  {
     "key": "ctrl+k ctrl+o",
     "command": "-workbench.action.files.openFolder"
   },
@@ -181,5 +177,9 @@
     "key": "ctrl+shift+j",
     "command": "-workbench.action.search.toggleQueryDetails",
     "when": "inSearchEditor || searchViewletFocus"
+  },
+  {
+    "key": "ctrl+x f",
+    "command": "workbench.action.files.openFolder"
   }
 ]
