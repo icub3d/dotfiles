@@ -13,7 +13,7 @@ function download-kali-iso
 	http -F "$BASEURL/SHA256SUMS.gpg" > "$TO/SHA256SUMS.gpg"
 
 	# verify sig
-	if not gpg -q --keyserver-options auto-key-retrieve --verify "$TO/SHA256SUMS.gpg" "$TO/SHA256SUMS" >/dev/null ^/dev/null
+	if not gpg -q --keyserver-options auto-key-retrieve --verify "$TO/SHA256SUMS.gpg" "$TO/SHA256SUMS" >/dev/null 2>/dev/null
 		echo bad signature, deleting
 		rm "$TO/kali-linux-live-amd64.iso"
 		rm "$TO/SHA256SUMS"

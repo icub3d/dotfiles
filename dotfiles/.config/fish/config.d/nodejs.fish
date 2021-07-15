@@ -3,7 +3,7 @@
 if command -vq npm
 	set MANS ""
 	if command -vq manpath
-		set MANS (manpath ^/dev/null)
+		set MANS (manpath 2>/dev/null)
 	end
 
 	set -x NPM_PACKAGES $HOME/.npm-packages

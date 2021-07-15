@@ -3,6 +3,7 @@
 function rust-binaries
 	set -lx RUSTFLAGS -C target-cpu=native
 	cargo install bandwhich \
+		jwt-cli \
 		my-ip \
 		bat \
 		bingrep \

@@ -12,7 +12,7 @@
  '(inhibit-startup-screen t)
  '(org-agenda-files '("~/Downloads/orgmode-coursefiles/sec-2.4-end-mylife.org"))
  '(package-selected-packages
-   '(company-capf vterm git-link adaptive-wrap org pkgbuild-mode rjsx-mode monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
+   '(edit-indirect markdown-mode company-capf vterm git-link adaptive-wrap org pkgbuild-mode rjsx-mode monokai-pro-theme jupyter company-jedi lsp-jedi lua-mode groovy-mode rainbow-mode lsp-ui prettier-js flycheck lsp-mode rust-mode flycheck-rust racer cargo auto-package-update flycheck-golangci-lint go-gen-test go-dlv company-go slime-company slime company-terraform terraform-mode flycheck-haskell company-c-headers php-mode toml-mode yaml-mode web-mode json-mode js2-mode protobuf-mode markdown-preview-mode markdown-mode fish-mode dockerfile-mode company counsel company-shell company-tabnine swiper ivy use-package))
  '(pkgbuild-update-sums-on-save nil)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
@@ -168,10 +168,13 @@
 (use-package dockerfile-mode :ensure t)
 (use-package fish-mode :ensure t)
 (use-package markdown-mode
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode)))
-(use-package markdown-preview-mode :ensure t)
+  :ensure markdown-mode :ensure edit-indirect
+  :commands (markdown-mode gfm-mode)
+  
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "markdown_py"))
 (use-package protobuf-mode
   :ensure t
   :config

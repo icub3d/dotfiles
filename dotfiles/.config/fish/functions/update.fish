@@ -21,7 +21,7 @@ function update
 	sudo sed -i -e 's/#Color/Color/g' /etc/pacman.conf
 	sudo sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
 
-	if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null ^/dev/null 
+	if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
 		echo -e "[multilib]
 Include = /etc/pacman.d/mirrorlist
 " | sudo tee -a /etc/pacman.conf >/dev/null
@@ -43,7 +43,7 @@ Include = /etc/pacman.d/mirrorlist
 	set SELECTED (string split ' ' -- $SELECTED)
 
 	# Install any packages we need.
-	set PACKAGES (begin; pushd packages/pacman; cat $SELECTED ^/dev/null; popd; end | sort | uniq)
+	set PACKAGES (begin; pushd packages/pacman; cat $SELECTED 2>/dev/null; popd; end | sort | uniq)
 	yay -Syu --needed --noconfirm $PACKAGES
 
 	# Make sure we have the latest from fish

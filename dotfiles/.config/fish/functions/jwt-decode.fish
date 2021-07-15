@@ -23,6 +23,6 @@ function jwt-decode
 	set header (fix_part (echo "$line" | cut -d. -f1))
 	set payload (fix_part (echo "$line" | cut -d. -f2))
 
-	echo "$header" | tr '_-' '/+' | base64 -d -i ^/dev/null | jq '.'
-	echo "$payload" | tr '_-' '/+' | base64 -d -i ^/dev/null | jq '.exp |= todateiso8601 | .iat |= todateiso8601 | .nbf |= todateiso8601'
+	echo "$header" | tr '_-' '/+' | base64 -d -i 2>/dev/null | jq '.'
+	echo "$payload" | tr '_-' '/+' | base64 -d -i 2>/dev/null | jq '.exp |= todateiso8601 | .iat |= todateiso8601 | .nbf |= todateiso8601'
 end
