@@ -1,0 +1,12 @@
+[Unit]
+Description=Enable extensions for GNOME Shell.
+
+[Service]
+ExecStart=dconf write /org/gnome/shell/disable-user-extensions false
+ExecStart=dconf write /org/gnome/shell/disabled-extensions '@as []'
+ExecStart=dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano', 'trayIconsReloaded@selfmade.pl']"
+RemainAfterExit=true
+Type=oneshot
+
+[Install]
+WantedBy=default.target

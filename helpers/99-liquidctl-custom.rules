@@ -1,0 +1,16 @@
+# First Commander (liquidctl list -v for values)
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="0c10", ATTRS{serial}=="1805006373291A10", SYMLINK+="commander0", TAG+="systemd"
+
+# Second Commander
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="0c10", ATTRS{serial}=="1305006473291217", SYMLINK+="commander1", TAG+="systemd"
+
+# Lighting Node Pro
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="0c0b", ATTRS{serial}=="22C00007C1843EAF9CD3E65BC11B00F5", SYMLINK+="lnp0", TAG+="systemd"
+
+# HX1000i
+ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="1c07", SYMLINK+="hx1000i", TAG+="systemd"
+
+# Allow non-root
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="0c10", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="1c07", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1b1c", ATTRS{idProduct}=="0c0b", TAG+="uaccess"

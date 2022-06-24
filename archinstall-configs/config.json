@@ -1,0 +1,13 @@
+{
+  "audio": "pipewire",
+  "bootloader": "systemd-bootctl",
+  "kernels": ["linux"],
+  "keyboard-language": "us",
+  "mirror-region": { "United States": {"https://mirrors.xtom.com/archlinux/$repo/os/$arch": true} },
+  "nic": {"NetworkManager": true},
+  "ntp": true,
+  "packages": ["sudo", "git", "fish", "iptables-nft"],
+  "sys-encoding": "utf-8",
+  "sys-language": "en_US",
+  "timezone": "America/Denver"
+}

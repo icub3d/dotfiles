@@ -1,0 +1,31 @@
+[Unit]
+Description=Liquid Cooling and Lighting Service
+Requires=dev-commander0.device
+Requires=dev-commander1.device
+Requires=dev-hx1000i.device
+Requires=dev-lnp0.device
+After=dev-commander0.device
+After=dev-commander1.device
+After=dev-hx1000i.device
+After=dev-lnp0.device
+After=suspend.target
+
+[Service]
+Type=oneshot
+ExecStart=liquidctl initialize all
+ExecStart=liquidctl --serial 1805006373291A10 set fan1 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 3
+ExecStart=liquidctl --serial 1805006373291A10 set fan2 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 3
+ExecStart=liquidctl --serial 1805006373291A10 set led1 color fixed 00ff00
+ExecStart=liquidctl --serial 1805006373291A10 set led2 color fixed 00ff00
+ExecStart=liquidctl --serial 1305006473291217 set fan1 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan2 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan3 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan4 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan5 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan6 speed 20 800 30 1500 40 2000 50 2500 55 3500 60 4800 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set led1 color fixed 00ff00
+ExecStart=liquidctl --serial 1305006473291217 set led2 color fixed 00ff00
+
+[Install]
+WantedBy=default.target
+WantedBy=suspend.target

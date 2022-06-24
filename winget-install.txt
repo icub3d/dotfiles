@@ -1,0 +1,9 @@
+Git.Git
+code
+python
+Oracle.JDK.17
+Mojang.MinecraftLauncher
+Discord.Discord
+Docker.DockerDesktop
+7zip.7zip
+OBSProject.OBSStudio

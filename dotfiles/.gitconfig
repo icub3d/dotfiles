@@ -1,0 +1,57 @@
+[init]
+	defaultBranch = main
+
+[user]
+	name = Joshua Marsh (icub3d)
+	email = joshua@themarshians.com
+
+[core]
+	pager = delta --dark --minus-style="#CC2E55" --minus-emph-style="#B04C1B" --plus-emph-style="#B04C1B" --plus-style="#5D902A"
+	
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[alias]
+	unstage = reset HEAD --
+	last = log -1 HEAD --stat
+	ff = flow feature
+	ffs = flow feature start
+	fff = flow feature finish
+	ffp = flow feature publish
+	fr = flow release
+	fh = flow hotfix
+	fs = flow support
+	fb = flow bugfix
+	l = log --oneline
+	p = pull
+	u = push
+	a = add
+	s = status -sb
+	c = commit
+	cm = commit -m
+	co = checkout
+	o = checkout
+	r = remove -v
+	d = diff
+	search = !git rev-list --all | xargs git grep -F
+	
+[push]
+	default = simple
