@@ -45,6 +45,12 @@ return require('packer').startup(function(use)
 
   -- treesitter (syntax)
   use { "nvim-treesitter/nvim-treesitter", config = require("config.treesitter") }
+  use {
+    'lewis6991/spellsitter.nvim',
+    config = function()
+      require('spellsitter').setup()
+    end
+  }
 
   -- lsp
   use 'williamboman/nvim-lsp-installer'
