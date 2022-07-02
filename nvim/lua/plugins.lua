@@ -27,6 +27,14 @@ return require('packer').startup(function(use)
     end,
   }
 
+  -- surround
+  use {
+    "kylechui/nvim-surround",
+    config = function()
+      require("nvim-surround").setup({})
+    end
+  }
+
   -- completion
   use {
     "hrsh7th/nvim-cmp",
