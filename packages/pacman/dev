@@ -1,3 +1,5 @@
+perl-authen-sasl
+perl-io-socket-ssl
 gnuplot
 binwalk
 bridge-utils
