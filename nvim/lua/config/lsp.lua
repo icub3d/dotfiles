@@ -68,5 +68,9 @@ return function()
   lspconfig.solargraph.setup(default)
 
   -- format on save
-  vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
+  -- vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
+  vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+    pattern = "*",
+    command = "lua vim.lsp.buf.formatting_sync()",
+  })
 end

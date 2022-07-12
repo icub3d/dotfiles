@@ -64,6 +64,25 @@ return require('packer').startup(function(use)
   use 'williamboman/nvim-lsp-installer'
   use { 'neovim/nvim-lspconfig', config = require('config.lsp') }
 
+  -- discord
+  use 'andweeb/presence.nvim'
+
+  -- go tools
+  use { 'ray-x/go.nvim',
+    config = function()
+      require('go').setup()
+      local opts = { noremap = true, silent = true }
+      vim.keymap.set('n', '<space>ccr', ":GoCoverage<CR>", opts)
+      vim.keymap.set('n', '<space>cct', ":GoCoverage -t<CR>", opts)
+      vim.keymap.set('n', '<space>cr', ":GoRun<CR>", opts)
+      vim.keymap.set('n', '<space>cta', ":GoTest<CR>", opts)
+      vim.keymap.set('n', '<space>ctf', ":GoTestFile<CR>", opts)
+      vim.keymap.set('n', '<space>ctu', ":GoTestFunc<CR>", opts)
+      vim.keymap.set('n', '<space>ctp', ":GoTestPkg<CR>", opts)
+    end
+  }
+  use 'ray-x/guihua.lua'
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if PackerBootstrap then
