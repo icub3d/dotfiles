@@ -15,6 +15,9 @@ rustup target add wasm32-unknown-unknown
 
 rust-binaries
 
+# Update our go binaries
+go-binaries
+
 # Haskell
 if test ! -e ~/.ghcup
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh

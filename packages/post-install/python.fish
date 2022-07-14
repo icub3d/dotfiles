@@ -1,4 +1,4 @@
 #!/usr/bin/fish
 
-# sudo -H pip install -U virtualenv jedi youtube-dl
-pip install -U pandas numpy matplotlib bpytop yq pynvim
+python -m venv ~/.python
+~/.python/bin/pip install pandas numpy matplotlib bpytop yq pynvim debugpy

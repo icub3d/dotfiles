@@ -65,6 +65,10 @@ if test -d $HOME/.rvm/bin
   set PATH $PATH $HOME/.rvm/bin
 end
 
+if test -d $HOME/.python/bin
+  set PATH $PATH $HOME/.python/bin 
+end
+
 # TODO may want to do this for desktop apps.
 # Desktop files (used by desktop environments within both X11 and Wayland) are
 # looked for in XDG_DATA_DIRS; make sure it includes the relevant directory for
