@@ -3,11 +3,11 @@ return function()
   local nnoremap = remap.nnoremap
 
   require('go').setup()
-  nnoremap('<leader>ccr', ":GoCoverage<CR>")
-  nnoremap('<leader>cct', ":GoCoverage -t<CR>")
-  nnoremap('<leader>cr', ":GoRun<CR>")
-  nnoremap('<leader>cta', ":GoTest<CR>")
-  nnoremap('<leader>ctf', ":GoTestFile<CR>")
-  nnoremap('<leader>ctu', ":GoTestFunc<CR>")
-  nnoremap('<leader>ctp', ":GoTestPkg<CR>")
+  nnoremap('<leader>cr', ":GoCoverage<CR>")
+  nnoremap('<leader>ct', ":GoCoverage -t<CR>")
+  nnoremap('<leader>r', ":GoRun<CR>")
+  nnoremap('<leader>ta', ":GoTest<CR>")
+  nnoremap('<leader>tf', ":GoTestFile<CR>")
+  nnoremap('<leader>tu', ":GoTestFunc<CR>")
+  nnoremap('<leader>tp', ":GoTestPkg<CR>")
 end

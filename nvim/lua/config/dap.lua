@@ -3,28 +3,26 @@ return function()
   local dapui = require('dapui')
   dapui.setup()
 
-  -- setup some listeners so when we start up dap, it starts up dapui as well.
-  dap.listeners.after.event_initialized["dapui_config"] = function()
-    dapui.open()
-  end
-  dap.listeners.before.event_terminated["dapui_config"] = function()
-    dapui.close()
-  end
-  dap.listeners.before.event_exited["dapui_config"] = function()
-    dapui.close()
-  end
-
   local remap = require('remap')
   local nnoremap = remap.nnoremap
 
   -- keybindings
-  nnoremap('<leader>cdc', function() dap.continue() end)
-  nnoremap('<leader>cdq', function() dap.close() end)
-  nnoremap('<leader>cdr', function() dap.run_to_cursor() end)
-  nnoremap('<leader>cdb', function() dap.toggle_breakpoint() end)
-  nnoremap('<leader>cdB', function()
+  nnoremap('<leader>dc', function()
+    dap.continue()
+    dapui.open()
+  end)
+  nnoremap('<leader>dq', function()
+    dap.close()
+    dapui.close()
+  end)
+  nnoremap('<leader>dr', function() dap.run_to_cursor() end)
+  nnoremap('<leader>db', function() dap.toggle_breakpoint() end)
+  nnoremap('<leader>dB', function()
     dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
   end)
+  nnoremap('<leader>do', function() dap.step_out() end)
+  nnoremap('<leader>di', function() dap.step_in() end)
+  nnoremap('<leader>dn', function() dap.step_over() end)
   nnoremap('<Up>', function() dap.step_out() end)
   nnoremap('<Down>', function() dap.step_in() end)
   nnoremap('<Right>', function() dap.step_over() end)
