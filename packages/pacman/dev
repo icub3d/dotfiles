@@ -18,6 +18,7 @@ github-cli
 go
 libvirt
 llvm
+lldb
 make
 man-db
 man-pages

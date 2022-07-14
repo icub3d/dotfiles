@@ -1,15 +1,17 @@
 return function()
+  local remap = require('remap')
+  local nnoremap = remap.nnoremap
+
   require("nvim-lsp-installer").setup {
     automatic_installation = true,
   }
 
   -- Mappings.
   -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-  local opts = { noremap = true, silent = true }
-  vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-  vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-  vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+  nnoremap('<leader>e', vim.diagnostic.open_float)
+  nnoremap('[d', vim.diagnostic.goto_prev)
+  nnoremap(']d', vim.diagnostic.goto_next)
+  nnoremap('<leader>q', vim.diagnostic.setloclist)
 
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
@@ -19,22 +21,23 @@ return function()
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local bufopts = { noremap = true, silent = true, buffer = bufnr }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
-    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-    vim.keymap.set('n', '<space>wl', function()
+    local bufopts = { noremap = true, buffer = bufnr }
+    local bufremap = remap.bind('n', bufopts)
+    bufremap('gD', vim.lsp.buf.declaration)
+    bufremap('gd', vim.lsp.buf.definition)
+    bufremap('K', vim.lsp.buf.hover)
+    bufremap('gi', vim.lsp.buf.implementation)
+    bufremap('<C-k>', vim.lsp.buf.signature_help)
+    bufremap('<leader>wa', vim.lsp.buf.add_workspace_folder)
+    bufremap('<leader>wr', vim.lsp.buf.remove_workspace_folder)
+    bufremap('<leader>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, bufopts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
+    end)
+    bufremap('<leader>D', vim.lsp.buf.type_definition)
+    bufremap('<leader>rn', vim.lsp.buf.rename)
+    bufremap('<leader>ca', vim.lsp.buf.code_action)
+    bufremap('gr', vim.lsp.buf.references)
+    bufremap('<leader>f', vim.lsp.buf.formatting)
   end
 
   local lspconfig = require("lspconfig")
@@ -68,7 +71,6 @@ return function()
   lspconfig.solargraph.setup(default)
 
   -- format on save
-  -- vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     pattern = "*",
     command = "lua vim.lsp.buf.formatting_sync()",

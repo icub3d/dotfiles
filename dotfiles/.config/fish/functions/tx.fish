@@ -2,6 +2,7 @@ function tx
 	set -x SIMPLE_PROMPT true
 
 	command tmux new-session -d -c ~/dev/dotfiles -s dot -n dot
+	command tmux new-window -d -c ~/dev/dotfiles/nvim -t dot:1 -n "nvim"
 
 	command tmux new-session -d -c ~ -s home -n "home"
 	command tmux new-window -d -c ~/dev -t home:1 -n "dev"

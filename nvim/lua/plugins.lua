@@ -14,7 +14,8 @@ return require('packer').startup(function(use)
   use 'tanvirtin/monokai.nvim'
 
   -- fuzzy find
-  use { 'ibhagwan/fzf-lua',
+  use {
+    'ibhagwan/fzf-lua',
     -- optional for icon support
     requires = { 'kyazdani42/nvim-web-devicons' }
   }
@@ -39,7 +40,6 @@ return require('packer').startup(function(use)
   use {
     "hrsh7th/nvim-cmp",
     requires = {
-
       { "saadparwaiz1/cmp_luasnip", requires = "L3MON4D3/LuaSnip" },
       "f3fora/cmp-spell",
       "hrsh7th/cmp-nvim-lsp",
@@ -64,23 +64,18 @@ return require('packer').startup(function(use)
   use 'williamboman/nvim-lsp-installer'
   use { 'neovim/nvim-lspconfig', config = require('config.lsp') }
 
+  -- dap
+  use {
+    'rcarriga/nvim-dap-ui',
+    requires = 'mfussenegger/nvim-dap',
+    config = require('config.dap'),
+  }
+
   -- discord
   use 'andweeb/presence.nvim'
 
   -- go tools
-  use { 'ray-x/go.nvim',
-    config = function()
-      require('go').setup()
-      local opts = { noremap = true, silent = true }
-      vim.keymap.set('n', '<space>ccr', ":GoCoverage<CR>", opts)
-      vim.keymap.set('n', '<space>cct', ":GoCoverage -t<CR>", opts)
-      vim.keymap.set('n', '<space>cr', ":GoRun<CR>", opts)
-      vim.keymap.set('n', '<space>cta', ":GoTest<CR>", opts)
-      vim.keymap.set('n', '<space>ctf', ":GoTestFile<CR>", opts)
-      vim.keymap.set('n', '<space>ctu', ":GoTestFunc<CR>", opts)
-      vim.keymap.set('n', '<space>ctp', ":GoTestPkg<CR>", opts)
-    end
-  }
+  use { 'ray-x/go.nvim', config = require('config.go') }
   use 'ray-x/guihua.lua'
 
   -- Automatically set up your configuration after cloning packer.nvim
