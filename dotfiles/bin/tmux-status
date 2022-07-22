@@ -1,5 +1,0 @@
-#!/usr/bin/fish
-
-if test "$TMUX_NO_STATUS" = ""
-    echo (hostname) (/home/jmarsh/go/bin/sysinfo) (date "+%Y-%m-%d %H:%M:%S")
-end

@@ -18,9 +18,6 @@ end
 set ARCH (uname -m)
 smbclient -A ~/.smbclient.conf --directory files -c "get cli-tools.$ARCH.zip /tmp/cli-tools.zip" //srv2/documents 
 pushd $HOME/bin
-unzip /tmp/cli-tools.zip
+unzip -o /tmp/cli-tools.zip
 popd
 rm /tmp/cli-tools.zip
-
-# install spark
-sh -c "curl https://raw.githubusercontent.com/holman/spark/master/spark -o ~/bin/spark && chmod +x ~/bin/spark"
