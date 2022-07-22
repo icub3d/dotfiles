@@ -67,7 +67,10 @@ return require('packer').startup(function(use)
   -- dap
   use {
     'rcarriga/nvim-dap-ui',
-    requires = 'mfussenegger/nvim-dap',
+    requires = {
+      'mfussenegger/nvim-dap',
+      'mfussenegger/nvim-dap-python', -- :TSInstall python
+    },
     config = require('config.dap'),
   }
 

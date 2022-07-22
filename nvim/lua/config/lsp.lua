@@ -69,6 +69,13 @@ return function()
   lspconfig.cssls.setup(default)
   lspconfig.html.setup(default)
   lspconfig.solargraph.setup(default)
+  lspconfig.groovyls.setup(default)
+
+  -- Jenkinsfile == groovy
+  vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    pattern = "Jenkinsfile",
+    command = "set filetype=groovy",
+  })
 
   -- format on save
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {

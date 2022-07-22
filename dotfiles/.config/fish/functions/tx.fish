@@ -17,6 +17,12 @@ function tx
 		command tmux new-window -d -c ~/dev/oti-azure -t oti:2 -n "run"
 	else
 		command tmux new-session -d -c ~ -s srv -n srv2
+		command tmux new-window -d -c ~ -t srv:1 -n pihole
+		command tmux new-window -d -c ~ -t srv:2 -n k8s
+		command tmux split-window -d -c ~ -t srv:2 -h
+		command tmux split-window -d -c ~ -t srv:2 -h
+		command tmux split-window -d -c ~ -t srv:2 -h
+    command tmux select-layout -t srv:2 even-horizontal
 	end
 	
 	command tmux attach -t home

@@ -11,7 +11,6 @@ My dotfiles
 	fish dotfiles.fish
 	fish go.fish
 	./install.fish
-	fish emacs.fish
 
 # Arch Linux Basic Install
 

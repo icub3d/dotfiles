@@ -54,17 +54,6 @@ else if test -f /etc/hostname
    set HOSTNAME (cat /etc/hostname)
 end
 
-set -U EMACSBIN /usr/bin/emacs
-if test -f /usr/local/bin/emacs
-	set -U EMACSBIN /usr/local/bin/emacs
-end
-
-set -U EMACSCLIENTBIN /usr/bin/emacsclient
-if test -f /usr/local/bin/emacsclient
-	set -U EMACSCLIENTBIN /usr/local/bin/emacsclient
-end
-
-
 set -U FISHBIN /usr/bin/fish
 if test -f /usr/local/bin/fish
 	set -U FISHBIN /usr/local/bin/fish

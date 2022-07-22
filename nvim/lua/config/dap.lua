@@ -132,4 +132,7 @@ return function()
       program = "./${relativeFileDirname}"
     }
   }
+
+  -- Python
+  require('dap-python').setup('~/.python/bin/python')
 end
