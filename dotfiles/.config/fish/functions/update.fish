@@ -25,11 +25,13 @@ function update
 		sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
 
 		# multilib
-		if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
-			echo -e "[multilib]
-			Include = /etc/pacman.d/mirrorlist
-			" | sudo tee -a /etc/pacman.conf >/dev/null
-		end
+    if grep gaming .selected_packages >/dev/null 2>/dev/null
+		  if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
+		  	echo -e "[multilib]
+		  	Include = /etc/pacman.d/mirrorlist
+		  	" | sudo tee -a /etc/pacman.conf >/dev/null
+		  end
+    end
 	end
 
 	# Figure out which groups we are going to install.
