@@ -12,7 +12,9 @@ httpie
 httping
 jq
 linux-headers
+make
 neovim
+networkmanager
 openssh
 parallel
 prettyping
@@ -20,8 +22,7 @@ python
 python-pip
 smbclient
 tcpdump
+texinfo
 tmux
 traceroute
 wget
-make
-networkmanager
