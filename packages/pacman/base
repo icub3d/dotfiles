@@ -2,6 +2,7 @@ acpid
 bpytop
 ca-certificates
 curl
+dhcpcd
 dialog
 dnsutils
 dstat
