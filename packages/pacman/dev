@@ -1,4 +1,3 @@
-acpid
 aspell-en
 binwalk
 bridge-utils
@@ -24,14 +23,12 @@ kubectl
 libvirt
 lldb
 llvm
-make
 man-db
 man-pages
 minikube
 mongodb-bin
 mongodb-tools-bin
 nerd-fonts-complete
-networkmanager
 nfs-utils
 nikto
 nmap
