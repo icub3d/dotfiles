@@ -16,8 +16,6 @@ kubectl
 libvirt
 lldb
 llvm
-man-db
-man-pages
 minikube
 mongodb-bin
 mongodb-tools-bin
