@@ -4,6 +4,7 @@ ca-certificates
 curl
 dhcpcd
 dialog
+dnsmasq
 dnsutils
 dstat
 fzf
