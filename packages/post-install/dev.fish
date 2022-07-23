@@ -20,3 +20,7 @@ end
 ghcup install ghc 9.2.3
 ghcup install cabal 3.6.2.0
 ghcup install stack 2.7.5
+
+# python
+python -m venv ~/.python
+~/.python/bin/pip install pandas numpy matplotlib pynvim debugpy
