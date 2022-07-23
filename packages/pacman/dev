@@ -1,6 +1,5 @@
 aspell-en
 binwalk
-bridge-utils
 clang
 dhcpcd
 dmidecode
@@ -35,9 +34,7 @@ noto-fonts-extra
 npm
 perl-authen-sasl
 perl-io-socket-ssl
-python
 python-jedi
-python-pip
 qemu
 stern-bin
 syncthing

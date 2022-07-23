@@ -16,6 +16,8 @@ neovim
 openssh
 parallel
 prettyping
+python
+python-pip
 smbclient
 tcpdump
 tmux
