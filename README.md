@@ -17,6 +17,8 @@ My dotfiles
 This should setup my common default values. I don't setup the disks
 because they are different for each machine I have.
 
+If the configs don't work, we need at least: fish git iptables-nft base-devel sudo
+
 ```bash
 wget https://raw.githubusercontent.com/icub3d/dotfiles/main/archinstall-configs/config.json >config.json
 wget https://github.com/icub3d/dotfiles/blob/main/archinstall-configs/creds.json >creds.json
