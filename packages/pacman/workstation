@@ -8,6 +8,7 @@ cmake
 cups
 cups-pdf
 discord
+docker-credential-secretservice
 eog
 file-roller
 firefox-developer-edition
