@@ -14,10 +14,20 @@ return require('packer').startup(function(use)
   use 'tanvirtin/monokai.nvim'
 
   -- fuzzy find
+  -- use {
+  --   'ibhagwan/fzf-lua',
+  --   -- optional for icon support
+  --   requires = { 'kyazdani42/nvim-web-devicons' }
+  -- }
+
+  -- telescope
   use {
-    'ibhagwan/fzf-lua',
-    -- optional for icon support
-    requires = { 'kyazdani42/nvim-web-devicons' }
+    'nvim-telescope/telescope.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
+      'kyazdani42/nvim-web-devicons',
+    },
   }
 
   -- color hex codes
