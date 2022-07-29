@@ -13,13 +13,6 @@ return require('packer').startup(function(use)
   -- Monokai theme
   use 'tanvirtin/monokai.nvim'
 
-  -- fuzzy find
-  -- use {
-  --   'ibhagwan/fzf-lua',
-  --   -- optional for icon support
-  --   requires = { 'kyazdani42/nvim-web-devicons' }
-  -- }
-
   -- telescope
   use {
     'nvim-telescope/telescope.nvim',
@@ -71,8 +64,11 @@ return require('packer').startup(function(use)
   }
 
   -- lsp
-  use 'williamboman/nvim-lsp-installer'
-  use { 'neovim/nvim-lspconfig', config = require('config.lsp') }
+  use {
+    'williamboman/mason-lspconfig.nvim',
+    requires = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' },
+    config = require('config.lsp')
+  }
 
   -- dap
   use {

@@ -2,8 +2,26 @@ return function()
   local remap = require('remap')
   local nnoremap = remap.nnoremap
 
-  require("nvim-lsp-installer").setup {
+  require("mason").setup {
     automatic_installation = true,
+  }
+
+  require("mason-lspconfig").setup {
+    automatic_installation = true,
+    ensure_installed = {
+      "sumneko_lua",
+      "emmet_ls",
+      "cland",
+      "tsserver",
+      "pyright",
+      "rust_analyzer",
+      "gopls",
+      "jdtls",
+      "cssls",
+      "html",
+      "solargraph",
+      "groovyls",
+    }
   }
 
   -- Mappings.

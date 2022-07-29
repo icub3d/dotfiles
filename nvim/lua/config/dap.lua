@@ -3,6 +3,7 @@ return function()
   local dapui = require('dapui')
   dapui.setup()
 
+  -- import remap for keybindings.
   local remap = require('remap')
   local nnoremap = remap.nnoremap
 
