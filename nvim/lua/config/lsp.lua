@@ -26,7 +26,7 @@ return function()
 
   -- Mappings.
   -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-  nnoremap('<leader>e', vim.diagnostic.open_float)
+  nnoremap('<leader>le', vim.diagnostic.open_float)
   nnoremap('[d', vim.diagnostic.goto_prev)
   nnoremap(']d', vim.diagnostic.goto_next)
   nnoremap('<leader>q', vim.diagnostic.setloclist)

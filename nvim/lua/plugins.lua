@@ -6,10 +6,25 @@ if fn.empty(fn.glob(install_path)) > 0 then
     'git', 'clone', '--depth', '1',
     'https://github.com/wbthomason/packer.nvim', install_path
   })
+  vim.cmd [[packadd packer.nvim]]
 end
 
+local packer = require('packer')
+packer.reset()
+packer.init({
+  display = {
+    open_fn = function() return require('packer.util').float { border = "rounded" } end,
+  }
+})
+
+
 -- start packer
-return require('packer').startup(function(use)
+return packer.startup(function(use)
+  -- basic plugins
+  use 'wbthomason/packer.nvim'
+  use 'nvim-lua/popup.nvim'
+  use 'nvim-lua/plenary.nvim'
+
   -- Monokai theme
   use 'tanvirtin/monokai.nvim'
 
