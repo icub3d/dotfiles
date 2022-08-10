@@ -25,6 +25,9 @@ return packer.startup(function(use)
   use 'nvim-lua/popup.nvim'
   use 'nvim-lua/plenary.nvim'
 
+  -- auto pairs
+  use 'jiangmiao/auto-pairs'
+
   -- Monokai theme
   use 'tanvirtin/monokai.nvim'
 
