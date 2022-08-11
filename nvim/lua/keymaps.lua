@@ -2,12 +2,20 @@ local remap = require('remap')
 local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
 
+-- telescope
 nnoremap('<leader>ff', "<cmd>lua require('telescope.builtin').find_files({hidden=true})<cr>")
 nnoremap('<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>")
 nnoremap('<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>")
 nnoremap('<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>")
 
 nnoremap('gb', '<C-o>')
+
+-- vim-test
+nnoremap('<leader>tt', ":TestNearest -strategy=neovim<cr>")
+nnoremap('<leader>tf', ":TestFile -strategy=neovim<cr>")
+nnoremap('<leader>ts', ":TestSuite -strategy=neovim<cr>")
+nnoremap('<leader>tl', ":TestLast -strategy=neovim<cr>")
+nnoremap('<leader>tv', ":TestVisit -strategy=neovim<cr>")
 
 -- base64 encode/decode
 vnoremap('<leader>bd', "c<c-r>=system('base64 --decode', @\")<cr><esc>")
@@ -23,7 +31,6 @@ nnoremap("<C-M-h>", ":vertical resize -2<cr>")
 nnoremap("<C-M-l>", ":vertical resize +2<cr>")
 nnoremap("<C-M-k>", ":resize -2<cr>")
 nnoremap("<C-M-j>", ":resize +2<cr>")
-
 
 -- Visual --
 -- Stay in indent mode

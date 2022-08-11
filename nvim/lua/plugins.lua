@@ -98,6 +98,9 @@ return packer.startup(function(use)
     config = require('config.dap'),
   }
 
+  -- testing
+  use 'vim-test/vim-test'
+
   -- discord
   use 'andweeb/presence.nvim'
 
