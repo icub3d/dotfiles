@@ -99,7 +99,14 @@ return packer.startup(function(use)
   }
 
   -- testing
-  use 'vim-test/vim-test'
+  use {
+    'vim-test/vim-test',
+    config = function()
+      vim.cmd [[
+         let g:test#neovim#start_normal = 1
+      ]]
+    end
+  }
 
   -- discord
   use 'andweeb/presence.nvim'
