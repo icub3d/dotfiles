@@ -8,6 +8,7 @@ echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-inotify.co
 sudo sysctl --system
 
 # update cli-tools
+mkdir -p $HOME/bin
 set ARCH (uname -m)
 curl https://s3.us-west-1.wasabisys.com/marshians-files/cli-tools.$ARCH.zip >/tmp/cli-tools.zip
 pushd $HOME/bin

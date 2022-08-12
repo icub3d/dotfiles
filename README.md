@@ -4,30 +4,34 @@ My dotfiles
 
 # WSL install
 
-	sudo apt update && sudo apt uprade
-	sudo apt install fish
-	fish fish.fish
-	chsh -s /usr/bin/fish
-	fish dotfiles.fish
-	fish go.fish
-	./install.fish
-
-# Arch Linux Basic Install
-
-This should setup my common default values. I don't setup the disks
-because they are different for each machine I have.
-
-If the configs don't work, we need at least: fish git iptables-nft base-devel sudo
-
 ```bash
-wget https://raw.githubusercontent.com/icub3d/dotfiles/main/archinstall-configs/config.json >config.json
-wget https://github.com/icub3d/dotfiles/blob/main/archinstall-configs/creds.json >creds.json
-archinstall --creds creds.json --config config.json
+./helpers/ppa.sh
+sudo apt install -y fish
+sudo chsh -s /usr/bin/fish jmarsh
+fish install.fish
+```
 
-# enter into chroot when asked
-passwd jmarsh
-pacman -S amd_ucode # if AMD
-pacman -S intel_ucode # if AMD
+## Yubikey
+
+https://www.thetestspecimen.com/posts/wsl2-yubikey/
+
+```powershell
+mkdir C:\Users\joshu\AppData\Roaming\gnupg
+
+echo "enable-putty-support
+enable-ssh-support
+default-cache-ttl 600
+max-cache-ttl 7200
+" > C:\Users\Dave\AppData\Roaming\gnupg\gpg-agent.conf
+
+gpg --recv-keys 3A9A1EDB4D5AD7A570BADC538A18F7931D00BF38
+gpg --edit-key 3A9A1EDB4D5AD7A570BADC538A18F7931D00BF38
+> trust
+> quit
+
+gpg --list-keys
+gpgconf --kill gpg-agent
+gpg-connect-agent /bye
 ```
 
 # Dotfiles Installation

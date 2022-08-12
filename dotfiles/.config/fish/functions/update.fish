@@ -7,32 +7,9 @@ function update
 	pushd ~/dev/dotfiles
 	source $HOME/.config/fish/config.fish
 
-	# If we are using arch, we need to install yay.
+	# If we use other package managers in the futures, we
+	# can change this.
 	set PACKAGES_LOCATION apt
-	if test "$DISTRO" != "Ubuntu"
-		set PACKAGES_LOCATION pacman
-		#install yay
-		if not type -q yay
-			mkdir -p ~/dev/
-			git clone https://aur.archlinux.org/yay.git ~/dev/yay
-			pushd ~/dev/yay
-			makepkg -si --noconfirm
-			popd
-		end
-
-		# Pacman/Makepkg configurations
-		sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf
-		sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
-
-		# multilib
-    if grep gaming .selected_packages >/dev/null 2>/dev/null
-		  if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
-		  	echo -e "[multilib]
-		  	Include = /etc/pacman.d/mirrorlist
-		  	" | sudo tee -a /etc/pacman.conf >/dev/null
-		  end
-    end
-	end
 
 	# Figure out which groups we are going to install.
 	set SELECTED ""
@@ -55,8 +32,6 @@ function update
 		yes | sudo apt update
 		yes | sudo apt upgrade -y $PACKAGES
 		yes | sudo apt autoremove
-	else
-		yes | yay -Syu --needed --noconfirm $PACKAGES
 	end
 
 	# Make sure we have the latest from fish

@@ -1,6 +1,6 @@
 #!/usr/bin/fish
 
-set VERSION 1.18.3
+set VERSION 1.19
 
 wget https://go.dev/dl/go{$VERSION}.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go

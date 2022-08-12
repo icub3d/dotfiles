@@ -1,0 +1,15 @@
+7zip.7zip
+9PJPW5LDXLZ5
+Canonical.Ubuntu.2204
+Discord.Discord
+GIMP.GIMP
+Git.Git
+GnuPG.GnuPG
+Mojang.MinecraftLauncher
+Mozilla.Firefox.DeveloperEdition
+Neovim.Neovim
+OBSProject.OBSStudio
+Oracle.JDK.17
+PuTTY.PuTTY
+XP9KHM4BK9FZ7Q
+kalilinux.kalilinux
