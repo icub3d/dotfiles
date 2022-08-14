@@ -31,6 +31,44 @@ return packer.startup(function(use)
   -- Monokai theme
   use 'tanvirtin/monokai.nvim'
 
+  -- lua line
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    config = function()
+      local colors = {
+        black  = '#403E41',
+        gray   = '#c1c0c0',
+        white  = '#fcfcfa',
+        cyan   = '#78dce8',
+        green  = '#a9dc76',
+        orange = '#fc9867',
+        pink   = '#ff6188',
+        red    = '#ff6188',
+        yellow = '#ffd866',
+      }
+
+      local my_theme = {
+        normal = {
+          a = { fg = colors.black, bg = colors.cyan, gui = 'bold' },
+          b = { fg = colors.black, bg = colors.pink },
+          c = { fg = colors.orange, bg = colors.black },
+        },
+        insert = { a = { fg = colors.black, bg = colors.green, gui = 'bold' } },
+        visual = { a = { fg = colors.black, bg = colors.yellow, gui = 'bold' } },
+        replace = { a = { fg = colors.black, bg = colors.red, gui = 'bold' } },
+        inactive = {
+          a = { fg = colors.pink, bg = colors.black, gui = 'bold' },
+          b = { fg = colors.white, bg = colors.pink },
+          c = { fg = colors.gray, bg = colors.black },
+        },
+      }
+      require('lualine').setup({
+        options = { theme = my_theme },
+      })
+    end,
+  }
+
   -- telescope
   use {
     'nvim-telescope/telescope.nvim',
