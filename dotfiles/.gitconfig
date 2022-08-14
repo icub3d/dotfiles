@@ -4,6 +4,7 @@
 [user]
 	name = Joshua Marsh (icub3d)
 	email = joshua@themarshians.com
+	signingkey = 0x8A18F7931D00BF38
 
 [core]
 	pager = delta --dark --minus-style="#CC2E55" --minus-emph-style="#B04C1B" --plus-emph-style="#B04C1B" --plus-style="#5D902A"
@@ -55,3 +56,7 @@
 	
 [push]
 	default = simple
+[gpg]
+	program = gpg
+[commit]
+	gpgsign = true
