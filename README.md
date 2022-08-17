@@ -2,13 +2,21 @@
 
 My dotfiles
 
-# WSL install
+# Ubuntu / WSL Install
 
 ```bash
+sudo apt install -y fish curl git ca-certificates curl gnupg lsb-release
+./helpers/go.fish
 ./helpers/ppa.sh
-sudo apt install -y fish
 sudo chsh -s /usr/bin/fish jmarsh
 fish install.fish
+```
+
+# GUI Stuff
+```bash
+sudo apt install kitty 
+./helpers/chrome.fish
+./helpers/fonts.fish
 ```
 
 ## Yubikey
