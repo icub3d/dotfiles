@@ -2,6 +2,14 @@
 
 My dotfiles
 
+# Arch Linux
+
+Do a basic install make sure you include:
+
+``` 
+fish git iptables-nft base-devel sudo amd_ucode pipewire
+```
+
 # Ubuntu / WSL Install
 
 ```bash

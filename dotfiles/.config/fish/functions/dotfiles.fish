@@ -6,6 +6,20 @@ function dotfiles
 		ln -s $PWD/nvim ~/.config
 	end
 
+  if ! test -f "$HOME/.gnupg/gpg.conf"
+    mkdir -p $HOME/.gnupg 
+    cp helpers/gpg.conf $HOME/.gnupg/gpg.conf 
+    chmod 700 $HOME/.gnupg
+    chmod 600 $HOME/.gnupg/gpg.conf
+  end
+
+  if ! test -f "$HOME/.gnupg/gpg-agent.conf"
+    mkdir -p $HOME/.gnupg 
+    cp helpers/gpg-agent.conf $HOME/.gnupg/gpg-agent.conf 
+    chmod 700 $HOME/.gnupg
+    chmod 600 $HOME/.gnupg/gpg-agent.conf
+  end
+
 	# create directories for dotfiles
 	mkdir -p (/usr/bin/find dotfiles -type f | /usr/bin/sed "s#dotfiles/#$HOME/#g" | xargs -n1 dirname | sort | uniq)
 	chmod 700 $HOME/.ssh $HOME/.gnupg

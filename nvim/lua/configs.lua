@@ -10,7 +10,6 @@ local opts = {
   compatible = false,
   showmatch = true,
   number = true,
-  relativenumber = true,
   expandtab = true,
   autoindent = true,
   smartindent = true,
