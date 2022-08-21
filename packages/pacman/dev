@@ -4,6 +4,7 @@ binwalk
 clang
 dmidecode
 ebtables
+efibootmgr
 expect
 ffmpeg
 gcc
