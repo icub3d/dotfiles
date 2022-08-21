@@ -1,5 +1,6 @@
 acpid
 bpytop
+btrfs-progs
 ca-certificates
 curl
 dhcpcd
