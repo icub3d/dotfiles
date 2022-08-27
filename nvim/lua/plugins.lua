@@ -26,7 +26,10 @@ return packer.startup(function(use)
   use 'nvim-lua/plenary.nvim'
 
   -- auto pairs
-  use 'jiangmiao/auto-pairs'
+  use {
+    "windwp/nvim-autopairs",
+    config = function() require("nvim-autopairs").setup {} end
+  }
 
   -- Monokai theme
   use 'tanvirtin/monokai.nvim'
@@ -116,6 +119,17 @@ return packer.startup(function(use)
     'lewis6991/spellsitter.nvim',
     config = function()
       require('spellsitter').setup()
+    end
+  }
+
+  -- nvim-tree
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icons
+    },
+    config = function()
+      require("nvim-tree").setup()
     end
   }
 
