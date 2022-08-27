@@ -68,6 +68,15 @@ return packer.startup(function(use)
       }
       require('lualine').setup({
         options = { theme = my_theme },
+        extensions = { 'nvim-tree' },
+        tabline = {
+          lualine_a = {},
+          lualine_b = {},
+          lualine_c = { { 'filename', path = 1 } },
+          lualine_x = {},
+          lualine_y = {},
+          lualine_z = {}
+        }
       })
     end,
   }
@@ -129,7 +138,7 @@ return packer.startup(function(use)
       'kyazdani42/nvim-web-devicons', -- optional, for file icons
     },
     config = function()
-      require("nvim-tree").setup()
+      require("nvim-tree").setup({ filters = { custom = { "^.git$" } } })
     end
   }
 
