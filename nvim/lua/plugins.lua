@@ -25,6 +25,12 @@ return packer.startup(function(use)
   use 'nvim-lua/popup.nvim'
   use 'nvim-lua/plenary.nvim'
 
+  -- context line
+  use {
+    "SmiteshP/nvim-navic",
+    requires = "neovim/nvim-lspconfig"
+  }
+
   -- auto pairs
   use {
     "windwp/nvim-autopairs",
@@ -66,13 +72,30 @@ return packer.startup(function(use)
           c = { fg = colors.gray, bg = colors.black },
         },
       }
+      local navic = require('nvim-navic')
       require('lualine').setup({
         options = { theme = my_theme },
         extensions = { 'nvim-tree' },
-        tabline = {
+        sections = {
+          lualine_a = { 'mode' },
+          lualine_b = { 'branch', 'diff', 'diagnostics' },
+          lualine_c = {},
+          lualine_x = { 'encoding', 'fileformat', 'filetype' },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' }
+        },
+        inactive_sections = {
           lualine_a = {},
           lualine_b = {},
           lualine_c = { { 'filename', path = 1 } },
+          lualine_x = { 'location' },
+          lualine_y = {},
+          lualine_z = {}
+        },
+        tabline = {
+          lualine_a = {},
+          lualine_b = { { 'filename', path = 1 } },
+          lualine_c = { { navic.get_location, cond = navic.is_available } },
           lualine_x = {},
           lualine_y = {},
           lualine_z = {}
