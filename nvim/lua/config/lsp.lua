@@ -84,10 +84,24 @@ return function()
     capabilities = capabilities,
     filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
   }
+  lspconfig.rust_analyzer.setup({
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+      ['rust-analyzer'] = {
+        checkOnSave = {
+          allFeatures = true,
+          overrideCommand = {
+            'cargo', 'clippy', '--workspace', '--message-format=json',
+            '--all-targets', '--all-features'
+          }
+        }
+      }
+    }
+  })
   lspconfig.clangd.setup(default)
   lspconfig.tsserver.setup(default)
   lspconfig.pyright.setup(default)
-  lspconfig.rust_analyzer.setup(default)
   lspconfig.gopls.setup(default)
   lspconfig.jdtls.setup(default)
   lspconfig.cssls.setup(default)
