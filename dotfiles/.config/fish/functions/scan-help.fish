@@ -4,7 +4,7 @@ function scan-help
 	pushd $argv[1]
 	set files (/usr/bin/ls)
 	for file in $files
-		firefox-developer-edition $file >/dev/null 2>/dev/null &
+		google-chrome-stable $file >/dev/null 2>/dev/null &
 		read -l -P "new name ($file): " name
 		if test -n "$name"
 			mv $file $name.pdf
@@ -15,5 +15,5 @@ function scan-help
 	end
 	popd
 	nautilus $argv[1] &
-	firefox-developer-edition "https://drive.google.com/drive/u/0/folders/1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" &
+	google-chrome-stable "https://drive.google.com/drive/u/0/folders/1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" &
 end

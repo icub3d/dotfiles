@@ -109,9 +109,14 @@ return packer.startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = {
       'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-dap.nvim',
       { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
       'kyazdani42/nvim-web-devicons',
     },
+    config = function()
+      require('telescope').setup({ defaults = { file_ignore_patterns = { "node_modules", ".git" } } })
+      require('telescope').load_extension('dap')
+    end,
   }
 
   -- color hex codes
@@ -178,6 +183,7 @@ return packer.startup(function(use)
     requires = {
       'mfussenegger/nvim-dap',
       'mfussenegger/nvim-dap-python', -- :TSInstall python
+      'leoluz/nvim-dap-go',
     },
     config = require('config.dap'),
   }

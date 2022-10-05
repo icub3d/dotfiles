@@ -1,6 +1,7 @@
 local remap = require('remap')
 local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
+local inoremap = remap.vnoremap
 
 -- nvim-tree
 nnoremap('<leader>dt', ':NvimTreeToggle<cr>')
@@ -10,6 +11,7 @@ nnoremap('<leader>ff', "<cmd>lua require('telescope.builtin').find_files({hidden
 nnoremap('<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>")
 nnoremap('<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>")
 nnoremap('<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>")
+nnoremap('<leader>fk', ":Telescope keymaps<cr>")
 
 nnoremap('gb', '<C-o>')
 
