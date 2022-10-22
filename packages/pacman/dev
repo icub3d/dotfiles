@@ -8,6 +8,8 @@ efibootmgr
 expect
 ffmpeg
 gcc
+ghc
+ghc-static
 gdb
 gitflow-avh
 gnuplot
