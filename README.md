@@ -7,7 +7,7 @@ My dotfiles
 Do a basic install make sure you include:
 
 ``` 
-fish git iptables-nft base-devel sudo amd_ucode pipewire
+fish git iptables-nft base-devel sudo amd-ucode pipewire lsb-release
 ```
 
 # Ubuntu / WSL Install
@@ -20,7 +20,7 @@ sudo chsh -s /usr/bin/fish jmarsh
 fish install.fish
 ```
 
-# GUI Stuff
+## GUI Stuff
 ```bash
 sudo apt install kitty 
 ./helpers/chrome.fish
