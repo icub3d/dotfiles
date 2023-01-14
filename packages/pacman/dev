@@ -34,6 +34,7 @@ noto-fonts-extra
 npm
 perl-authen-sasl
 perl-io-socket-ssl
+powershell
 python-jedi
 qemu
 stern-bin

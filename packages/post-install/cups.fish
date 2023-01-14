@@ -1,3 +1,3 @@
 #!/usr/bin/fish
 
-add_service org.cups.cupsd.service
+add_service cups
