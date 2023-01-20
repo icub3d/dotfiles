@@ -1,3 +1,4 @@
+act
 aspell-en
 base-devel
 binwalk
@@ -34,7 +35,7 @@ noto-fonts-extra
 npm
 perl-authen-sasl
 perl-io-socket-ssl
-powershell
+powershell-bin
 python-jedi
 qemu
 stern-bin
