@@ -16,7 +16,6 @@ return function()
       "pyright",
       "rust_analyzer",
       "gopls",
-      "jdtls",
       "cssls",
       "html",
       "solargraph",
