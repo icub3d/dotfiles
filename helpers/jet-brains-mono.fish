@@ -4,7 +4,7 @@ if test ! -d ~/.local/share/fonts
   mkdir jet-brains-mono
   pushd jet-brains-mono
 
-  wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/JetBrainsMono.zip
+  wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/JetBrainsMono.zip
   unzip JetBrainsMono.zip
 
   mkdir -p ~/.local/share/fonts
