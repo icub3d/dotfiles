@@ -1,9 +1,6 @@
 require('keymaps')
 require('configs')
 require('plugins')
--- require('plugins')
--- require('theme')
-
 
 -- Update tmux status on save
 vim.api.nvim_create_autocmd({ 'BufWritePost' }, {

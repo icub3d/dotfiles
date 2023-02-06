@@ -10,7 +10,6 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-
 local plugins = {
   -- basic plugins
   'nvim-lua/popup.nvim',
@@ -19,7 +18,7 @@ local plugins = {
   -- auto pairs
   {
     "windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
+    config = true,
   },
 
   -- context line
@@ -96,7 +95,9 @@ local plugins = {
   -- monokai theme
   {
     'tanvirtin/monokai.nvim',
-    config = function()
+    lazy = false,
+    priotiy = 1000,
+    init = function()
       local monokai = require('monokai')
       monokai.setup {
         palette = {
@@ -156,7 +157,7 @@ local plugins = {
   {
     "norcalli/nvim-colorizer.lua",
     config = function()
-      require("colorizer").setup()
+      require('colorizer').setup()
     end,
   },
 
