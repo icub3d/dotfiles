@@ -1,49 +1,37 @@
--- install if missing
-local fn = vim.fn
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-  PackerBootstrap = fn.system({
-    'git', 'clone', '--depth', '1',
-    'https://github.com/wbthomason/packer.nvim', install_path
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
   })
-  vim.cmd [[packadd packer.nvim]]
 end
+vim.opt.rtp:prepend(lazypath)
 
-local packer = require('packer')
-packer.reset()
-packer.init({
-  display = {
-    open_fn = function() return require('packer.util').float { border = "rounded" } end,
-  }
-})
-
-
--- start packer
-return packer.startup(function(use)
+local plugins = {
   -- basic plugins
-  use 'wbthomason/packer.nvim'
-  use 'nvim-lua/popup.nvim'
-  use 'nvim-lua/plenary.nvim'
-
-  -- context line
-  use {
-    "SmiteshP/nvim-navic",
-    requires = "neovim/nvim-lspconfig"
-  }
+  'nvim-lua/popup.nvim',
+  'nvim-lua/plenary.nvim',
 
   -- auto pairs
-  use {
+  {
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
-  }
+  },
 
-  -- Monokai theme
-  use 'tanvirtin/monokai.nvim'
+  -- context line
+  {
+    "SmiteshP/nvim-navic",
+    dependencies = { "neovim/nvim-lspconfig" },
+  },
 
   -- lua line
-  use {
+  {
     'nvim-lualine/lualine.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons' },
+    dependencies = { 'kyazdani42/nvim-web-devicons' },
     config = function()
       local colors = {
         black  = '#403E41',
@@ -102,112 +90,181 @@ return packer.startup(function(use)
         }
       })
     end,
-  }
+  },
+
+
+  -- monokai theme
+  {
+    'tanvirtin/monokai.nvim',
+    config = function()
+      local monokai = require('monokai')
+      monokai.setup {
+        palette = {
+          base0 = '#222426',
+          base1 = '#211F22',
+          base2 = '#2d2a2e',
+          base3 = '#5b595c',
+          base4 = '#333842',
+          base5 = '#4d5154',
+          base6 = '#72696A',
+          base7 = '#fcfcfa',
+          base8 = '#e3e3e1',
+          border = '#A1B5B1',
+          brown = '#504945',
+          white = '#FFF1F3',
+          grey = '#72696A',
+          black = '#000000',
+          pink = '#FF6188',
+          green = '#A9DC76',
+          aqua = '#78DCE8',
+          yellow = '#FFD866',
+          orange = '#FC9867',
+          purple = '#AB9DF2',
+          red = '#ff6188',
+          diff_add = '#3d5213',
+          diff_remove = '#4a0f23',
+          diff_change = '#27406b',
+          diff_text = '#23324d',
+        }
+      }
+    end
+  },
 
   -- telescope
-  use {
+  {
     'nvim-telescope/telescope.nvim',
-    requires = {
+    dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-dap.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
       'kyazdani42/nvim-web-devicons',
     },
     config = function()
       require('telescope').setup({ defaults = { file_ignore_patterns = { "node_modules", ".git" } } })
       require('telescope').load_extension('dap')
     end,
-  }
+    keys = {
+      { '<leader>ff', "<cmd>lua require('telescope.builtin').find_files({hidden=true})<cr>", mode = 'n', noremap = true },
+      { '<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>", mode = 'n', noremap = true },
+      { '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>", mode = 'n', noremap = true },
+      { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>", mode = 'n', noremap = true },
+      { '<leader>fk', ":Telescope keymaps<cr>", mode = 'n', noremap = true },
+    },
+  },
 
   -- color hex codes
-  use {
+  {
     "norcalli/nvim-colorizer.lua",
     config = function()
       require("colorizer").setup()
     end,
-  }
+  },
 
   -- surround
-  use {
+  {
     "kylechui/nvim-surround",
     config = function()
       require("nvim-surround").setup({})
-    end
-  }
+    end,
+  },
+
+  -- nvim-tree
+  {
+    'kyazdani42/nvim-tree.lua',
+    dependencies = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icons
+    },
+    config = function()
+      require("nvim-tree").setup({ filters = { custom = { "^.git$" } } })
+    end,
+    keys = {
+      { '<leader>dt', ':NvimTreeToggle<cr>', mode = 'n', noremap = true },
+    },
+  },
 
   -- completion
-  use {
+  "L3MON4D3/LuaSnip",
+  {
     "hrsh7th/nvim-cmp",
-    requires = {
-      { "saadparwaiz1/cmp_luasnip", requires = "L3MON4D3/LuaSnip" },
+    depdenencies = {
+      "L3MON4D3/LuaSnip",
+      "saadparwaiz1/cmp_luasnip",
       "f3fora/cmp-spell",
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
-      { "tzachar/cmp-tabnine", run = "./install.sh" },
+      { "tzachar/cmp-tabnine", build = "./install.sh" },
     },
     config = require("config.cmp"),
-  }
+  },
 
   -- treesitter (syntax)
-  use { "nvim-treesitter/nvim-treesitter", config = require("config.treesitter") }
-  use {
+  { "nvim-treesitter/nvim-treesitter", config = require("config.treesitter") },
+  {
     'lewis6991/spellsitter.nvim',
     config = function()
       require('spellsitter').setup()
     end
-  }
+  },
 
-  -- nvim-tree
-  use {
-    'kyazdani42/nvim-tree.lua',
-    requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icons
-    },
-    config = function()
-      require("nvim-tree").setup({ filters = { custom = { "^.git$" } } })
-    end
-  }
+  -- discord
+  'andweeb/presence.nvim',
 
-  -- lsp
-  use {
-    'williamboman/mason-lspconfig.nvim',
-    requires = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' },
-    config = require('config.lsp')
-  }
-
-  -- dap
-  use {
-    'rcarriga/nvim-dap-ui',
-    requires = {
-      'mfussenegger/nvim-dap',
-      'mfussenegger/nvim-dap-python', -- :TSInstall python
-      'leoluz/nvim-dap-go',
-    },
-    config = require('config.dap'),
-  }
+  -- go tools
+  {
+    'ray-x/go.nvim',
+    config = function() require('go').setup() end,
+    keys = {
+      { '<leader>cr', ":GoCoverage<CR>", mode = 'n', noremap = true },
+      { '<leader>ct', ":GoCoverage -t<CR>", mode = 'n', noremap = true },
+      { '<leader>r', ":GoRun<CR>", mode = 'n', noremap = true },
+      { '<leader>ta', ":GoTest<CR>", mode = 'n', noremap = true },
+      { '<leader>tf', ":GoTestFile<CR>", mode = 'n', noremap = true },
+      { '<leader>tu', ":GoTestFunc<CR>", mode = 'n', noremap = true },
+      { '<leader>tp', ":GoTestPkg<CR>", mode = 'n', noremap = true },
+    }
+  },
+  'ray-x/guihua.lua',
 
   -- testing
-  use {
+  {
     'vim-test/vim-test',
     config = function()
       vim.cmd [[
          let g:test#neovim#start_normal = 1
       ]]
-    end
-  }
+    end,
+    keys = {
+      { '<leader>tt', ":TestNearest -strategy=neovim<cr>", mode = 'n', noremap = true },
+      { '<leader>tf', ":TestFile -strategy=neovim<cr>", mode = 'n', noremap = true },
+      { '<leader>ts', ":TestSuite -strategy=neovim<cr>", mode = 'n', noremap = true },
+      { '<leader>tl', ":TestLast -strategy=neovim<cr>", mode = 'n', noremap = true },
+      { '<leader>tv', ":TestVisit -strategy=neovim<cr>", mode = 'n', noremap = true },
+    },
+  },
 
-  -- discord
-  use 'andweeb/presence.nvim'
+  -- lsp
+  {
+    'williamboman/mason-lspconfig.nvim',
+    dependencies = {
+      'williamboman/mason.nvim',
+      'neovim/nvim-lspconfig',
+      'hrsh7th/cmp-nvim-lsp',
+    },
+    config = require('config.lsp')
+  },
 
-  -- go tools
-  use { 'ray-x/go.nvim', config = require('config.go') }
-  use 'ray-x/guihua.lua'
+  -- dap
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = {
+      'mfussenegger/nvim-dap',
+      'mfussenegger/nvim-dap-python', -- :TSInstall python
+      'leoluz/nvim-dap-go',
+    },
+    config = require('config.dap'),
+  },
+}
 
-  -- Automatically set up your configuration after cloning packer.nvim
-  -- Put this at the end after all plugins
-  if PackerBootstrap then
-    require('packer').sync()
-  end
-end)
+require("lazy").setup(plugins)
