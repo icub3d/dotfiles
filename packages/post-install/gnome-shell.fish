@@ -23,8 +23,7 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
-dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'kitty.desktop', 'code.desktop', 'virt-manager.desktop', 'org.gnome.Nautilus.desktop', 'discord.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
-
+dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
 
 # stylus
 dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/output' "['AUS', 'ASUS VP28U', '0x00014840']"
