@@ -9,7 +9,7 @@ return function()
   require("mason-lspconfig").setup {
     automatic_installation = true,
     ensure_installed = {
-      "sumneko_lua",
+      "lua_ls",
       "emmet_ls",
       "clangd",
       "tsserver",
@@ -67,7 +67,7 @@ return function()
     capabilities = capabilities,
     on_attach = on_attach,
   }
-  lspconfig.sumneko_lua.setup {
+  lspconfig.lua_ls.setup {
     capabilities = capabilities,
     on_attach = on_attach,
     settings = {
