@@ -35,6 +35,7 @@ npm
 perl-authen-sasl
 perl-io-socket-ssl
 powershell-bin
+prettier
 python-jedi
 qemu
 stern-bin

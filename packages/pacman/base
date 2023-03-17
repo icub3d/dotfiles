@@ -7,6 +7,9 @@ dhcpcd
 dialog
 dnsmasq
 dnsutils
+docker
+docker-buildx
+docker-compose
 dstat
 fzf
 git

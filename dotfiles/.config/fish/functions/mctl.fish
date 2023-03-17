@@ -6,9 +6,8 @@ function mctl
 			set TAGS (echo $argv[3] | sed 's/[ .-]/,/g')
 			set MIME (file -b --mime-type "$argv[3]") 
 			imagesctl -u (cat $HOME/Documents/ssssh/mongo-images-uri) put $argv[3] "$MIME" "$TAGS"
-			echo "https://i.marsh.gg/api/media/$argv[3]"
-		else if test $argv[2] = "rm"
-			mongo (cat $HOME/Documents/ssssh/mongo-images-uri) --eval "db.media.remove({_id:\"$argv[3]\"});db.chunks.remove({filename:\"$argv[3]\"});"
+      		aws s3 cp --endpoint-url=https://s3.us-west-1.wasabisys.com $argv[3] s3://img.marsh.gg/
+			echo "https://img.marsh.gg/$argv[3]"
 		else
 			echo "unknown command for images: $argv[2]"
 		end

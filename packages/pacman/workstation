@@ -1,3 +1,4 @@
+aws-cli-v2
 aircrack-ng
 asciinema
 baobab
@@ -32,7 +33,8 @@ gnome-tweaks
 gnome-user-docs
 gnome-user-share
 gnome-video-effects
-google-cloud-sdk
+google-chrome
+google-cloud-cli
 gpick
 grilo-plugins
 gvfs

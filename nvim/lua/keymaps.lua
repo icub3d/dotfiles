@@ -23,3 +23,6 @@ nnoremap("<C-M-j>", ":resize +2<cr>")
 -- Visual --
 vnoremap("<", "<gv")
 vnoremap(">", ">gv")
+
+-- Prettier --
+vnoremap("^", 'vi{:! prettier --parser html --stdin-filepath<CR>vi{>')

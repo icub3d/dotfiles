@@ -26,11 +26,11 @@ dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
 dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
 
 # stylus
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/output' "['AUS', 'ASUS VP28U', '0x00014840']"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/left-handed' true
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonA/action' "'keybinding'"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonA/keybinding' "'<Primary>z'"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonD/action' "'keybinding'"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonD/keybinding' "'<Primary><Shift>plus'"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonE/action' "'keybinding'"
-dconf write '/org/gnome/desktop/peripherals/tablets/256c:006e/buttonE/keybinding' "'<Primary>minus'"
+dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/output' "['GSM', 'LG ULTRAGEAR', '107NTMX8J515']"
+dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/left-handed' true
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonA/action' "'keybinding'"
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonA/keybinding' "'<Primary>z'"
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonD/action' "'keybinding'"
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonD/keybinding' "'<Primary><Shift>plus'"
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonE/action' "'keybinding'"
+# dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonE/keybinding' "'<Primary>minus'"
