@@ -2,6 +2,9 @@ local remap = require('remap')
 local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
 
+-- LSP
+nnoremap('<leader>rn', "<cmd>lua vim.lsp.buf.rename()<CR>")
+
 -- Go back
 nnoremap('gb', '<C-o>')
 

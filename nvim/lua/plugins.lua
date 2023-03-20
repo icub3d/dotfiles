@@ -15,6 +15,9 @@ local plugins = {
   'nvim-lua/popup.nvim',
   'nvim-lua/plenary.nvim',
 
+  -- comments
+  { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
+
   -- auto pairs
   {
     "windwp/nvim-autopairs",
@@ -146,10 +149,10 @@ local plugins = {
     end,
     keys = {
       { '<leader>ff', "<cmd>lua require('telescope.builtin').find_files({hidden=true})<cr>", mode = 'n', noremap = true },
-      { '<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>", mode = 'n', noremap = true },
-      { '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>", mode = 'n', noremap = true },
-      { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>", mode = 'n', noremap = true },
-      { '<leader>fk', ":Telescope keymaps<cr>", mode = 'n', noremap = true },
+      { '<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>",               mode = 'n', noremap = true },
+      { '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>",                 mode = 'n', noremap = true },
+      { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>",               mode = 'n', noremap = true },
+      { '<leader>fk', ":Telescope keymaps<cr>",                                              mode = 'n', noremap = true },
     },
   },
 
@@ -201,7 +204,11 @@ local plugins = {
   },
 
   -- treesitter (syntax)
-  { "nvim-treesitter/nvim-treesitter", config = require("config.treesitter") },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    config = require("config.treesitter"),
+    build = ":TSUpdate",
+  },
   {
     'lewis6991/spellsitter.nvim',
     config = function()
@@ -217,13 +224,13 @@ local plugins = {
     'ray-x/go.nvim',
     config = function() require('go').setup() end,
     keys = {
-      { '<leader>cr', ":GoCoverage<CR>", mode = 'n', noremap = true },
+      { '<leader>cr', ":GoCoverage<CR>",    mode = 'n', noremap = true },
       { '<leader>ct', ":GoCoverage -t<CR>", mode = 'n', noremap = true },
-      { '<leader>r', ":GoRun<CR>", mode = 'n', noremap = true },
-      { '<leader>ta', ":GoTest<CR>", mode = 'n', noremap = true },
-      { '<leader>tf', ":GoTestFile<CR>", mode = 'n', noremap = true },
-      { '<leader>tu', ":GoTestFunc<CR>", mode = 'n', noremap = true },
-      { '<leader>tp', ":GoTestPkg<CR>", mode = 'n', noremap = true },
+      { '<leader>r',  ":GoRun<CR>",         mode = 'n', noremap = true },
+      { '<leader>ta', ":GoTest<CR>",        mode = 'n', noremap = true },
+      { '<leader>tf', ":GoTestFile<CR>",    mode = 'n', noremap = true },
+      { '<leader>tu', ":GoTestFunc<CR>",    mode = 'n', noremap = true },
+      { '<leader>tp', ":GoTestPkg<CR>",     mode = 'n', noremap = true },
     }
   },
   'ray-x/guihua.lua',
@@ -238,10 +245,10 @@ local plugins = {
     end,
     keys = {
       { '<leader>tt', ":TestNearest -strategy=neovim<cr>", mode = 'n', noremap = true },
-      { '<leader>tf', ":TestFile -strategy=neovim<cr>", mode = 'n', noremap = true },
-      { '<leader>ts', ":TestSuite -strategy=neovim<cr>", mode = 'n', noremap = true },
-      { '<leader>tl', ":TestLast -strategy=neovim<cr>", mode = 'n', noremap = true },
-      { '<leader>tv', ":TestVisit -strategy=neovim<cr>", mode = 'n', noremap = true },
+      { '<leader>tf', ":TestFile -strategy=neovim<cr>",    mode = 'n', noremap = true },
+      { '<leader>ts', ":TestSuite -strategy=neovim<cr>",   mode = 'n', noremap = true },
+      { '<leader>tl', ":TestLast -strategy=neovim<cr>",    mode = 'n', noremap = true },
+      { '<leader>tv', ":TestVisit -strategy=neovim<cr>",   mode = 'n', noremap = true },
     },
   },
 
@@ -273,9 +280,9 @@ local plugins = {
     build = ":Neorg sync-parsers",
     opts = {
       load = {
-        ["core.defaults"] = {}, -- Loads default behaviour
+        ["core.defaults"] = {},       -- Loads default behaviour
         ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
-        ["core.norg.dirman"] = { -- Manages Neorg workspaces
+        ["core.norg.dirman"] = {      -- Manages Neorg workspaces
           config = {
             workspaces = {
               notes = "~/Documents/notes",
