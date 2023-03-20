@@ -83,6 +83,8 @@ swtpm
 system-config-printer
 tk
 totem
+ttf-jetbrains-mono
+ttf-nerd-fonts-symbols-2048-em-mono
 virt-manager
 visual-studio-code-bin
 vlc
