@@ -24,9 +24,6 @@ if test "$DISTRO" = "Ubuntu"
   end
 end
 
-# Nerd Fonts 
-fish ./helpers/jet-brains-mono.fish
-
 # install/update rust
 if test ! -e ~/.cargo/bin/rustc
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -39,3 +36,10 @@ else
 end
 
 rustup target add wasm32-unknown-unknown
+
+pip install black isort
+if test ! -d ~/.python
+  python -v venv ~/.python
+  source ~/.python/bin/activate.fish
+  pip install debugpy
+end

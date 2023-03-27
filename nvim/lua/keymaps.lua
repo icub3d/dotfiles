@@ -1,16 +1,31 @@
 local remap = require('remap')
 local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
+local tnoremap = remap.tnoremap
+
+-- floaterm
+nnoremap('<leader>tn', ":FloatermNew<CR>")
+nnoremap('<leader>tp', ":FloatermNew! python %<CR>")
+vnoremap('<leader>tp', ":'<,'>FloatermNew! python<CR>")
+tnoremap('<leader>tn', "<C-\\><C-n>:FloatermNew<CR>")
+nnoremap('<leader>t>', ":FloatermNext<CR>")
+tnoremap('<leader>t>', '<C-\\><C-n>:FloatermNext<CR>')
+nnoremap('<leader>t<', ":FloatermPrev<CR>")
+tnoremap('<leader>t<', '<C-\\><C-n>:FloatermPrev<CR>')
+nnoremap('<leader>tt', ":FloatermToggle<CR>")
+tnoremap('<leader>tt', '<C-\\><C-n>:FloatermToggle<CR>')
+
 
 -- LSP
-nnoremap('<leader>rn', "<cmd>lua vim.lsp.buf.rename()<CR>")
+nnoremap('<leader>lr', "<cmd>lua vim.lsp.buf.rename()<CR>")
+nnoremap('<leader>lf', "<cmd>lua vim.lsp.buf.format()<CR>")
 
 -- Go back
 nnoremap('gb', '<C-o>')
 
 -- base64 encode/decode
 vnoremap('<leader>bd', "c<c-r>=system('base64 --decode', @\")<cr><esc>")
-vnoremap('<leader>be', "c<c-r>=system('base64', @\")<cr><esc>")
+vnoremap('<leader>be', "c<c-r>=system('base64 -w0', @\")<cr><esc>")
 
 -- window navigation
 nnoremap("<leader>e", ":Lex 30<cr>")

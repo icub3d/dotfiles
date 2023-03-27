@@ -10,10 +10,6 @@ function scan-help
 			mv $file $name.pdf
 		end
 	end
-	for file in (/usr/bin/ls)
-		gdrive upload --parent 1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU $file
-	end
 	popd
 	nautilus $argv[1] &
-	firefox-developer-edition "https://drive.google.com/drive/u/0/folders/1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" &
 end

@@ -10,10 +10,19 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+
 local plugins = {
   -- basic plugins
   'nvim-lua/popup.nvim',
   'nvim-lua/plenary.nvim',
+
+  -- floatterm
+  {
+    'voldikss/vim-floaterm',
+  },
+
+  -- copilot
+  'github/copilot.vim',
 
   -- comments
   { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
@@ -198,7 +207,7 @@ local plugins = {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
-      { "tzachar/cmp-tabnine", build = "./install.sh" },
+      -- { "tzachar/cmp-tabnine", build = "./install.sh" },
     },
     config = require("config.cmp"),
   },
@@ -252,6 +261,20 @@ local plugins = {
     },
   },
 
+  -- null-ls
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    config = function()
+      local null_ls = require('null-ls')
+      null_ls.setup({
+        sources = {
+          null_ls.builtins.formatting.prettier,
+          null_ls.builtins.formatting.black,
+        }
+      })
+    end
+  },
+
   -- lsp
   {
     'williamboman/mason-lspconfig.nvim',
@@ -262,6 +285,7 @@ local plugins = {
     },
     config = require('config.lsp')
   },
+
 
   -- dap
   {

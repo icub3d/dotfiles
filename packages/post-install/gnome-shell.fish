@@ -23,7 +23,7 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
-dconf write /org/gnome/shell/favorite-apps "['google-chrome.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
+dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'google-chrome.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
 
 # stylus
 dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/output' "['GSM', 'LG ULTRAGEAR', '107NTMX8J515']"
