@@ -39,7 +39,7 @@ rustup target add wasm32-unknown-unknown
 
 pip install black isort
 if test ! -d ~/.python
-  python -v venv ~/.python
+  python -m venv $HOME/.python
   source ~/.python/bin/activate.fish
   pip install debugpy
 end
