@@ -153,7 +153,7 @@ local plugins = {
       'kyazdani42/nvim-web-devicons',
     },
     config = function()
-      require('telescope').setup({ defaults = { file_ignore_patterns = { "node_modules", ".git" } } })
+      require('telescope').setup({ defaults = { file_ignore_patterns = { "node_modules", ".git/" } } })
       require('telescope').load_extension('dap')
     end,
     keys = {
