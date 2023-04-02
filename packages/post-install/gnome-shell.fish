@@ -20,7 +20,7 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 # gsettings set org.gnome.settings-daemon.plugins.power lid-close-suspend-with-external-monitor 'false'
 # gsettings set org.gnome.settings-daemon.plugins.power lid-close-battery-action 'suspend'
 
-dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano']"
+dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano', 'trayIconsReloaded@selfmade.pl']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
 dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'google-chrome.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"

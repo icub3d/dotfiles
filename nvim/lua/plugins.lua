@@ -21,8 +21,21 @@ local plugins = {
     'voldikss/vim-floaterm',
   },
 
-  -- copilot
-  'github/copilot.vim',
+  -- tabnine
+  {
+    'codota/tabnine-nvim',
+    build = "./dl_binaries.sh",
+    init = function()
+      require('tabnine').setup({
+        disable_auto_comment = true,
+        accept_keymap = "<Tab>",
+        dismiss_keymap = "<C-]>",
+        debounce_ms = 800,
+        -- suggestion_color = { gui = "#808080", cterm = 244 },
+        exclude_filetypes = { "TelescopePrompt" }
+      })
+    end,
+  },
 
   -- comments
   { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
@@ -78,10 +91,10 @@ local plugins = {
         sections = {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
-          lualine_c = {},
+          lualine_c = { 'lsp_progress' },
           lualine_x = { 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress' },
-          lualine_z = { 'location' }
+          lualine_y = { 'progress', 'location' },
+          lualine_z = { 'tabnine' }
         },
         inactive_sections = {
           lualine_a = {},
@@ -207,7 +220,6 @@ local plugins = {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
-      -- { "tzachar/cmp-tabnine", build = "./install.sh" },
     },
     config = require("config.cmp"),
   },
@@ -268,7 +280,6 @@ local plugins = {
       local null_ls = require('null-ls')
       null_ls.setup({
         sources = {
-          null_ls.builtins.formatting.prettier,
           null_ls.builtins.formatting.black,
         }
       })

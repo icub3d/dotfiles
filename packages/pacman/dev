@@ -38,6 +38,7 @@ powershell-bin
 prettier
 python-jedi
 qemu
+r
 stern-bin
 syncthing
 terraform

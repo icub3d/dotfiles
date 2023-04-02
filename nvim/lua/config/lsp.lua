@@ -15,6 +15,7 @@ return function()
       "tsserver",
       "pyright",
       "rust_analyzer",
+      "r_language_server",
       "gopls",
       "tailwindcss",
       "cssls",
