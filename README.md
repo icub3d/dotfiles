@@ -106,6 +106,10 @@ Wants=containerd.service
 
 https://extensions.gnome.org/extension/2890/tray-icons-reloaded/
 
+# Firefox Theme
+
+https://color.firefox.com/?theme=XQAAAAINAQAAAAAAAABBKYhm849SCia2CaaEGccwS-xMDPr_XRu12ajAyvGQvdO26Ke36gCzswmpsCq85wKEuQm3cbHPlgQ_1AWFbct1I6zgMmXPDOOPI2BJ43BL7_9GrG6kSCjUl81wVSVlRdSoulyHtir6l9Q84h9vdlIZTPDGJUALC3wrYKS2Tk4MagiQaLuATA6H1fR54qTRpiOTBG8_JsD8Sx0WV6M4vlRtNWB-Sjf2afI_mV9y1RP_6oXGQA
+
 # Firefox + Yubikey
 
 Firefox kept asking for my password for the smart card part of the
