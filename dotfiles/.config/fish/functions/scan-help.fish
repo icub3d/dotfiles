@@ -11,5 +11,5 @@ function scan-help
 		end
 	end
 	popd
-	nautilus $argv[1] &
+	open $argv[1]
 end
