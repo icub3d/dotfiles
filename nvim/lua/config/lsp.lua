@@ -31,10 +31,11 @@ return function()
   nnoremap(']d', vim.diagnostic.goto_next)
   nnoremap('<leader>q', vim.diagnostic.setloclist)
 
-
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
   local on_attach = function(client, bufnr)
+    require("lsp-format").on_attach(client)
+
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -107,10 +108,4 @@ return function()
   lspconfig.cssls.setup(default)
   lspconfig.html.setup(default)
   lspconfig.solargraph.setup(default)
-
-  -- format on save
-  vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-    pattern = "*",
-    command = "lua vim.lsp.buf.formatting_sync()",
-  })
 end

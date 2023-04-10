@@ -15,9 +15,9 @@ tnoremap('<leader>t<', '<C-\\><C-n>:FloatermPrev<CR>')
 nnoremap('<leader>tt', ":FloatermToggle<CR>")
 tnoremap('<leader>tt', '<C-\\><C-n>:FloatermToggle<CR>')
 
-
 -- LSP
 nnoremap('<leader>lr', "<cmd>lua vim.lsp.buf.rename()<CR>")
+nnoremap('<leader>lx', ":LspRestart<CR>")
 nnoremap('<leader>lf', "<cmd>lua vim.lsp.buf.format()<CR>")
 
 -- Go back

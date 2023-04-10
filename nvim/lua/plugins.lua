@@ -21,21 +21,31 @@ local plugins = {
     'voldikss/vim-floaterm',
   },
 
-  -- tabnine
+  -- copilot
+  { 'github/copilot.vim' },
+
+  -- comment
   {
-    'codota/tabnine-nvim',
-    build = "./dl_binaries.sh",
-    init = function()
-      require('tabnine').setup({
-        disable_auto_comment = true,
-        accept_keymap = "<Tab>",
-        dismiss_keymap = "<C-]>",
-        debounce_ms = 800,
-        -- suggestion_color = { gui = "#808080", cterm = 244 },
-        exclude_filetypes = { "TelescopePrompt" }
-      })
-    end,
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup()
+    end
   },
+  -- -- tabnine
+  -- {
+  --   'codota/tabnine-nvim',
+  --   build = "./dl_binaries.sh",
+  --   init = function()
+  --     require('tabnine').setup({
+  --       disable_auto_comment = true,
+  --       accept_keymap = "<Tab>",
+  --       dismiss_keymap = "<C-]>",
+  --       debounce_ms = 800,
+  --       -- suggestion_color = { gui = "#808080", cterm = 244 },
+  --       exclude_filetypes = { "TelescopePrompt" }
+  --     })
+  --   end,
+  -- },
 
   -- comments
   { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
@@ -230,12 +240,6 @@ local plugins = {
     config = require("config.treesitter"),
     build = ":TSUpdate",
   },
-  {
-    'lewis6991/spellsitter.nvim',
-    config = function()
-      require('spellsitter').setup()
-    end
-  },
 
   -- discord
   'andweeb/presence.nvim',
@@ -293,6 +297,7 @@ local plugins = {
       'williamboman/mason.nvim',
       'neovim/nvim-lspconfig',
       'hrsh7th/cmp-nvim-lsp',
+      'lukas-reineke/lsp-format.nvim',
     },
     config = require('config.lsp')
   },
