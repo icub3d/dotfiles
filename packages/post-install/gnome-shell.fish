@@ -24,6 +24,7 @@ dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano', 'tra
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
 dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
+dconf write /org/gnome/shell/extensions/user-theme/name 'marshians'
 
 # stylus
 dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/output' "['GSM', 'LG ULTRAGEAR', '107NTMX8J515']"

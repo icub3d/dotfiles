@@ -12,11 +12,11 @@ function update
   if test "$DISTRO" != "Ubuntu"
 		set PACKAGES_LOCATION pacman
 
-		#install yay
-		if not type -q yay
+		#install paru
+		if not type -q paru
 			mkdir -p ~/dev/
-			git clone https://aur.archlinux.org/yay.git ~/dev/yay
-			pushd ~/dev/yay
+      git clone https://aur.archlinux.org/paru.git ~/dev/paru
+			pushd ~/dev/paru
 			makepkg -si --noconfirm
 			popd
 		end
@@ -57,7 +57,7 @@ function update
 		yes | sudo apt upgrade -y $PACKAGES
 		yes | sudo apt autoremove
   else 
-    yes | yay -Syu --needed --noconfirm $PACKAGES
+    yes | paru -Syu --needed --noconfirm $PACKAGES
 	end
 
 	# Make sure we have the latest from fish

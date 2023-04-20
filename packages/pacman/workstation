@@ -1,6 +1,6 @@
-aws-cli-v2
 aircrack-ng
 asciinema
+aws-cli-v2
 baobab
 blender
 brother-hll2350dw
@@ -51,9 +51,11 @@ helvum
 hydra
 imagemagick
 inetutils
+informant
 inkscape
 john
 kitty
+libfido2
 libvterm
 liquidctl
 lolcat
@@ -73,6 +75,7 @@ pandoc
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
+pkgfile
 psensor
 realtime-privileges
 rygel

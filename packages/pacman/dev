@@ -37,7 +37,7 @@ perl-io-socket-ssl
 powershell-bin
 prettier
 python-jedi
-qemu
+qemu-full
 r
 stern-bin
 syncthing

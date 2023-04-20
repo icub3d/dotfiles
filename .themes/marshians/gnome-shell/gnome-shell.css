@@ -1,0 +1,28 @@
+#panel { 
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 2px;
+  margin-bottom: 7px;
+  background-color: #19181A;
+  font-family: 'JetBrains Mono';
+  font-weight: bold;
+  border-radius: 30px;
+}
+
+#panel .panel-button:hover {
+  background-color: #A9DC76;
+  color: #19181A;
+}
+
+#panel .panel-button:active {
+  background-color: #AB9DF2;
+  color: #19181A;
+}
+/*  */
+/* #panel .panel-button { */
+/*   background-color: #221F22; */
+/* } */
+/*  */
+/* #panel .panel-button:hover { */
+/*   background-color: #727072; */
+/* } */
