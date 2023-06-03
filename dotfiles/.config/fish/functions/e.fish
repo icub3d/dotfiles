@@ -1,3 +1,3 @@
 function e
-  v $argv
+  emacs -nw $argv
 end

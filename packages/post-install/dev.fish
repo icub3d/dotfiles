@@ -30,7 +30,7 @@ if test ! -e ~/.cargo/bin/rustc
 	set -x PATH $HOME/.cargo/bin $PATH
 	rustup toolchain add stable
 	rustup default stable
-	rustup component add rust-analysis rust-src
+	rustup component add rust-analysis rust-src rust-analyzer
 else
 	rustup update
 end
