@@ -1,4 +1,4 @@
- ;; straight and use-package setup
+;; straight and use-package setup
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -22,6 +22,8 @@
 (setq-default tab-width 4)           ; tab size
 (global-display-line-numbers-mode 1) ; line numbers
 (electric-pair-mode 1)               ; autopairs
+(setq ring-bell-function 'ignore)    ; no bell
+(setq vc-follow-symlinks t)          ; follow symlinks
 
 ;; backup stuff
 (setq
@@ -137,16 +139,6 @@
   :straight t
   :ensure t)
 
-(use-package perspective
-  :ensure t
-  :straight t
-  :bind (("C-x k" . persp-kill-buffer*)
-    ("C-x C-b" . persp-list-buffers))
-  :custom
-  (persp-mode-prefix-key (kbd "C-c M-p"))
-  :init
-  (persp-mode))
-
 ;; lsp-mode
 (use-package lsp-mode
   :ensure t
@@ -167,18 +159,30 @@
   :ensure t
   :straight t)
 
-;; optionally if you want to use debugger
-;; (use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 ;; Go
+(use-package gotest :ensure t :straight t)
 (use-package go-mode
   :ensure t
   :straight t
   :mode "\\.go\\'"
+  :bind (:map go-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g f" . go-test-current-file)
+			  ("M-g b" . go-test-current-benchmark)
+			  ("M-g p" . go-test-current-project)
+			  ("M-g t" . go-test-current-test)
+			  ("M-g R" . go-run)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown)
+			  ("M-g s" . lsp-rust-analyzer-status))
   :hook ((go-mode . lsp-deferred)
-	 (go-mode . my/go-config-hooks)
-	 (go-mode . my/go-save-hooks))
+		 (go-mode . my/go-config-hooks)
+		 (go-mode . my/go-save-hooks))
   :config
   (defun my/go-config-hooks ()
     (setq tab-width 4)
@@ -195,19 +199,53 @@
   :hook ((rustic-mode . lsp-deferred)
 		 (rustic-mode . my/rustic-mode-hook))
   :bind (:map rustic-mode-map
-              ("M-j" . lsp-ui-imenu)
-              ("M-?" . lsp-find-references)
-              ("C-c C-c l" . flycheck-list-errors)
-              ("C-c C-c a" . lsp-execute-code-action)
-              ("C-c C-c r" . lsp-rename)
-              ("C-c C-c q" . lsp-workspace-restart)
-              ("C-c C-c Q" . lsp-workspace-shutdown)
-              ("C-c C-c s" . lsp-rust-analyzer-status))
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g b" . rustic-cargo-build)
+			  ("M-g t" . rustic-cargo-test)
+			  ("M-g A" . rustic-cargo-add)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown)
+			  ("M-g s" . lsp-rust-analyzer-status))
   :config
   (defun my/rustic-mode-hook ()
 	(when buffer-file-name
       (setq-local buffer-save-without-query t))
+	(require 'dap-dlv-go)
 	(add-hook 'before-save-hook 'lsp-format-buffer t t)))
+
+;; Python
+(use-package pyvenv
+  :ensure t
+  :straight t
+  :config
+  (setq pyvenv-workon ".venv")
+  (pyvenv-tracking-mode 1))
+(use-package python-black
+  :ensure t
+  :straight t
+  :diminish python-black-on-save-mode
+  :after python
+  :hook (python-mode . python-black-on-save-mode))
+(use-package python-pytest :ensure t :straight t)
+(use-package python-mode
+  :hook ((python-mode . lsp-deferred))
+  :bind (:map python-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g t" . python-pytest)
+			  ("M-g f" . python-pytest-file)
+			  ("M-g p" . python-pytest)
+			  ("M-g F" . python-pytest-function)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown)
+			  ("M-g s" . lsp-rust-analyzer-status)))
 
 ;; Fish
 (use-package fish-mode
@@ -226,16 +264,52 @@
   :straight (:host github :repo "zerolfx/copilot.el"
                    :files ("dist" "*.el")))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(persp-mode t)
- '(persp-mode-prefix-key [3 134217840]))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(persp-selected-face ((t (:foreground "#a9dc76" :weight bold)))))
+;; Terraform
+(use-package terraform-mode
+  :ensure t
+  :straight t)
+
+;; dap-mode
+(use-package dap-mode
+  :ensure t
+  :straight t
+  :custom
+  (dap-auto-configure-mode t)
+  :config
+  ;; go
+  (require 'dap-dlv-go)
+  ;; gdb // rust
+  (require 'dap-gdb-lldb)
+  (dap-register-debug-template "Rust::GDB Run Configuration"
+                               (list :type "gdb"
+									 :request "launch"
+									 :name "GDB::Run"
+									 :gdbpath "rust-gdb"
+									 :target nil
+									 :cwd nil))
+  ;; python
+  (require 'dap-python)
+  (setq dap-python-debugger 'debugpy))
+
+;; perspective
+;; (use-package perspective
+;;   :ensure t
+;;   :straight t
+;;   :custom
+;;   (persp-mode-prefix-key (kbd "C-x x"))
+;;   :init
+;;   (persp-mode))
+
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(persp-mode t)
+;;  '(persp-mode-prefix-key [3 134217840]))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(persp-selected-face ((t (:foreground "#a9dc76" :weight bold)))))

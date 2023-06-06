@@ -1,3 +1,3 @@
 function e
-  emacs -nw $argv
+  emacsclient --create-frame --alternate-editor="" -nw $argv
 end

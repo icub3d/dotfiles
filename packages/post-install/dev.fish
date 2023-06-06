@@ -37,7 +37,7 @@ end
 
 rustup target add wasm32-unknown-unknown
 
-pip install black isort
+pip install black isort 'python-lsp-server[all]'
 if test ! -d ~/.python
   python -m venv $HOME/.python
   source ~/.python/bin/activate.fish
