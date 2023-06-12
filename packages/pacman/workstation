@@ -37,8 +37,8 @@ google-chrome
 google-cloud-cli
 gpick
 grilo-plugins
-gst-plugin-good
-gst-plugin-pipewire
+gst-plugins-good
+gst-plugins-pipewire
 gvfs
 gvfs-afc
 gvfs-goa
