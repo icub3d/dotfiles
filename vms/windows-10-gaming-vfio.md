@@ -18,7 +18,7 @@ Current list: 10de:1b02,10de:10ef,10ec:8125,1b73:1100
 
 	sudoedit /etc/mkinitcpio.conf
 	# should go before nvidia drivers if there.
-	#   MODULES=(... vfio_pci vfio vfio_iommu_type1 vfio_virqfd ...)
+	#   MODULES=(... vfio_pci vfio vfio_iommu_type1 ...)
 	# ensure modconf hook
 	#   HOOKS=(... modconf ...)
 	sudo mkinitcpio -p linux

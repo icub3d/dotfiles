@@ -13,17 +13,24 @@
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 
+;; some helper functions
+(defun trim-string (str)
+  "Trim whitespace from beginning and end of STR."
+  (replace-regexp-in-string "\\`[[:blank:]\n]*" ""
+                            (replace-regexp-in-string "[[:blank:]\n]*\\'" "" str)))
+
 ;; general settings
-(tool-bar-mode -1)                   ; hide tool bar
-(menu-bar-mode -1)                   ; hide menu bar
-(scroll-bar-mode -1)                 ; hide scroll bar
-(xterm-mouse-mode 1)                 ; mouse in terminal
-(setq inhibit-startup-screen t)      ; startup screen
-(setq-default tab-width 4)           ; tab size
-(global-display-line-numbers-mode 1) ; line numbers
-(electric-pair-mode 1)               ; autopairs
-(setq ring-bell-function 'ignore)    ; no bell
-(setq vc-follow-symlinks t)          ; follow symlinks
+(tool-bar-mode -1)                             ; hide tool bar
+(menu-bar-mode -1)                             ; hide menu bar
+(scroll-bar-mode -1)                           ; hide scroll bar
+(xterm-mouse-mode 1)                           ; mouse in terminal
+(setq inhibit-startup-screen t)                ; startup screen
+(setq-default tab-width 4)                     ; tab size
+(global-display-line-numbers-mode 1)           ; line numbers
+(electric-pair-mode 1)                         ; autopairs
+(setq ring-bell-function 'ignore)              ; no bell
+(setq vc-follow-symlinks t)                    ; follow symlinks
+(setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
 
 ;; backup stuff
 (setq
@@ -79,8 +86,7 @@
   :straight t
   :defer 0.0
   :diminish
-  :bind (("C-c C-r" . ivy-resume)
-         ("C-x B" . ivy-switch-buffer-other-window))
+  :bind (("C-c C-r" . ivy-resume))
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-use-virtual-buffers t)
@@ -90,6 +96,7 @@
   :ensure t
   :straight t
   :after ivy
+  :bind (("C-x B" . ivy-switch-buffer-other-window))
   :custom
   (ivy-virtual-abbreviate 'full
                           ivy-rich-switch-buffer-align-virtual-buffer t
@@ -291,25 +298,32 @@
   (require 'dap-python)
   (setq dap-python-debugger 'debugpy))
 
-;; perspective
-;; (use-package perspective
-;;   :ensure t
-;;   :straight t
-;;   :custom
-;;   (persp-mode-prefix-key (kbd "C-x x"))
-;;   :init
-;;   (persp-mode))
+;; multiple cursors
+(use-package multiple-cursors
+  :ensure t
+  :straight t
+  :bind (("C-c m c" . mc/edit-lines)
+		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m p" . mc/mark-previous-like-this)
+		 ("C-c m a" . mc/mark-all-like-this)))
 
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(persp-mode t)
-;;  '(persp-mode-prefix-key [3 134217840]))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(persp-selected-face ((t (:foreground "#a9dc76" :weight bold)))))
+;; markdown
+(use-package markdown-mode
+  :ensure t
+  :straight t)
+
+;; chatgpt
+(use-package shell-maker
+  :ensure t
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
+(use-package chatgpt-shell
+  :requires shell-maker
+  :ensure t
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
+  :config
+  (let ((file-path "~/Documents/ssssh/chat-gpt-api-key"))
+	(if (file-exists-p file-path)
+		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
+							(insert-file-contents file-path)
+							(buffer-string)))))))
