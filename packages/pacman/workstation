@@ -38,7 +38,7 @@ google-cloud-cli
 gpick
 grilo-plugins
 gst-plugins-good
-gst-plugins-pipewire
+gst-plugin-pipewire
 gvfs
 gvfs-afc
 gvfs-goa
