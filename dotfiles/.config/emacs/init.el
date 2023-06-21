@@ -275,7 +275,12 @@
 (use-package terraform-mode
   :ensure t
   :straight t
-  :hook ((terraform-mode . lsp-deferred)))
+  :hook ((terraform-mode . lsp-deferred)
+		 (terraform-mode . my/terraform-save-hooks))
+  :config
+  (defun my/terraform-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 ;; dap-mode
 (use-package dap-mode
