@@ -37,8 +37,8 @@ google-chrome
 google-cloud-cli
 gpick
 grilo-plugins
-gst-plugins-good
 gst-plugin-pipewire
+gst-plugins-good
 gvfs
 gvfs-afc
 gvfs-goa
@@ -78,6 +78,8 @@ pipewire-jack
 pipewire-pulse
 pkgfile
 psensor
+qt5-wayland
+qt6-wayland
 realtime-privileges
 rygel
 sejda-desktop
@@ -95,6 +97,7 @@ vlc
 wireplumber
 wireshark-qt
 wl-clipboard
+xdg-desktop-portal
 xdg-user-dirs-gtk
 xorg-xinput
 yubikey-manager

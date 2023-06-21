@@ -274,7 +274,8 @@
 ;; Terraform
 (use-package terraform-mode
   :ensure t
-  :straight t)
+  :straight t
+  :hook ((terraform-mode . lsp-deferred)))
 
 ;; dap-mode
 (use-package dap-mode
@@ -316,6 +317,21 @@
 (use-package shell-maker
   :ensure t
   :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
+;; docker-compose
+(use-package docker-compose-mode
+  :ensure t
+  :straight t)
+
+;; yaml
+(use-package yaml-mode
+  :ensure t
+  :straight t)
+
+;; Jenkinsfile
+(use-package jenkinsfile-mode
+  :ensure t
+  :straight t)
 
 (use-package chatgpt-shell
   :requires shell-maker

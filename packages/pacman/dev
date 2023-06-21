@@ -9,9 +9,9 @@ efibootmgr
 expect
 ffmpeg
 gcc
+gdb
 ghc
 ghc-static
-gdb
 gitflow-avh
 gnuplot
 go
@@ -42,6 +42,7 @@ r
 stern-bin
 syncthing
 terraform
+terraform-ls
 ttf-baekmuk
 ttf-inconsolata
 ttf-jetbrains-mono
