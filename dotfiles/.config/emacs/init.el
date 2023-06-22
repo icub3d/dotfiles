@@ -31,16 +31,19 @@
 (setq ring-bell-function 'ignore)              ; no bell
 (setq vc-follow-symlinks t)                    ; follow symlinks
 (setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
+;; (setq-default indent-tabs-mode nil)			   ; no tabs
 
 ;; backup stuff
 (setq
-   backup-by-copying t      ; don't clobber symlinks
+   backup-by-copying t          ; don't clobber symlinks
    backup-directory-alist
-    '(("." . "~/.saves/"))    ; don't litter my fs tree
+    '(("." . "~/.saves/"))      ; don't litter my fs tree
    delete-old-versions t
    kept-new-versions 6
    kept-old-versions 2
-   version-control t)       ; use versioned backups
+   auto-save-list-file-prefix   ; same for auto saves
+   '(("." . "~/.auto-saves/"))
+   version-control t)           ; use versioned backups
 
 ;; copy/paste with clipboard (wayland specific)
 (setq wl-copy-process nil)
@@ -154,7 +157,6 @@
   (setq lsp-keymap-prefix "C-c l")
   :config
   (setq lsp-prefer-flymake nil)
-  
   :commands (lsp lsp-mode lsp-deferred))
 
 (use-package lsp-ui
@@ -331,12 +333,40 @@
 ;; yaml
 (use-package yaml-mode
   :ensure t
-  :straight t)
+  :straight t
+  :mode "\\.yaml\\'"
+  :mode "\\.yml\\'"
+  :config
+  (defun my/yaml-config-hooks ()
+    (setq tab-width 4))
+  (defun my/yaml-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t))
+  :hook
+  ((yaml-mode . my/yaml-config-hooks)
+   (yaml-mode . my/yaml-save-hooks)
+   (yaml-mode . lsp-deferred)))
 
 ;; Jenkinsfile
 (use-package jenkinsfile-mode
   :ensure t
   :straight t)
+
+;; json
+(use-package json-mode
+  :ensure t
+  :straight t
+  :mode "\\.json\\'"
+  :config
+  (defun my/json-config-hooks ()
+    (setq tab-width 4))
+  (defun my/json-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t))
+  :hook
+  ((json-mode . my/json-config-hooks)
+   (json-mode . my/json-save-hooks)
+   (json-mode . lsp-deferred)))
 
 (use-package chatgpt-shell
   :requires shell-maker
