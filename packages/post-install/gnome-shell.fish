@@ -23,7 +23,7 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano', 'trayIconsReloaded@selfmade.pl', 'user-theme@gnome-shell-extensions.gcampax.github.com']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
-dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
+dconf write /org/gnome/shell/favorite-apps "['google-chrome.desktop', 'kitty.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
 dconf write /org/gnome/shell/extensions/user-theme/name 'marshians'
 dconf write /org/gnome/mutter/keybindings/switch-monitor '@as []'
 
@@ -38,5 +38,5 @@ dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/left-handed' true
 # dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/buttonE/keybinding' "'<Primary>minus'"
 
 # default browser
-xdg-settings set default-web-browser firefoxdeveloperedition.desktop
+xdg-settings set default-web-browser google-chrome.desktop
 

@@ -37,12 +37,12 @@
 (setq
    backup-by-copying t          ; don't clobber symlinks
    backup-directory-alist
-    '(("." . "~/.saves/"))      ; don't litter my fs tree
+   '(("." . "~/.saves/"))      ; don't litter my fs tree
    delete-old-versions t
    kept-new-versions 6
    kept-old-versions 2
-   auto-save-list-file-prefix   ; same for auto saves
-   '(("." . "~/.auto-saves/"))
+   auto-save-file-name-transforms
+   '((".*" "~/.saves/" t))
    version-control t)           ; use versioned backups
 
 ;; copy/paste with clipboard (wayland specific)
@@ -367,6 +367,13 @@
   ((json-mode . my/json-config-hooks)
    (json-mode . my/json-save-hooks)
    (json-mode . lsp-deferred)))
+
+;; ripgrep
+(use-package rg
+  :ensure t
+  :straight t
+  :config
+  (rg-enable-default-bindings))
 
 (use-package chatgpt-shell
   :requires shell-maker

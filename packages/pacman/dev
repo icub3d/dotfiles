@@ -36,7 +36,10 @@ perl-authen-sasl
 perl-io-socket-ssl
 powershell-bin
 prettier
+python-black
+python-isort
 python-jedi
+python-lsp-server
 qemu-full
 r
 stern-bin
