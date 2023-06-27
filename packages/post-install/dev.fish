@@ -42,3 +42,11 @@ if test ! -d ~/.python
   source ~/.python/bin/activate.fish
   pip install debugpy
 end
+
+
+# hey
+if test ! -e ~/bin/hey
+	wget https://hey-release.s3.us-east-2.amazonaws.com/hey_linux_amd64
+	chmod +x hey_linux_amd64
+	mv hey_linux_amd64 ~/bin/hey
+end
