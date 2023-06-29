@@ -330,6 +330,11 @@
   :ensure t
   :straight t)
 
+;; dockerfile
+(use-package dockerfile-mode
+  :ensure t
+  :straight t)
+
 ;; yaml
 (use-package yaml-mode
   :ensure t
