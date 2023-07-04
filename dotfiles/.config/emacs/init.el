@@ -19,7 +19,10 @@
   (replace-regexp-in-string "\\`[[:blank:]\n]*" ""
                             (replace-regexp-in-string "[[:blank:]\n]*\\'" "" str)))
 
+
+
 ;; general settings
+(setq shell-file-name "/bin/bash")             ; use bash
 (tool-bar-mode -1)                             ; hide tool bar
 (menu-bar-mode -1)                             ; hide menu bar
 (scroll-bar-mode -1)                           ; hide scroll bar
@@ -80,8 +83,7 @@
   :straight t
   :after ivy
   :bind
-  (("C-x C-f" . counsel-find-file)
-   ("C-x f" . counsel-git))
+  (("C-x C-f" . counsel-find-file))
   :config (counsel-mode))
 
 (use-package ivy
@@ -168,6 +170,60 @@
   :ensure t
   :straight t)
 
+;; svelte
+(use-package svelte-mode
+  :ensure t
+  :straight t
+  :mode "\\.svelte\\'"
+  :bind (:map svelte-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ;; ("M-g f" . go-test-current-file)
+			  ;; ("M-g b" . go-test-current-benchmark)
+			  ;; ("M-g p" . go-test-current-project)
+			  ;; ("M-g t" . go-test-current-test)
+			  ;; ("M-g R" . go-run)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((svelte-mode . lsp-deferred)
+		 (svelte-mode . my/svelte-config-hooks)
+		 (svelte-mode . my/svelte-save-hooks))
+  :config
+  (defun my/svelte-config-hooks ())
+  (defun my/svelte-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+
+;; js/ts
+(use-package typescript-mode
+  :ensure t
+  :straight t
+  :mode "\\.ts\\'"
+  :bind (:map typescript-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ;; ("M-g f" . go-test-current-file)
+			  ;; ("M-g b" . go-test-current-benchmark)
+			  ;; ("M-g p" . go-test-current-project)
+			  ;; ("M-g t" . go-test-current-test)
+			  ;; ("M-g R" . go-run)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((typescript-mode . lsp-deferred)
+		 (typescript-mode . my/typescript-config-hooks)
+		 (typescript-mode . my/typescript-save-hooks))
+  :config
+  (defun my/typescript-config-hooks ())
+  (defun my/typescript-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 ;; Go
 (use-package gotest :ensure t :straight t)
@@ -187,8 +243,7 @@
 			  ("M-g a" . lsp-execute-code-action)
 			  ("M-g r" . lsp-rename)
 			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown)
-			  ("M-g s" . lsp-rust-analyzer-status))
+			  ("M-g Q" . lsp-workspace-shutdown))
   :hook ((go-mode . lsp-deferred)
 		 (go-mode . my/go-config-hooks)
 		 (go-mode . my/go-save-hooks))
@@ -220,10 +275,10 @@
 			  ("M-g Q" . lsp-workspace-shutdown)
 			  ("M-g s" . lsp-rust-analyzer-status))
   :config
+  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
   (defun my/rustic-mode-hook ()
 	(when buffer-file-name
       (setq-local buffer-save-without-query t))
-	(require 'dap-dlv-go)
 	(add-hook 'before-save-hook 'lsp-format-buffer t t)))
 
 ;; Python
@@ -291,17 +346,15 @@
   :custom
   (dap-auto-configure-mode t)
   :config
+  (dap-ui-mode 1)
+  (dap-tooltip-mode 1)
+  (dap-ui-controls-mode 1)
   ;; go
   (require 'dap-dlv-go)
   ;; gdb // rust
+  (require 'dap-lldb)
   (require 'dap-gdb-lldb)
-  (dap-register-debug-template "Rust::GDB Run Configuration"
-                               (list :type "gdb"
-									 :request "launch"
-									 :name "GDB::Run"
-									 :gdbpath "rust-gdb"
-									 :target nil
-									 :cwd nil))
+  (dap-gdb-lldb-setup)
   ;; python
   (require 'dap-python)
   (setq dap-python-debugger 'debugpy))
@@ -379,6 +432,39 @@
   :straight t
   :config
   (rg-enable-default-bindings))
+
+;; elcord
+(use-package elcord
+  :ensure t
+  :straight t
+  :config
+  (elcord-mode))
+
+;; treemacs
+(use-package treemacs
+  :ensure t
+  :straight t
+  :custom
+  (treemacs--icon-size 16)
+  :bind ("C-c t" . treemacs-select-window))
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :straight t
+  :diminish projectile-mode
+  :config
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode t))
+(use-package treemacs-projectile
+  :ensure t
+  :straight t)
+;; (use-package counsel-projectile
+;;   :ensure t
+;;   :straight t
+;;   :config
+;;   (counsel-projectile-mode))
+
 
 (use-package chatgpt-shell
   :requires shell-maker

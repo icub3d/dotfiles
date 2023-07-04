@@ -1,4 +1,5 @@
-personal_ws-1.1 en 19 
+personal_ws-1.1 en 34 
+APIs
 Bednar
 Christofferson
 Eubanks
@@ -16,5 +17,19 @@ Revillo
 Schmiel
 Sikahema
 Soares
+Typicode's
 Uchtdorf
 Villanueva
+YAML
+apictl
+auth
+cd
+config
+dev
+json
+npm
+url
+urlencoded
+userId
+www
+yaml
