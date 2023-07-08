@@ -50,3 +50,22 @@ if test ! -e ~/bin/hey
 	chmod +x hey_linux_amd64
 	mv hey_linux_amd64 ~/bin/hey
 end
+
+
+# dap stuff
+if test ! -e ~/dev/vscode-chrome-debug
+	git clone https://github.com/microsoft/vscode-chrome-debug ~/dev/vscode-chrome-debug
+	pushd ~/dev/vscode-chrome-debug
+	npm install
+	npm run build
+	popd
+end
+
+if test ! -e ~/dev/vscode-firefox-debug
+	git clone https://github.com/firefox-devtools/vscode-firefox-debug ~/dev/vscode-firefox-debug
+	pushd ~/dev/vscode-chrome-debug
+	npm install
+	npm run build
+	popd
+end
+

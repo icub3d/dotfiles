@@ -178,11 +178,6 @@
   :bind (:map svelte-mode-map
 			  ("M-j" . lsp-ui-imenu)
 			  ("M-?" . lsp-find-references)
-			  ;; ("M-g f" . go-test-current-file)
-			  ;; ("M-g b" . go-test-current-benchmark)
-			  ;; ("M-g p" . go-test-current-project)
-			  ;; ("M-g t" . go-test-current-test)
-			  ;; ("M-g R" . go-run)
 			  ("M-g l" . flycheck-list-errors)
 			  ("M-g a" . lsp-execute-code-action)
 			  ("M-g r" . lsp-rename)
@@ -194,34 +189,6 @@
   :config
   (defun my/svelte-config-hooks ())
   (defun my/svelte-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
-
-
-;; js/ts
-(use-package typescript-mode
-  :ensure t
-  :straight t
-  :mode "\\.ts\\'"
-  :bind (:map typescript-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ;; ("M-g f" . go-test-current-file)
-			  ;; ("M-g b" . go-test-current-benchmark)
-			  ;; ("M-g p" . go-test-current-project)
-			  ;; ("M-g t" . go-test-current-test)
-			  ;; ("M-g R" . go-run)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((typescript-mode . lsp-deferred)
-		 (typescript-mode . my/typescript-config-hooks)
-		 (typescript-mode . my/typescript-save-hooks))
-  :config
-  (defun my/typescript-config-hooks ())
-  (defun my/typescript-save-hooks ()
     "save hooks"
     (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
@@ -343,12 +310,39 @@
 (use-package dap-mode
   :ensure t
   :straight t
+  :bind
+  :bind (:map lsp-mode-map
+			  ("M-g d" . dap-debug)
+			  ("M-g h" . dap-hydra))
+  :bind (:map dap-mode-map
+			  ("<left>" . dap-continue)
+			  ("<right>" . dap-next)
+			  ("<down>" . dap-step-in)
+			  ("<up>" . dap-step-out))
   :custom
   (dap-auto-configure-mode t)
   :config
   (dap-ui-mode 1)
   (dap-tooltip-mode 1)
   (dap-ui-controls-mode 1)
+  
+  ;; chrome
+  (require 'dap-chrome)
+  (setq dap-chrome-debug-program  `("node"
+                                    ,"/home/jmarsh/dev/vscode-chrome-debug/out/src/chromeDebug.js"))
+  ;; firefox
+  (require 'dap-firefox)
+  (dap-firefox-setup)
+  (setq dap-firefox-debug-program  `("node"
+                                     ,"/home/jmarsh/dev/vscode-firefox-debug/dist/adapter.bundle.js"))
+  (defun dap-firefox--populate-start-file-args (conf)
+  "Populate CONF with the required arguments."
+  (-> conf
+	  (dap--put-if-absent :dap-server-path dap-firefox-debug-program)
+      (dap--put-if-absent :type "Firefox")
+      (dap--put-if-absent :cwd default-directory)
+      (dap--put-if-absent :name "Firefox Debug")))
+  
   ;; go
   (require 'dap-dlv-go)
   ;; gdb // rust
@@ -465,6 +459,27 @@
 ;;   :config
 ;;   (counsel-projectile-mode))
 
+;; js-mode
+(use-package js
+  :ensure nil
+  :straight nil
+  :bind (:map js-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((js-mode . lsp-deferred)
+		 (js-mode . my/js-config-hooks)
+		 (js-mode . my/js-save-hooks))
+  :config
+  (defun my/js-config-hooks ()
+	(setq js-jsx-syntax t))
+  (defun my/js-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 (use-package chatgpt-shell
   :requires shell-maker

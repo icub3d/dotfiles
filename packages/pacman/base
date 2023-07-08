@@ -39,6 +39,7 @@ man-pages
 neovim
 networkmanager
 openssh
+pacman-contrib
 parallel
 prettyping
 procs
