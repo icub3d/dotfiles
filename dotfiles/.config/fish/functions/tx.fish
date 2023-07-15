@@ -1,19 +1,28 @@
 function tx
 	set -x SIMPLE_PROMPT true
 
-	command tmux new-session -d -c ~/dev/dotfiles -s dot -n dot
-	command tmux new-window -d -c ~/dev/dotfiles/dotfiles/.config/emacs -t dot:1 -n "emacs"
-	command tmux new-window -d -c ~/dev/dotfile/dotfiles/.config/emacs -t dot:2 -n "emacs-daemon"
-	command tmux send-keys -t dot:2 "emacs --fg-daemon" C-m
+	command tmux new-session -d -c ~/dev/dotfiles -s λ -n "⚫️"
+	command tmux send-keys -t λ:0 "emacs -nw ." C-m
+	command tmux new-window -d -c ~/dev/dotfiles/dotfiles/.config/emacs -t λ:1 -n "👺"
+	command tmux send-keys -t λ:1 "emacs --fg-daemon" C-m
+	command tmux new-window -d -c ~/dev/dotfiles -t λ:2 -n "🐟"
 
-	command tmux new-session -d -c ~ -s home -n "home"
-	command tmux new-window -d -c ~/dev -t home:1 -n "dev"
+
+	command tmux new-session -d -c ~ -s 🏠 -n "🏠"
+	command tmux new-window -d -c ~/dev -t 🏠:1 -n "🤖"
+	command tmux new-window -d -c ~ -t 🏠:2 -n "🏢"
 
 	if test "$ATWORK" = "true"
-		command tmux new-session -d -c ~/dev/oti-azure -s oti -n "e"
-		command tmux new-window -d -c ~/dev/oti-azure -t oti:1 -n "run"
-		command tmux new-window -d -c ~/dev/oti-azure -t oti:2 -n "fish"
+		command tmux new-session -d -c ~/dev/oti-azure -s oti -n "🐧"
+		command tmux send-keys -t oti:0 "emacs -nw ." C-m
+		command tmux new-window -d -c ~/dev/oti-azure -t oti:1 -n "🏃"
+		command tmux new-window -d -c ~/dev/oti-azure -t oti:2 -n "🐟"
+
+		command tmux new-session -d -c ~/dev/edi-oti-otvm_containerized -s otvm -n "🐧"
+		command tmux send-keys -t otvm:0 "emacs -nw ." C-m
+		command tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:1 -n "🏃"
+		command tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:2 -n "🐟"
 	end
 	
-	command tmux attach -t home
+	command tmux attach -t 🏠
 end

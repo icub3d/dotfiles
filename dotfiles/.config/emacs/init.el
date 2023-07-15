@@ -278,6 +278,22 @@
 			  ("M-g Q" . lsp-workspace-shutdown)
 			  ("M-g s" . lsp-rust-analyzer-status)))
 
+;; treesitter
+(use-package tree-sitter
+  :ensure t
+  :straight t
+  :diminish
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package tree-sitter-langs
+  :ensure t
+  :straight t
+  :after tree-sitter
+  :config
+  (require 'tree-sitter-langs))
+
+
 ;; Fish
 (use-package fish-mode
   :ensure t
@@ -404,21 +420,6 @@
   :ensure t
   :straight t)
 
-;; json
-(use-package json-mode
-  :ensure t
-  :straight t
-  :mode "\\.json\\'"
-  :config
-  (defun my/json-config-hooks ()
-    (setq tab-width 4))
-  (defun my/json-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t))
-  :hook
-  ((json-mode . my/json-config-hooks)
-   (json-mode . my/json-save-hooks)
-   (json-mode . lsp-deferred)))
 
 ;; ripgrep
 (use-package rg
@@ -481,6 +482,76 @@
     "save hooks"
     (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
+;; emmet-mode
+(use-package emmet-mode
+  :ensure t
+  :straight t
+  :hook ((mhtml-mode . emmet-mode)
+		 (css-mode . emmet-mode)
+		 (js-mode . emmet-mode)
+		 (web-mode . emmet-mode)))
+
+;; html
+(use-package mhtml-mode
+  :ensure nil
+  :straight (:type built-in)
+  :bind (:map html-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((html-mode . lsp-deferred)
+		 (html-mode . my/html-config-hooks)
+		 (html-mode . my/html-save-hooks))
+  :config
+  (defun my/html-config-hooks ())
+  (defun my/html-save-hooks ()
+	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+;; typescript
+(use-package typescript-mode
+  :ensure t
+  :straight t
+  :mode "\\.ts\\'"
+  :mode "\\.tsx\\'"
+  :bind (:map typescript-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((typescript-mode . lsp-deferred)
+		 (typescript-mode . my/typescript-config-hooks)
+		 (typescript-mode . my/typescript-save-hooks))
+  :config
+  (defun my/typescript-config-hooks ()
+	(setq tab-width 2))
+  (defun my/typescript-save-hooks ()
+	"save hooks"
+	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+;; json
+(use-package json-mode
+  :ensure t
+  :straight t
+  :mode "\\.json\\'"
+  :config
+  (defun my/json-config-hooks ()
+    (setq tab-width 4))
+  (defun my/json-save-hooks ()
+    "save hooks"
+    (add-hook 'before-save-hook #'lsp-format-buffer t t))
+  :hook
+  ((json-mode . my/json-config-hooks)
+   (json-mode . my/json-save-hooks)
+   (json-mode . lsp-deferred)))
+
+;; chatgpt
 (use-package chatgpt-shell
   :requires shell-maker
   :ensure t
@@ -491,3 +562,19 @@
 		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
 							(insert-file-contents file-path)
 							(buffer-string)))))))
+
+;; vim equivalent of ci
+(defun seek-backward-to-char (chr)
+  "Seek backwards to a character"
+  (interactive "cSeek back to char: ")
+  (while (not (= (char-after) chr))
+  (forward-char -1)))
+(defun delete-between-pair (char)
+  "Delete in between a pair of characters"
+  (interactive "cDelete between char: ")
+  (seek-backward-to-char char)
+  (forward-char 1)
+  (zap-to-char 1 char)
+  (insert char)
+  (forward-char -1))
+(global-set-key (kbd "M-C-z") 'delete-between-pair)
