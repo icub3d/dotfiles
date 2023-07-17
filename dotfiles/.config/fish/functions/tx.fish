@@ -1,11 +1,11 @@
 function tx
 	set -x SIMPLE_PROMPT true
 
-	command tmux new-session -d -c ~/dev/dotfiles -s λ -n "⚫️"
-	command tmux send-keys -t λ:0 "emacs -nw ." C-m
-	command tmux new-window -d -c ~/dev/dotfiles/dotfiles/.config/emacs -t λ:1 -n "👺"
-	command tmux send-keys -t λ:1 "emacs --fg-daemon" C-m
-	command tmux new-window -d -c ~/dev/dotfiles -t λ:2 -n "🐟"
+	command tmux new-session -d -c ~/dev/dotfiles -s • -n "•"
+	command tmux send-keys -t •:0 "emacs -nw ." C-m
+	command tmux new-window -d -c ~/dev/dotfiles/dotfiles/.config/emacs -t •:1 -n "👺"
+	command tmux send-keys -t •:1 "emacs --fg-daemon" C-m
+	command tmux new-window -d -c ~/dev/dotfiles -t •:2 -n "🐟"
 
 
 	command tmux new-session -d -c ~ -s 🏠 -n "🏠"
