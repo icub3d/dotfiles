@@ -68,7 +68,7 @@
 ;; update tmux on save
 (add-hook 'after-save-hook
 		   (lambda ()
-			 (call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save >/dev/null 2>&1")))
+			 (call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save")))
 
 ;; theming
 (use-package monokai-pro-theme
