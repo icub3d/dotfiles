@@ -1,1 +1,9 @@
-{"hideIntro":"1","layout":"_max-width","autoInstall":"1","hideDisabled":"1","tips":"KeyNav","theme":"dark","docs":"css/docker~19/fish~3.6/git/go/html/http/javascript/markdown/python~3.11/rust/terraform/bash/elisp/gnu_make/kubectl/kubernetes/postgresql~15/react/redux/typescript"}
+{
+	"hideIntro": "1",
+	"layout": "_max-width",
+	"autoInstall": "1",
+	"hideDisabled": "1",
+	"tips": "KeyNav",
+	"theme": "dark",
+	"docs": "css/docker~19/fish~3.6/git/go/html/http/javascript/markdown/python~3.11/rust/terraform/bash/elisp/gnu_make/kubectl/kubernetes/postgresql~15/react/redux/typescript"
+}
