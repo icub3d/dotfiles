@@ -22,6 +22,7 @@
 
 
 ;; general settings
+(setq column-number-mode t)                    ; show column number
 (setq shell-file-name "/bin/bash")             ; use bash
 (tool-bar-mode -1)                             ; hide tool bar
 (menu-bar-mode -1)                             ; hide menu bar
@@ -63,6 +64,11 @@
     (shell-command-to-string "wl-paste -n | tr -d \r")))
 (setq interprogram-cut-function 'wl-copy)
 (setq interprogram-paste-function 'wl-paste)
+
+;; update tmux on save
+(add-hook 'after-save-hook
+		   (lambda ()
+			 (shell-command "fish tmux-status-tracker-save >/dev/null 2>&1")))
 
 ;; theming
 (use-package monokai-pro-theme
@@ -235,6 +241,7 @@
 			  ("M-g b" . rustic-cargo-build)
 			  ("M-g t" . rustic-cargo-test)
 			  ("M-g A" . rustic-cargo-add)
+			  ("M-g f" . leptos-format-buffer)
 			  ("M-g l" . flycheck-list-errors)
 			  ("M-g a" . lsp-execute-code-action)
 			  ("M-g r" . lsp-rename)
@@ -243,9 +250,15 @@
 			  ("M-g s" . lsp-rust-analyzer-status))
   :config
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+  (defun leptos-format-buffer ()
+	(interactive)
+	(setq temp-point (point))
+	(shell-command-on-region (point-min) (point-max) "leptosfmt -m 80 -s -q 2>/dev/null" nil t)
+	(goto-char temp-point))
   (defun my/rustic-mode-hook ()
 	(when buffer-file-name
       (setq-local buffer-save-without-query t))
+	(add-hook 'before-save-hook 'leptos-format-buffer t t)
 	(add-hook 'before-save-hook 'lsp-format-buffer t t)))
 
 ;; Python

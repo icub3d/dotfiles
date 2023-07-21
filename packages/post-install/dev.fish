@@ -29,13 +29,17 @@ if test ! -e ~/.cargo/bin/rustc
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 	set -x PATH $HOME/.cargo/bin $PATH
 	rustup toolchain add stable
+	rustup toolchain add nightly
 	rustup default stable
 	rustup component add rust-analysis rust-src rust-analyzer
+	rustup target add wasm32-unknown-unknown
+	rustup component add --toolchain nightly rust-analysis rust-src rust-analyzer
+	rustup target add --toolchain nightly wasm32-unknown-unknown
 else
 	rustup update
 end
 
-rustup target add wasm32-unknown-unknown
+cargo install leptosfmt
 
 if test ! -d ~/.python
   python -m venv $HOME/.python
