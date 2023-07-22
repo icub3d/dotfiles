@@ -20,7 +20,6 @@
                             (replace-regexp-in-string "[[:blank:]\n]*\\'" "" str)))
 
 
-
 ;; general settings
 (setq column-number-mode t)                    ; show column number
 (setq shell-file-name "/bin/bash")             ; use bash
@@ -37,17 +36,25 @@
 (setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
 ;; (setq-default indent-tabs-mode nil)			   ; no tabs
 
+;; libvterm
+(use-package vterm
+  :ensure t
+  :straight t
+  :config
+  (setq vterm-shell "/usr/bin/env fish")
+  (setq vterm-max-scrollback 100000))
+
 ;; backup stuff
 (setq
-   backup-by-copying t          ; don't clobber symlinks
-   backup-directory-alist
-   '(("." . "~/.saves/"))      ; don't litter my fs tree
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   auto-save-file-name-transforms
-   '((".*" "~/.saves/" t))
-   version-control t)           ; use versioned backups
+ backup-by-copying t          ; don't clobber symlinks
+ backup-directory-alist
+ '(("." . "~/.saves/"))      ; don't litter my fs tree
+ delete-old-versions t
+ kept-new-versions 6
+ kept-old-versions 2
+ auto-save-file-name-transforms
+ '((".*" "~/.saves/" t))
+ version-control t)           ; use versioned backups
 
 ;; copy/paste with clipboard (wayland specific)
 (setq wl-copy-process nil)
@@ -67,8 +74,8 @@
 
 ;; update tmux on save
 (add-hook 'after-save-hook
-		   (lambda ()
-			 (call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save")))
+		  (lambda ()
+			(call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save")))
 
 ;; theming
 (use-package monokai-pro-theme
@@ -78,6 +85,12 @@
   (load-theme 'monokai-pro t))
 (set-face-attribute 'default nil :font "JetBrains Mono" :height 120)
 
+;; rainbow delimiters
+(use-package rainbow-delimiters
+  :ensure t
+  :straight t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 ;; diminish
 (use-package diminish
   :ensure t
@@ -86,6 +99,7 @@
 ;; Ivy, Counsel, Swiper
 (use-package counsel
   :ensure t
+  :diminish
   :straight t
   :after ivy
   :bind
@@ -123,7 +137,6 @@
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
 
-
 ;; flycheck
 (use-package flycheck
   :diminish
@@ -156,6 +169,97 @@
 (use-package yasnippet-snippets
   :straight t
   :ensure t)
+
+;; multiple cursors
+(use-package multiple-cursors
+  :ensure t
+  :straight t
+  :bind (("C-c m c" . mc/edit-lines)
+		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m p" . mc/mark-previous-like-this)
+		 ("C-c m a" . mc/mark-all-like-this)))
+
+;; treesitter
+(use-package tree-sitter
+  :ensure t
+  :straight t
+  :diminish
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package tree-sitter-langs
+  :ensure t
+  :straight t
+  :after tree-sitter
+  :config
+  (require 'tree-sitter-langs))
+
+;; copilot
+(use-package copilot
+  :ensure t
+  :init
+  (add-hook 'prog-mode-hook 'copilot-mode)
+  :diminish
+  :config
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+  :straight (:host github :repo "zerolfx/copilot.el"
+                   :files ("dist" "*.el")))
+
+;; chatgpt
+(use-package shell-maker
+  :ensure t
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
+;; ripgrep
+(use-package rg
+  :ensure t
+  :straight t
+  :config
+  (rg-enable-default-bindings))
+
+;; elcord
+(use-package elcord
+  :ensure t
+  :straight t
+  :config
+  (elcord-mode))
+
+;; treemacs
+(use-package treemacs
+  :ensure t
+  :straight t
+  :custom
+  (treemacs--icon-size 16)
+  :bind ("C-c t" . treemacs-select-window))
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :straight t
+  :diminish projectile-mode
+  :config
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode t))
+(use-package treemacs-projectile
+  :ensure t
+  :straight t)
+;; (use-package counsel-projectile
+;;   :ensure t
+;;   :straight t
+;;   :config
+;;   (counsel-projectile-mode))
+;; chatgpt
+(use-package chatgpt-shell
+  :requires shell-maker
+  :ensure t
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
+  :config
+  (let ((file-path "~/Documents/ssssh/chat-gpt-api-key"))
+	(if (file-exists-p file-path)
+		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
+													  (insert-file-contents file-path)
+													  (buffer-string)))))))
 
 ;; lsp-mode
 (use-package lsp-mode
@@ -251,10 +355,17 @@
   :config
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
   (defun leptos-format-buffer ()
-	(interactive)
-	(setq temp-point (point))
-	(shell-command-on-region (point-min) (point-max) "leptosfmt -m 80 -s -q 2>/dev/null" nil t)
-	(goto-char temp-point))
+	(let ((temp-point (point))
+		  (temp-start (window-start)))
+	  (shell-command-on-region
+	   (point-min)
+	   (point-max)
+	   "fish -c leptosfmt_helper"
+	   nil
+	   t)
+	  (goto-char (point-min))
+	  (set-window-start (selected-window) temp-start)
+	  (goto-char temp-point)))
   (defun my/rustic-mode-hook ()
 	(when buffer-file-name
       (setq-local buffer-save-without-query t))
@@ -291,38 +402,10 @@
 			  ("M-g Q" . lsp-workspace-shutdown)
 			  ("M-g s" . lsp-rust-analyzer-status)))
 
-;; treesitter
-(use-package tree-sitter
-  :ensure t
-  :straight t
-  :diminish
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-(use-package tree-sitter-langs
-  :ensure t
-  :straight t
-  :after tree-sitter
-  :config
-  (require 'tree-sitter-langs))
-
-
 ;; Fish
 (use-package fish-mode
   :ensure t
   :straight t)
-
-;; copilot
-(use-package copilot
-  :ensure t
-  :init
-  (add-hook 'prog-mode-hook 'copilot-mode)
-  :diminish
-  :config
-  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-  :straight (:host github :repo "zerolfx/copilot.el"
-                   :files ("dist" "*.el")))
 
 ;; Terraform
 (use-package terraform-mode
@@ -335,71 +418,11 @@
     "save hooks"
     (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
-;; dap-mode
-(use-package dap-mode
-  :ensure t
-  :straight t
-  :bind
-  :bind (:map lsp-mode-map
-			  ("M-g d" . dap-debug)
-			  ("M-g h" . dap-hydra))
-  :bind (:map dap-mode-map
-			  ("<left>" . dap-continue)
-			  ("<right>" . dap-next)
-			  ("<down>" . dap-step-in)
-			  ("<up>" . dap-step-out))
-  :custom
-  (dap-auto-configure-mode t)
-  :config
-  (dap-ui-mode 1)
-  (dap-tooltip-mode 1)
-  (dap-ui-controls-mode 1)
-  
-  ;; chrome
-  (require 'dap-chrome)
-  (setq dap-chrome-debug-program  `("node"
-                                    ,"/home/jmarsh/dev/vscode-chrome-debug/out/src/chromeDebug.js"))
-  ;; firefox
-  (require 'dap-firefox)
-  (dap-firefox-setup)
-  (setq dap-firefox-debug-program  `("node"
-                                     ,"/home/jmarsh/dev/vscode-firefox-debug/dist/adapter.bundle.js"))
-  (defun dap-firefox--populate-start-file-args (conf)
-  "Populate CONF with the required arguments."
-  (-> conf
-	  (dap--put-if-absent :dap-server-path dap-firefox-debug-program)
-      (dap--put-if-absent :type "Firefox")
-      (dap--put-if-absent :cwd default-directory)
-      (dap--put-if-absent :name "Firefox Debug")))
-  
-  ;; go
-  (require 'dap-dlv-go)
-  ;; gdb // rust
-  (require 'dap-lldb)
-  (require 'dap-gdb-lldb)
-  (dap-gdb-lldb-setup)
-  ;; python
-  (require 'dap-python)
-  (setq dap-python-debugger 'debugpy))
-
-;; multiple cursors
-(use-package multiple-cursors
-  :ensure t
-  :straight t
-  :bind (("C-c m c" . mc/edit-lines)
-		 ("C-c m n" . mc/mark-next-like-this)
-		 ("C-c m p" . mc/mark-previous-like-this)
-		 ("C-c m a" . mc/mark-all-like-this)))
 
 ;; markdown
 (use-package markdown-mode
   :ensure t
   :straight t)
-
-;; chatgpt
-(use-package shell-maker
-  :ensure t
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
 
 ;; docker-compose
 (use-package docker-compose-mode
@@ -432,46 +455,6 @@
 (use-package jenkinsfile-mode
   :ensure t
   :straight t)
-
-
-;; ripgrep
-(use-package rg
-  :ensure t
-  :straight t
-  :config
-  (rg-enable-default-bindings))
-
-;; elcord
-(use-package elcord
-  :ensure t
-  :straight t
-  :config
-  (elcord-mode))
-
-;; treemacs
-(use-package treemacs
-  :ensure t
-  :straight t
-  :custom
-  (treemacs--icon-size 16)
-  :bind ("C-c t" . treemacs-select-window))
-
-;; projectile
-(use-package projectile
-  :ensure t
-  :straight t
-  :diminish projectile-mode
-  :config
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (projectile-mode t))
-(use-package treemacs-projectile
-  :ensure t
-  :straight t)
-;; (use-package counsel-projectile
-;;   :ensure t
-;;   :straight t
-;;   :config
-;;   (counsel-projectile-mode))
 
 ;; js-mode
 (use-package js
@@ -564,24 +547,60 @@
    (json-mode . my/json-save-hooks)
    (json-mode . lsp-deferred)))
 
-;; chatgpt
-(use-package chatgpt-shell
-  :requires shell-maker
+;; dap-mode
+(use-package dap-mode
+  :mode "\\.go\\'"
   :ensure t
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
+  :straight t
+  :bind
+  :bind (:map lsp-mode-map
+			  ("M-g d" . dap-debug)
+			  ("M-g h" . dap-hydra))
+  :bind (:map dap-mode-map
+			  ("<left>" . dap-continue)
+			  ("<right>" . dap-next)
+			  ("<down>" . dap-step-in)
+			  ("<up>" . dap-step-out))
+  :custom
+  (dap-auto-configure-mode t)
   :config
-  (let ((file-path "~/Documents/ssssh/chat-gpt-api-key"))
-	(if (file-exists-p file-path)
-		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
-							(insert-file-contents file-path)
-							(buffer-string)))))))
+  (dap-ui-mode 1)
+  (dap-tooltip-mode 1)
+  (dap-ui-controls-mode 1)
+  
+  ;; chrome
+  (require 'dap-chrome)
+  (setq dap-chrome-debug-program  `("node"
+                                    ,"/home/jmarsh/dev/vscode-chrome-debug/out/src/chromeDebug.js"))
+  ;; firefox
+  (require 'dap-firefox)
+  (dap-firefox-setup)
+  (setq dap-firefox-debug-program  `("node"
+                                     ,"/home/jmarsh/dev/vscode-firefox-debug/dist/adapter.bundle.js"))
+  (defun dap-firefox--populate-start-file-args (conf)
+	"Populate CONF with the required arguments."
+	(-> conf
+		(dap--put-if-absent :dap-server-path dap-firefox-debug-program)
+		(dap--put-if-absent :type "Firefox")
+		(dap--put-if-absent :cwd default-directory)
+		(dap--put-if-absent :name "Firefox Debug")))
+  
+  ;; go
+  (require 'dap-dlv-go)
+  ;; gdb // rust
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  (dap-gdb-lldb-setup)
+  ;; python
+  (require 'dap-python)
+  (setq dap-python-debugger 'debugpy))
 
 ;; vim equivalent of ci
 (defun seek-backward-to-char (chr)
   "Seek backwards to a character"
   (interactive "cSeek back to char: ")
   (while (not (= (char-after) chr))
-  (forward-char -1)))
+	(forward-char -1)))
 (defun delete-between-pair (char)
   "Delete in between a pair of characters"
   (interactive "cDelete between char: ")
