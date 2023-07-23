@@ -216,6 +216,8 @@
   :ensure t
   :straight t
   :config
+  (setq rg-command-line-flags
+   '("--hidden" "--glob" "!.git"))
   (rg-enable-default-bindings))
 
 ;; elcord
@@ -223,7 +225,8 @@
   :ensure t
   :straight t
   :config
-  (elcord-mode))
+  (when (not (string= (getenv "ATWORK") "true"))
+	(elcord-mode)))
 
 ;; treemacs
 (use-package treemacs

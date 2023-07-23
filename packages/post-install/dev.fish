@@ -39,8 +39,6 @@ else
 	rustup update
 end
 
-cargo install leptosfmt
-
 if test ! -d ~/.python
   python -m venv $HOME/.python
   source ~/.python/bin/activate.fish
