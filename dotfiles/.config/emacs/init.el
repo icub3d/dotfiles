@@ -552,9 +552,9 @@
 
 ;; dap-mode
 (use-package dap-mode
-  :mode "\\.go\\'"
   :ensure t
   :straight t
+  :demand t
   :bind
   :bind (:map lsp-mode-map
 			  ("M-g d" . dap-debug)
