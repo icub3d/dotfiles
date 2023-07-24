@@ -76,6 +76,13 @@ systemctl enable --now --user syncthing
   you can approve and then after a few seconds you'll also see the new
   shares that you can map.
 
+# gdrive
+
+```bash
+gdrive account add
+# use credentials from our secret file.
+```
+
 # 3rd Monitor Not Working
 
 I kept cycling the power (unplug from monitor) until it finally was

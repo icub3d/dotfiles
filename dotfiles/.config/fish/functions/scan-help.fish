@@ -9,6 +9,7 @@ function scan-help
 		if test -n "$name"
 			mv $file $name.pdf
 		end
+		gdrive files upload --parent (cat ~/Documents/ssssh/scanned-cabinet-id) $name.pdf
 	end
 	popd
 	open $argv[1]
