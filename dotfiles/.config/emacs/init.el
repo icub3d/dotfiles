@@ -1,4 +1,6 @@
-;; straight and use-package setup
+;; -*- lexical-binding: t; -*-
+
+;; straight and use-package setup  
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -7,7 +9,7 @@
     (with-current-buffer
         (url-retrieve-synchronously
          "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
+         'silent 'inhibit-cookies)2
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -77,6 +79,10 @@
 		  (lambda ()
 			(call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save")))
 
+;; general bindings
+(global-set-key (kbd "C-c e r") 'eval-region)
+(global-set-key (kbd "C-c e b") 'eval-buffer)
+
 ;; theming
 (use-package monokai-pro-theme
   :ensure t
@@ -84,6 +90,22 @@
   :config
   (load-theme 'monokai-pro t))
 (set-face-attribute 'default nil :font "JetBrains Mono" :height 120)
+(use-package telephone-line
+  :ensure t
+  :straight t
+  :config
+  (setq telephone-line-lhs '((accent . (telephone-line-projectile-segment))
+							 (nil . (telephone-line-buffer-segment))))
+  (setq telephone-line-rhs '((nil . (telephone-line-flycheck-segment telephone-line-misc-info-segment))
+							 (nil . (telephone-line-major-mode-segment))
+							 (accent . (telephone-line-airline-position-segment))))
+  (telephone-line-mode 1))
+
+;; rainbow colors
+(use-package rainbow-mode
+  :ensure t
+  :straight t
+  :hook (prog-mode . rainbow-mode))
 
 ;; rainbow delimiters
 (use-package rainbow-delimiters
@@ -94,7 +116,9 @@
 ;; diminish
 (use-package diminish
   :ensure t
-  :straight t)
+  :straight t
+  :config
+  (diminish 'elisp-mode "el"))
 
 ;; Ivy, Counsel, Swiper
 (use-package counsel
@@ -136,6 +160,15 @@
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
+
+;; command-log-mode
+(use-package command-log-mode
+  :ensure t
+  :straight t
+  :diminish
+  :bind (("C-c l" . clm/toggle-command-log-buffer))
+  :config
+  (global-command-log-mode))
 
 ;; flycheck
 (use-package flycheck
@@ -613,3 +646,30 @@
   (insert char)
   (forward-char -1))
 (global-set-key (kbd "M-C-z") 'delete-between-pair)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(telephone-line-mode t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mode-line ((t (:background "#403e41" :foreground "#fcfcfa"))))
+ '(swiper-background-match-face-1 ((t (:background "#5b595c" :foreground "#fcfcfa"))))
+ '(swiper-background-match-face-2 ((t (:background "#5b595c" :foreground "#fcfcfa"))))
+ '(swiper-background-match-face-3 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
+ '(swiper-background-match-face-4 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
+ '(swiper-line-face ((t (:background "#403e41" :foreground "#a9dc76"))))
+ '(swiper-match-face-1 ((t (:background "#5b595c" :foreground "#fcfcfa"))))
+ '(swiper-match-face-2 ((t (:background "#5b595c" :foreground "#fcfcfa"))))
+ '(swiper-match-face-3 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
+ '(swiper-match-face-4 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
+ '(telephone-line-accent-active ((t (:inherit mode-line :background "#5b595c" :foreground "#fcfcfa"))))
+ '(telephone-line-accent-inactive ((t (:inherit mode-line-inactive :background "#221f22" :foreground "#78dce8"))))
+ '(telephone-line-evil ((t (:inherit mode-line :foreground "white" :weight bold))))
+ '(telephone-line-projectile ((t (:foreground "#a9dc76" :weight bold))))
+ '(telephone-line-unimportant ((t (:inherit mode-line :foreground "#c1c0c0")))))
