@@ -94,9 +94,41 @@
   :ensure t
   :straight t
   :config
+  (telephone-line-defsegment my-telephone-line-flycheck-segment ()
+	"Displays current checker state."
+	(when (bound-and-true-p flycheck-mode)
+      (let* ((text (pcase flycheck-last-status-change
+					 ('finished (if flycheck-current-errors
+									(let-alist (flycheck-count-errors flycheck-current-errors)
+                                      (if (or .error .warning)
+                                          (propertize (format "😱 %s / 😟 %s"
+                                                              (or .error 0) (or .warning 0))
+                                                      'face 'telephone-line-warning)
+										""))
+                                  (propertize "😌" 'face 'telephone-line-unimportant)))
+					 ('running     "😔")
+					 ('no-checker  (propertize "😐" 'face 'telephone-line-unimportant))
+					 ('not-checked "😐")
+					 ('errored     (propertize "😱" 'face 'telephone-line-error))
+					 ('interrupted (propertize "😲" 'face 'telephone-line-error))
+					 ('suspicious  "😒"))))
+		(propertize text
+					'help-echo (pcase flycheck-last-status-change
+								 ('finished "Display errors found by Flycheck")
+								 ('running "Running...")
+								 ('no-checker "No Checker")
+								 ('not-checked "Not Checked")
+								 ('errored "Error!")
+								 ('interrupted "Interrupted")
+								 ('suspicious "Suspicious?"))
+					'display '(raise 0.0)
+					'mouse-face '(:box 1)
+					'local-map (make-mode-line-mouse-map
+								'mouse-1 #'flycheck-list-errors)))))
   (setq telephone-line-lhs '((accent . (telephone-line-projectile-segment))
 							 (nil . (telephone-line-buffer-segment))))
-  (setq telephone-line-rhs '((nil . (telephone-line-flycheck-segment telephone-line-misc-info-segment))
+  (setq telephone-line-rhs '((nil . (my-telephone-line-flycheck-segment))
+							 (nil . (telephone-line-misc-info-segment))
 							 (nil . (telephone-line-major-mode-segment))
 							 (accent . (telephone-line-airline-position-segment))))
   (telephone-line-mode 1))
@@ -175,6 +207,13 @@
   :diminish
   :ensure t
   :straight t)
+(use-package flycheck-status-emoji
+  :diminish
+  :ensure t
+  :straight t
+  :after flycheck
+  :config
+  (flycheck-status-emoji-mode))
 
 ;; company
 (use-package company
@@ -213,19 +252,19 @@
 		 ("C-c m a" . mc/mark-all-like-this)))
 
 ;; treesitter
-(use-package tree-sitter
-  :ensure t
-  :straight t
-  :diminish
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-(use-package tree-sitter-langs
-  :ensure t
-  :straight t
-  :after tree-sitter
-  :config
-  (require 'tree-sitter-langs))
+;; (use-package tree-sitter
+;;   :ensure t
+;;   :straight t
+;;   :diminish
+;;   :config
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter-langs
+;;   :ensure t
+;;   :straight t
+;;   :after tree-sitter
+;;   :config
+;;   (require 'tree-sitter-langs))
 
 ;; copilot
 (use-package copilot
@@ -668,7 +707,7 @@
  '(swiper-match-face-2 ((t (:background "#5b595c" :foreground "#fcfcfa"))))
  '(swiper-match-face-3 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
  '(swiper-match-face-4 ((t (:background "#5b595c" :foreground "#fcfcfa" :weight bold))))
- '(telephone-line-accent-active ((t (:inherit mode-line :background "#5b595c" :foreground "#fcfcfa"))))
+ '(telephone-line-accent-active ((t (:inherit mode-line :weight bold :background "#221f22" :foreground "#a9dc76"))))
  '(telephone-line-accent-inactive ((t (:inherit mode-line-inactive :background "#221f22" :foreground "#78dce8"))))
  '(telephone-line-evil ((t (:inherit mode-line :foreground "white" :weight bold))))
  '(telephone-line-projectile ((t (:foreground "#a9dc76" :weight bold))))
