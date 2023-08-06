@@ -670,6 +670,13 @@
   (require 'dap-python)
   (setq dap-python-debugger 'debugpy))
 
+;; mermaid-mode
+(use-package mermaid-mode
+  :ensure t
+  :straight t
+  :mode "\\.mmd\\'"
+  :mode "\\.mermaid\\'")
+
 ;; vim equivalent of ci
 (defun seek-backward-to-char (chr)
   "Seek backwards to a character"

@@ -71,3 +71,6 @@ if test ! -e ~/dev/vscode-firefox-debug
 	popd
 end
 
+if test ! -e ~/bin/bw
+	install-bitwarden-cli
+end
