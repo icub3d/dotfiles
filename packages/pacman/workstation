@@ -75,6 +75,7 @@ openvpn
 orca
 ovmf
 pandoc
+pdftk
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
@@ -89,6 +90,8 @@ skaffold
 sushi
 swtpm
 system-config-printer
+texlive-binextra
+texlive-latexrecommended
 tk
 totem
 ttf-jetbrains-mono

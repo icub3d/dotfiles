@@ -1,3 +1,3 @@
 function pdf-part
-	pdftk $argv[1] cat $argv[2] output $argv[3]
+	pdfjam $argv[1] $argv[2] -o $argv[3]
 end
