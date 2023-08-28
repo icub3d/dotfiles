@@ -2,6 +2,13 @@
 
 My dotfiles
 
+```mermaid
+graph TD;
+	A-->B;
+	B-->D;
+	C-->D;
+```
+
 # Arch Linux
 
 Do a basic install make sure you include:

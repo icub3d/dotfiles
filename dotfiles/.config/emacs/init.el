@@ -38,6 +38,11 @@
 (setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
 ;; (setq-default indent-tabs-mode nil)			   ; no tabs
 
+;; f
+(use-package f
+  :ensure t
+  :straight t)
+
 ;; libvterm
 (use-package vterm
   :ensure t
@@ -498,6 +503,31 @@
 (use-package markdown-mode
   :ensure t
   :straight t)
+
+;; chatgpt
+(use-package shell-maker
+  :ensure t
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
+;; mdlp
+(use-package mdlp-mode
+  :ensure t
+  :hook (markdown-mode . mdlp-mode)
+  :straight (:host github :repo "icub3d/mdlp" :files ("mdlp-mode.el"))
+  :config
+  (setq mdlp-github-token (string-trim (f-read-text "~/Documents/ssssh/github-pat"))))
+
+;; grip (for makrdown preview)
+;; (use-package grip-mode
+;;   :ensure t
+;;   :straight t
+;;   :hook ((markdown-mode . grip-mode))
+;;   :config
+;;   (setq grip-github-user "icub3d")
+;;   (setq grip-github-password (f-read-text "~/Documents/ssssh/github-pat"))
+;;   (setq grip-preview-use-webkit t)
+;;   (setq grip-update-after-change nil))
+
 
 ;; docker-compose
 (use-package docker-compose-mode

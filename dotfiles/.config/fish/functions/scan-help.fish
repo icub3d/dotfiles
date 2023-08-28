@@ -1,7 +1,6 @@
 #!/usr/bin/fish
 
 function scan-help
-	set 
 	pushd $argv[1]
 	set files (/usr/bin/ls)
 	for file in $files
