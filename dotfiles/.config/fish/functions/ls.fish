@@ -1,6 +1,6 @@
 function ls
-    if command -vq exa
-        command exa --icons $argv
+    if command -vq eza
+        command eza --icons $argv
 	else if command -vq logo-ls
         command logo-ls $argv
     else

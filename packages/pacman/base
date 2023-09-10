@@ -19,7 +19,7 @@ docker-buildx
 docker-compose
 dstat
 dust
-exa
+eza
 fd
 fzf
 git

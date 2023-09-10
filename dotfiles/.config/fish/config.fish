@@ -44,7 +44,7 @@ set -U fish_color_command blue
 set -x fish_color_param green
 
 # fzf.fish options
-set fzf_preview_dir_cmd exa -al --color=always --icons
+set fzf_preview_dir_cmd eza -al --color=always --icons
 set fzf_fd_opts --hidden --exclude=.git
 
 # Figure out where we with some important binaries and our host.
