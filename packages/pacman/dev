@@ -4,6 +4,7 @@ base-devel
 binwalk
 clang
 dmidecode
+dotnet-runtime
 ebtables
 efibootmgr
 expect
