@@ -15,7 +15,7 @@ function tx
 		command tmux new-window -d -c ~/dev/oti-azure -t oti:1 -n "🐟"
 		command tmux new-window -d -c ~/dev/oti-azure -t oti:2 -n "🏃"
 
-		command tmux new-session -d -c ~/dev/oti-azure -s otvm -n "e"
+		command tmux new-session -d -c ~/dev/edi-oti-otvm_containerized -s otvm -n "e"
 		command tmux send-keys -t otvm:0 "emacs -nw ." C-m
 		command tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:1 -n "🐟"
 		command tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:2 -n "🏃"
