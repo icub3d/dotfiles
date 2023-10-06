@@ -512,7 +512,7 @@
 ;; mdlp
 (use-package mdlp-mode
   :ensure t
-  :hook (markdown-mode . mdlp-mode)
+;;  :hook (markdown-mode . mdlp-mode)
   :straight (:host github :repo "icub3d/mdlp" :files ("mdlp-mode.el"))
   :config
   (setq mdlp-github-token (string-trim (f-read-text "~/Documents/ssssh/github-pat"))))
