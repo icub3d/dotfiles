@@ -590,7 +590,35 @@
   :hook ((mhtml-mode . emmet-mode)
 		 (css-mode . emmet-mode)
 		 (js-mode . emmet-mode)
+		 (typescript-mode . emmet-mode)
 		 (web-mode . emmet-mode)))
+
+;; css
+(use-package css-mode
+  :ensure nil
+  :straight (:type built-in)
+  :bind (:map css-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((css-mode . lsp-deferred)
+		 (css-mode . my/css-config-hooks)
+		 (css-mode . my/css-save-hooks))
+  :config
+  (setq lsp-css-lint-unknown-at-rules "ignore")
+  (defun my/css-config-hooks ())
+  (defun my/css-save-hooks ()
+	"save hooks"
+	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+;; tailwind
+(use-package lsp-tailwindcss
+  :ensure t
+  :straight (:host github :repo "merrickluo/lsp-tailwindcss"))
 
 ;; html
 (use-package mhtml-mode
@@ -612,6 +640,16 @@
   (defun my/html-save-hooks ()
 	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
+;; prettier
+(use-package prettier-js
+  :ensure t
+  :straight t
+  :hook ((js-mode . prettier-js-mode)
+		 (typescript-mode . prettier-js-mode)
+		 (css-mode . prettier-js-mode)
+		 (html-mode . prettier-js-mode)
+		 (mhtml-mode . prettier-js-mode)))
+
 ;; typescript
 (use-package typescript-mode
   :ensure t
@@ -630,11 +668,8 @@
 		 (typescript-mode . my/typescript-config-hooks)
 		 (typescript-mode . my/typescript-save-hooks))
   :config
-  (defun my/typescript-config-hooks ()
-	(setq tab-width 2))
-  (defun my/typescript-save-hooks ()
-	"save hooks"
-	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  (defun my/typescript-config-hooks ())
+  (defun my/typescript-save-hooks ()))
 
 ;; json
 (use-package json-mode
