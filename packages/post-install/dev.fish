@@ -74,3 +74,12 @@ end
 if test ! -e ~/bin/bw
 	install-bitwarden-cli
 end
+
+
+# ollama
+if test ! -e /usr/local/bin/ollama
+	curl https://ollama.ai/install.sh | sh
+	ollama pull codellama
+	ollama pull llama2
+	ollama pull zephyr
+end

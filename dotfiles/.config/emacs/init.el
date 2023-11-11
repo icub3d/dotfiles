@@ -256,7 +256,7 @@
 		 ("C-c m p" . mc/mark-previous-like-this)
 		 ("C-c m a" . mc/mark-all-like-this)))
 
-;; treesitter
+;;treesitter
 ;; (use-package tree-sitter
 ;;   :ensure t
 ;;   :straight t
@@ -283,10 +283,14 @@
   :straight (:host github :repo "zerolfx/copilot.el"
                    :files ("dist" "*.el")))
 
-;; chatgpt
-(use-package shell-maker
-  :ensure t
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+;; ellama
+(use-package ellama
+  :straight t)
+
+;; ;; chatgpt
+;; (use-package shell-maker
+;;   :ensure t
+;;   :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
 
 ;; ripgrep
 (use-package rg
@@ -330,16 +334,16 @@
 ;;   :config
 ;;   (counsel-projectile-mode))
 ;; chatgpt
-(use-package chatgpt-shell
-  :requires shell-maker
-  :ensure t
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
-  :config
-  (let ((file-path "~/Documents/ssssh/chat-gpt-api-key"))
-	(if (file-exists-p file-path)
-		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
-													  (insert-file-contents file-path)
-													  (buffer-string)))))))
+;; (use-package chatgpt-shell
+;;   :requires shell-maker
+;;   :ensure t
+;;   :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
+;;   :config
+;;   (let ((file-path "~/Documents/ssssh/chat-gpt-api-key"))
+;; 	(if (file-exists-p file-path)
+;; 		(setq chatgpt-shell-openai-key (trim-string (with-temp-buffer
+;; 													  (insert-file-contents file-path)
+;; 													  (buffer-string)))))))
 
 ;; lsp-mode
 (use-package lsp-mode

@@ -19,6 +19,7 @@ docker-buildx
 docker-compose
 dstat
 dust
+efitools
 eza
 fd
 fzf
@@ -46,6 +47,7 @@ procs
 python
 python-pip
 ripgrep
+sbctl
 sd
 smbclient
 tcpdump

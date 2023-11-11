@@ -59,6 +59,8 @@ inkscape
 john
 kitty
 libfido2
+libva-vdpau-driver
+libvdpau-va-gl
 libvterm
 liquidctl
 lolcat
@@ -67,7 +69,7 @@ mpv
 mutter
 nautilus
 ntfs-3g
-obs-studio
+obs-studio-amf
 octave
 opensc
 openshot
@@ -95,8 +97,8 @@ texlive-latexrecommended
 tk
 totem
 ttf-jetbrains-mono
-ttf-nerd-fonts-symbols-mono
 ttf-jetbrains-mono-nerd
+ttf-nerd-fonts-symbols-mono
 virt-manager
 visual-studio-code-bin
 vlc
@@ -109,3 +111,6 @@ xorg-xinput
 yubikey-manager
 yubikey-manager-qt
 yubikey-personalization
+systemd-boot-pacman-hook
+nvidia
+nvidia-utils
