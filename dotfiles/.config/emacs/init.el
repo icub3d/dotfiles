@@ -285,7 +285,9 @@
 
 ;; ellama
 (use-package ellama
-  :straight t)
+  :straight t
+  :config
+  (global-set-key (kbd "M-0") 'ellama-chat))
 
 ;; ;; chatgpt
 ;; (use-package shell-maker
@@ -363,6 +365,37 @@
 (use-package lsp-ivy
   :ensure t
   :straight t)
+
+;; lisp / slime
+(use-package slime
+  :ensure t
+  :straight t
+  :config
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq slime-contribs '(slime-fancy)))
+
+;; haskell
+(use-package lsp-haskell :ensure t :straight t)
+(use-package haskell-mode
+  :ensure t
+  :straight t
+  :mode "\\.hs\\'"
+  :bind (:map haskell-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((haskell-mode . lsp-deferred)
+		 (haskell-mode . my/haskell-config-hooks)
+		 (haskell-mode . my/haskell-save-hooks))
+  :config
+  (defun my/haskell-config-hooks ())
+  (defun my/haskell-save-hooks ()
+	"save hooks"
+	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 ;; svelte
 (use-package svelte-mode
@@ -767,7 +800,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(telephone-line-mode t))
+ '(telephone-line-mode t)
+ '(warning-suppress-types '((emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -788,3 +822,4 @@
  '(telephone-line-evil ((t (:inherit mode-line :foreground "white" :weight bold))))
  '(telephone-line-projectile ((t (:foreground "#a9dc76" :weight bold))))
  '(telephone-line-unimportant ((t (:inherit mode-line :foreground "#c1c0c0")))))
+(put 'downcase-region 'disabled nil)

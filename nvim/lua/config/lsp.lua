@@ -9,18 +9,18 @@ return function()
   require("mason-lspconfig").setup {
     automatic_installation = true,
     ensure_installed = {
-      "lua_ls",
-      "emmet_ls",
       "clangd",
-      "tsserver",
+      "cssls",
+      "emmet_ls",
+      "gopls",
+      "hls",
+      "html",
+      "lua_ls",
       "pyright",
       "rust_analyzer",
-      "r_language_server",
-      "gopls",
-      "tailwindcss",
-      "cssls",
-      "html",
       "solargraph",
+      "tailwindcss",
+      "tsserver",
     }
   }
 

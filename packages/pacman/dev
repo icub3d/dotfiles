@@ -2,6 +2,7 @@ act
 aspell-en
 base-devel
 binwalk
+cabal-install
 clang
 dmidecode
 dotnet-runtime
@@ -12,10 +13,10 @@ ffmpeg
 gcc
 gdb
 ghc
-ghc-static
 gitflow-avh
 gnuplot
 go
+haskell-language-server
 helm
 k9s
 kubectl
@@ -43,6 +44,7 @@ python-jedi
 python-lsp-server
 qemu-full
 r
+stack
 stern-bin
 syncthing
 terraform
@@ -56,3 +58,5 @@ valgrind
 wireguard-tools
 wmctrl
 xdotool
+sbcl
+roswell
