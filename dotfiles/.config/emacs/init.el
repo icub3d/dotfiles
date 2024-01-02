@@ -1,6 +1,15 @@
 ;; -*- lexical-binding: t; -*-
 
-;; straight and use-package setup  
+;; Minimize garbage collection during startup
+(setq gc-cons-threshold 100000000)
+
+;; Lower threshold back to 8 MiB (default is 800kB)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (expt 2 23))))
+
+;; straight and use-package setup
+(setq straight-check-for-modifications nil)
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -33,7 +42,7 @@
 (setq-default tab-width 4)                     ; tab size
 (global-display-line-numbers-mode 1)           ; line numbers
 (electric-pair-mode 1)                         ; autopairs
-(setq ring-bell-function 'ignore)              ; no bell
+(setq ring-bell-function 'ignore)              ; no belli
 (setq vc-follow-symlinks t)                    ; follow symlinks
 (setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
 ;; (setq-default indent-tabs-mode nil)			   ; no tabs
@@ -278,6 +287,7 @@
   (add-hook 'prog-mode-hook 'copilot-mode)
   :diminish
   :config
+  (setq copilot-max-char 1000000)
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
   :straight (:host github :repo "zerolfx/copilot.el"
@@ -459,6 +469,7 @@
   :bind (:map rustic-mode-map
 			  ("M-j" . lsp-ui-imenu)
 			  ("M-?" . lsp-find-references)
+			  ("C-c C-c C-e" . rustic-cargo-run-release)
 			  ("M-g b" . rustic-cargo-build)
 			  ("M-g t" . rustic-cargo-test)
 			  ("M-g A" . rustic-cargo-add)
@@ -471,6 +482,7 @@
 			  ("M-g s" . lsp-rust-analyzer-status))
   :config
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+  (defun rustic-cargo-run-release () (interactive) (rustic-cargo-run-command "-r"))
   (defun leptos-format-buffer ()
 	(let ((temp-point (point))
 		  (temp-start (window-start)))
@@ -800,8 +812,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(telephone-line-mode t)
- '(warning-suppress-types '((emacs))))
+ '(telephone-line-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

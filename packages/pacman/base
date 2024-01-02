@@ -17,7 +17,7 @@ dnsutils
 docker
 docker-buildx
 docker-compose
-dstat
+dool
 dust
 efitools
 eza
