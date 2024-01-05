@@ -59,3 +59,4 @@ wasm-pack
 wget
 wpa_supplicant
 yq
+perf

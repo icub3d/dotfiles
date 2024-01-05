@@ -33,14 +33,6 @@
 [alias]
 	unstage = reset HEAD --
 	last = log -1 HEAD --stat
-	ff = flow feature
-	ffs = flow feature start
-	fff = flow feature finish
-	ffp = flow feature publish
-	fr = flow release
-	fh = flow hotfix
-	fs = flow support
-	fb = flow bugfix
 	l = log --oneline
 	p = pull
 	u = push
@@ -53,6 +45,7 @@
 	r = remove -v
 	d = diff
 	search = !git rev-list --all | xargs git grep -F
+	
 	
 [push]
 	default = simple

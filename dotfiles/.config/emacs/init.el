@@ -473,7 +473,7 @@
 			  ("M-j" . lsp-ui-imenu)
 			  ("M-?" . lsp-find-references)
 			  ("C-c C-c C-e" . rustic-cargo-run-release)
-			  ("M-g b" . rustic-cargo-build)
+			  ("M-g b" . rustic-cargo-bench)
 			  ("M-g t" . rustic-cargo-test)
 			  ("M-g A" . rustic-cargo-add)
 			  ("M-g f" . leptos-format-buffer)
