@@ -3,6 +3,9 @@ local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
 local tnoremap = remap.tnoremap
 
+-- Netrw
+nnoremap('<leader>pv', vim.cmd.Ex)
+
 -- floaterm
 nnoremap('<leader>tn', ":FloatermNew<CR>")
 nnoremap('<leader>tp', ":FloatermNew! python %<CR>")

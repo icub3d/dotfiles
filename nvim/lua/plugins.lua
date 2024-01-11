@@ -31,21 +31,6 @@ local plugins = {
       require('Comment').setup()
     end
   },
-  -- -- tabnine
-  -- {
-  --   'codota/tabnine-nvim',
-  --   build = "./dl_binaries.sh",
-  --   init = function()
-  --     require('tabnine').setup({
-  --       disable_auto_comment = true,
-  --       accept_keymap = "<Tab>",
-  --       dismiss_keymap = "<C-]>",
-  --       debounce_ms = 800,
-  --       -- suggestion_color = { gui = "#808080", cterm = 244 },
-  --       exclude_filetypes = { "TelescopePrompt" }
-  --     })
-  --   end,
-  -- },
 
   -- comments
   { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
@@ -68,22 +53,26 @@ local plugins = {
     dependencies = { 'kyazdani42/nvim-web-devicons' },
     config = function()
       local colors = {
-        black  = '#403E41',
-        gray   = '#c1c0c0',
-        white  = '#fcfcfa',
-        cyan   = '#78dce8',
-        green  = '#a9dc76',
-        orange = '#fc9867',
-        pink   = '#ff6188',
-        red    = '#ff6188',
-        yellow = '#ffd866',
+        dark_gray = '#403E41',
+        black     = '#221f22',
+        gray      = '#c1c0c0',
+        white     = '#fcfcfa',
+        cyan      = '#78dce8',
+        green     = '#a9dc76',
+        orange    = '#fc9867',
+        pink      = '#ff6188',
+        red       = '#ff6188',
+        yellow    = '#ffd866',
       }
 
       local my_theme = {
         normal = {
           a = { fg = colors.black, bg = colors.cyan, gui = 'bold' },
-          b = { fg = colors.black, bg = colors.pink },
+          b = { fg = colors.white, bg = colors.dark_gray },
           c = { fg = colors.orange, bg = colors.black },
+          x = { fg = colors.white, bg = colors.black },
+          y = { fg = colors.white, bg = colors.dark_gray },
+          z = { fg = colors.black, bg = colors.red },
         },
         insert = { a = { fg = colors.black, bg = colors.green, gui = 'bold' } },
         visual = { a = { fg = colors.black, bg = colors.yellow, gui = 'bold' } },
@@ -102,9 +91,9 @@ local plugins = {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
           lualine_c = { 'lsp_progress' },
-          lualine_x = { 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress', 'location' },
-          lualine_z = { 'tabnine' }
+          lualine_x = {},
+          lualine_y = { 'encoding', 'fileformat', 'filetype' },
+          lualine_z = { 'progress', 'location' },
         },
         inactive_sections = {
           lualine_a = {},

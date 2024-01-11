@@ -13,7 +13,6 @@ return function()
       "cssls",
       "emmet_ls",
       "gopls",
-      "hls",
       "html",
       "lua_ls",
       "pyright",

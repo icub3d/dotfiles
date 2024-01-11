@@ -388,27 +388,27 @@
   (setq slime-contribs '(slime-fancy)))
 
 ;; haskell
-(use-package lsp-haskell :ensure t :straight t)
-(use-package haskell-mode
-  :ensure t
-  :straight t
-  :mode "\\.hs\\'"
-  :bind (:map haskell-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((haskell-mode . lsp-deferred)
-		 (haskell-mode . my/haskell-config-hooks)
-		 (haskell-mode . my/haskell-save-hooks))
-  :config
-  (defun my/haskell-config-hooks ())
-  (defun my/haskell-save-hooks ()
-	"save hooks"
-	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+;; (use-package lsp-haskell :ensure t :straight t)
+;; (use-package haskell-mode
+;;   :ensure t
+;;   :straight t
+;;   :mode "\\.hs\\'"
+;;   :bind (:map haskell-mode-map
+;; 			  ("M-j" . lsp-ui-imenu)
+;; 			  ("M-?" . lsp-find-references)
+;; 			  ("M-g l" . flycheck-list-errors)
+;; 			  ("M-g a" . lsp-execute-code-action)
+;; 			  ("M-g r" . lsp-rename)
+;; 			  ("M-g q" . lsp-workspace-restart)
+;; 			  ("M-g Q" . lsp-workspace-shutdown))
+;;   :hook ((haskell-mode . lsp-deferred)
+;; 		 (haskell-mode . my/haskell-config-hooks)
+;; 		 (haskell-mode . my/haskell-save-hooks))
+;;   :config
+;;   (defun my/haskell-config-hooks ())
+;;   (defun my/haskell-save-hooks ()
+;; 	"save hooks"
+;; 	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 ;; svelte
 (use-package svelte-mode
@@ -533,6 +533,28 @@
 			  ("M-g q" . lsp-workspace-restart)
 			  ("M-g Q" . lsp-workspace-shutdown)
 			  ("M-g s" . lsp-rust-analyzer-status)))
+
+;; lua
+(use-package lua-mode
+  :ensure t
+  :straight t
+  :mode "\\.lua\\'"
+  :bind (:map lua-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("M-g l" . flycheck-list-errors)
+			  ("M-g a" . lsp-execute-code-action)
+			  ("M-g r" . lsp-rename)
+			  ("M-g q" . lsp-workspace-restart)
+			  ("M-g Q" . lsp-workspace-shutdown))
+  :hook ((lua-mode . lsp-deferred)
+		 (lua-mode . my/lua-config-hooks)
+		 (lua-mode . my/lua-save-hooks))
+  :config
+  (defun my/lua-config-hooks ())
+  (defun my/lua-save-hooks ()
+	"save hooks"
+	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
 ;; Fish
 (use-package fish-mode
@@ -815,7 +837,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(telephone-line-mode t))
+ '(telephone-line-mode t)
+ '(warning-suppress-types '(((copilot copilot-no-mode-indent)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

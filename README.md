@@ -29,7 +29,7 @@ fish install.fish
 
 ## GUI Stuff
 ```bash
-sudo apt install kitty 
+sudo apt install wezterm 
 ./helpers/chrome.fish
 ./helpers/fonts.fish
 ```
@@ -65,6 +65,18 @@ git clone https://github.com/icub3d/dotfiles ~/dev/dotfiles
 pushd ~/dev/dotfiles
 fish dotfiles.fish
 fish install.fish
+```
+
+# Emacs Daemon
+
+```bash
+systemctl --user edit emacs
+
+# Add these lines
+TERM=xterm-256color
+COLORTERM=truecolor
+
+systemctl --user enable --now emacs
 ```
 
 # Syncthing
