@@ -8,6 +8,11 @@ function update
 
 	set PACKAGES_LOCATION pacman
 
+	# Pacman/Makepkg configurations
+	sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf
+	sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
+	sudo /usr/bin/sed -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
+
 	#install paru
 	if not type -q paru
 		mkdir -p ~/dev/
@@ -17,10 +22,6 @@ function update
 		popd
 	end
 
-	# Pacman/Makepkg configurations
-	sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf
-	sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
-	sudo /usr/bin/set -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
 
 	# Figure out which groups we are going to install.
 	set SELECTED ""
