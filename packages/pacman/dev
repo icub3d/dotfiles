@@ -18,19 +18,11 @@ k9s
 kubectl
 lldb
 llvm
-minikube
 mongodb-bin
 mongodb-tools-bin
-nikto
 nodejs
 npm
-powershell-bin
-prettier
 python
-python-black
-python-isort
-python-jedi
-python-lsp-server
 python-pip
 stern-bin
 terraform
@@ -38,4 +30,3 @@ terraform-ls
 usbutils
 valgrind
 wasm-pack
-skaffold
