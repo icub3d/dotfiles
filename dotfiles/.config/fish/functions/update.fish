@@ -1,6 +1,6 @@
 function update
 	# Update dotfiles
-	source "$HOME/.config/fish/functions/dotfiles.fish"
+	source "$HOME/dev/dotfiles/.config/fish/functions/dotfiles.fish"
 	dotfiles
 
 	# Make sure we have the latest from fish
