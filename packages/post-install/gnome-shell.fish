@@ -11,7 +11,9 @@ gsettings set org.gnome.desktop.interface clock-show-seconds true
 gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 gsettings set org.gnome.desktop.background show-desktop-icons 'false'
 gsettings set org.gnome.desktop.session idle-delay 0
-gsettings set org.gnome.desktop.background picture-uri 'file:///home/jmarsh/Pictures/marshians-green-background-4k.png'
+gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/jmarsh/Pictures/marshians-green-background-4k.png'
+gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/jmarsh/Pictures/marshians-green-background-4k.png'
+gsettings set org.gnome.desktop.screensaver picture-uri 'file:///home/jmarsh/Pictures/marshians-green-background-4k.png'
 gsettings set org.gnome.desktop.screensaver picture-uri 'file:///home/jmarsh/Pictures/marshians-green-background-4k.png'
 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'suspend'
