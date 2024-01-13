@@ -1,6 +1,6 @@
 function update
 	# Update dotfiles
-  fish ~/dev/dotfiles/dotfiles.fish	
+  dotfiles
 
 	# Make sure we have the latest from fish
 	pushd ~/dev/dotfiles
