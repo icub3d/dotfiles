@@ -1,6 +1,6 @@
 function license
     if command -vq licensor
-        command bat $argv
+        command licensor $argv
     else
         command license $argv
     end 

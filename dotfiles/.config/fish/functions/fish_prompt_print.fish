@@ -18,8 +18,6 @@ function fish_prompt_print
             set suffix '>'
     end
 
-	tmux_status_tracker_save
-	
 	echo
 	if not set -q SIMPLE_PROMPT
 		set git (__fish_git_prompt | sed 's#[\)\|\(]##g')

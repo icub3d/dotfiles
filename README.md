@@ -2,19 +2,22 @@
 
 My dotfiles
 
-```mermaid
-graph TD;
-	A-->B;
-	B-->D;
-	C-->D;
-```
+todo
+- normal paru -Syu
+- look for missing instead
 
 # Arch Linux
+
+You may want to use parallel downloads:
+
+```
+sed -i 's/#ParallelDownloads 5/ParallelDownloads 5/g' /etc/pacman.conf
+```
 
 Do a basic install make sure you include:
 
 ``` 
-fish git iptables-nft base-devel sudo amd-ucode pipewire lsb-release
+base base-devel linux linux-firmware fish git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release neovim efivar efibootmgr networkmanager
 ```
 
 # Ubuntu / WSL Install
@@ -73,8 +76,9 @@ fish install.fish
 systemctl --user edit emacs
 
 # Add these lines
-TERM=xterm-256color
-COLORTERM=truecolor
+[Service]
+Environment=TERM=xterm-256color
+Environment=COLORTERM=truecolor
 
 systemctl --user enable --now emacs
 ```

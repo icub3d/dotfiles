@@ -88,11 +88,6 @@
 (setq interprogram-cut-function 'wl-copy)
 (setq interprogram-paste-function 'wl-paste)
 
-;; update tmux on save
-(add-hook 'after-save-hook
-		  (lambda ()
-			(call-process "/usr/bin/env" nil nil nil "fish" "-c" "tmux_status_tracker_save")))
-
 ;; general bindings
 (global-set-key (kbd "C-c e r") 'eval-region)
 (global-set-key (kbd "C-c e b") 'eval-buffer)

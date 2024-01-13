@@ -4,4 +4,4 @@ if test ! -f ~/.npmrc
 	echo -en "prefix=/home/jmarsh/.npm-packages\n" >~/.npmrc
 end
 
-npm install --global yarn typescript-language-server pyright typescript yaml-language-server neovim emmet-ls browser-sync json-server @mermaid-js/mermaid-cli
+npm install --global yarn typescript neovim browser-sync json-server 
