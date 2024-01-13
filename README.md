@@ -18,24 +18,7 @@ sed -i 's/#ParallelDownloads 5/ParallelDownloads 5/g' /etc/pacman.conf
 Do a basic install make sure you include:
 
 ``` 
-base base-devel linux linux-firmware fish git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release emacs-nox efivar efibootmgr networkmanager
-```
-
-# Ubuntu / WSL Install
-
-```bash
-sudo apt install -y fish curl git ca-certificates curl gnupg lsb-release
-./helpers/go.fish
-./helpers/ppa.sh
-sudo chsh -s /usr/bin/fish jmarsh
-fish install.fish
-```
-
-## GUI Stuff
-```bash
-sudo apt install wezterm 
-./helpers/chrome.fish
-./helpers/fonts.fish
+base base-devel linux linux-firmware fish git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release neovim efivar efibootmgr networkmanager
 ```
 
 ## Yubikey
@@ -67,21 +50,7 @@ gpg-connect-agent /bye
 mkdir -p ~/dev
 git clone https://github.com/icub3d/dotfiles ~/dev/dotfiles
 pushd ~/dev/dotfiles
-fish dotfiles.fish
 fish install.fish
-```
-
-# Emacs Daemon
-
-```bash
-systemctl --user edit emacs
-
-# Add these lines
-[Service]
-Environment=TERM=xterm-256color
-Environment=COLORTERM=truecolor
-
-systemctl --user enable --now emacs
 ```
 
 # Syncthing
