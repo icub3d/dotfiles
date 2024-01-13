@@ -22,15 +22,6 @@ function update
 	sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
 	sudo /usr/bin/set -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
 
-	# multilib
-	if grep gaming .selected_packages >/dev/null 2>/dev/null
-		if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
-		  	echo -e "[multilib]
-		  	Include = /etc/pacman.d/mirrorlist
-		  	" | sudo tee -a /etc/pacman.conf >/dev/null
-		end
-	end
-
 	# Figure out which groups we are going to install.
 	set SELECTED ""
 	if test -f .selected_packages
@@ -44,6 +35,15 @@ function update
 		echo $SELECTED >.selected_packages
 	end
 	set SELECTED (string split ' ' -- $SELECTED)
+
+	# multilib - we have to do this after we set selected packages but before we install them.
+	if grep gaming .selected_packages >/dev/null 2>/dev/null
+		if not grep '^\[multilib\]' /etc/pacman.conf >/dev/null 2>/dev/null 
+		  	echo -e "[multilib]
+		  	Include = /etc/pacman.d/mirrorlist
+		  	" | sudo tee -a /etc/pacman.conf >/dev/null
+		end
+	end
 
 	# Install any packages we need.
 	set PACKAGES (begin; pushd packages/$PACKAGES_LOCATION; cat $SELECTED 2>/dev/null; popd; end | sort | uniq)
