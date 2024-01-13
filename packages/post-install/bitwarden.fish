@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-mkidr -p ~/bin
-
-# Download and install bitwarden-cli
+# Install Bitwarden CLI
+mkdir -p ~/bin
 wget -O ~/bin/bw 'https://vault.bitwarden.com/download/?app=cli&platform=linux'
+chmod +x ~/bin/bw
