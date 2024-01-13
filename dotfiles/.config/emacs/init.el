@@ -53,12 +53,12 @@
   :straight t)
 
 ;; libvterm
-(use-package vterm
-  :ensure t
-  :straight t
-  :config
-  (setq vterm-shell "/usr/bin/env fish")
-  (setq vterm-max-scrollback 100000))
+;; (use-package vterm
+;;   :ensure t
+;;   :straight t
+;;   :config
+;;   (setq vterm-shell "/usr/bin/env fish")
+;;   (setq vterm-max-scrollback 100000))
 
 ;; backup stuff
 (setq

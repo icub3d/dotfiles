@@ -211,6 +211,37 @@ config.keys = {
 	}
 }
 
+-- Copy mode key bindings to work like emacs
+config.key_tables = {
+	copy_mode = {
+		{ key = "Escape", mods = "NONE",      action = wezterm.action { CopyMode = "Close" } },
+		{ key = "g",      mods = "CTRL",      action = wezterm.action { CopyMode = "Close" } },
+		{ key = "b",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveLeft" } },
+		{ key = "f",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveRight" } },
+		{ key = "p",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveUp" } },
+		{ key = "n",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveDown" } },
+		{ key = "b",      mods = "ALT",       action = wezterm.action { CopyMode = "MoveBackwardWord" } },
+		{ key = "f",      mods = "ALT",       action = wezterm.action { CopyMode = "MoveForwardWord" } },
+		{ key = "a",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveToStartOfLine" } },
+		{ key = "e",      mods = "CTRL",      action = wezterm.action { CopyMode = "MoveToEndOfLineContent" } },
+		{ key = "m",      mods = "ALT",       action = wezterm.action { CopyMode = "MoveToStartOfLineContent" } },
+		{ key = "v",      mods = "CTRL",      action = wezterm.action { CopyMode = "PageDown" } },
+		{ key = "v",      mods = "ALT",       action = wezterm.action { CopyMode = "PageUp" } },
+		{ key = "<",      mods = "ALT|SHIFT", action = wezterm.action { CopyMode = "MoveToScrollbackTop" } },
+		{ key = ">",      mods = "ALT|SHIFT", action = wezterm.action { CopyMode = "MoveToScrollbackBottom" } },
+		{ key = "Space",  mods = "CTRL",      action = act.CopyMode { SetSelectionMode = 'Cell' } },
+		{ key = "r",      mods = "",          action = act.CopyMode { SetSelectionMode = 'Block' } },
+		{
+			key = "w",
+			mods = "ALT",
+			action = act.Multiple {
+				{ CopyTo = 'ClipboardAndPrimarySelection' },
+				{ CopyMode = 'Close' },
+			}
+		},
+	}
+}
+
 -- Use leader + [0-9] to select tabs.
 for i = 0, 9 do
 	table.insert(config.keys, {
