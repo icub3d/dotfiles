@@ -1,4 +1,11 @@
 return function()
+  -- We don't need any of this unless we the word 'dev' is in our `.selected_packages` file.
+  local selected_packages = vim.fn.readfile(vim.fn.expand('~/dev/dotfiles/.selected_packages'))
+  selected_packages = table.concat(selected_packages, ' ')
+  if not string.find(selected_packages, 'dev') then
+    return
+  end
+
   local dap = require('dap')
   local dapui = require('dapui')
   dapui.setup()
