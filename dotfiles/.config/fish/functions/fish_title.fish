@@ -1,5 +1,5 @@
 function fish_title
-    hostname
+    prompt_hostname
     echo ":"
     pwd
 end
