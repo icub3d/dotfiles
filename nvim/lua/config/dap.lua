@@ -10,30 +10,18 @@ return function()
   local dapui = require('dapui')
   dapui.setup()
 
-  -- import remap for keybindings.
+  -- keymaps
   local remap = require('remap')
-  local nnoremap = remap.nnoremap
-
-  -- keybindings
-  nnoremap('<leader>dc', function()
-    dap.continue()
-    dapui.open()
-  end)
-  nnoremap('<leader>dq', function()
-    dap.close()
-    dapui.close()
-  end)
-  nnoremap('<leader>dr', function() dap.run_to_cursor() end)
-  nnoremap('<leader>db', function() dap.toggle_breakpoint() end)
-  nnoremap('<leader>dB', function()
-    dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
-  end)
-  nnoremap('<leader>do', function() dap.step_out() end)
-  nnoremap('<leader>di', function() dap.step_into() end)
-  nnoremap('<leader>dn', function() dap.step_over() end)
-  nnoremap('<Up>', function() dap.step_out() end)
-  nnoremap('<Down>', function() dap.step_into() end)
-  nnoremap('<Right>', function() dap.step_over() end)
+  remap.nnoremap('<leader>dc', dap.continue, { desc = "Debug: [C]ontinue" })
+  remap.nnoremap('<leader>ds', dap.step_over, { desc = "Debug: [S]tep Over" })
+  remap.nnoremap('<leader>di', dap.step_into, { desc = "Debug: Step [I]nto" })
+  remap.nnoremap('<leader>do', dap.step_out, { desc = "Debug: Step [O]ut" })
+  remap.nnoremap('<leader>db', dap.toggle_breakpoint, { desc = "Debug: Toggle [B]reakpoint" })
+  remap.nnoremap('<leader>dB', dap.set_breakpoint, { desc = "Debug: [B]reakpoint" })
+  remap.nnoremap('<leader>dl', dap.set_breakpoint, { desc = "Debug: [L]og point" })
+  remap.nnoremap('<leader>dr', dap.repl.open, { desc = "Debug: [R]epl" })
+  remap.nnoremap('<leader>dt', dapui.toggle, { desc = "Debug: [T]oggle" })
+  remap.nnoremap('<leader>dr', dap.run_to_cursor, { desc = "Debug: [R]un to Cursor" })
 
   -- C/C++/Rust
   dap.adapters.lldb = {

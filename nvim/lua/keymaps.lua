@@ -1,27 +1,9 @@
 local remap = require('remap')
 local nnoremap = remap.nnoremap
 local vnoremap = remap.vnoremap
-local tnoremap = remap.tnoremap
 
 -- Netrw
-nnoremap('<leader>pv', vim.cmd.Ex)
-
--- floaterm
-nnoremap('<leader>tn', ":FloatermNew<CR>")
-nnoremap('<leader>tp', ":FloatermNew! python %<CR>")
-vnoremap('<leader>tp', ":'<,'>FloatermNew! python<CR>")
-tnoremap('<leader>tn', "<C-\\><C-n>:FloatermNew<CR>")
-nnoremap('<leader>t>', ":FloatermNext<CR>")
-tnoremap('<leader>t>', '<C-\\><C-n>:FloatermNext<CR>')
-nnoremap('<leader>t<', ":FloatermPrev<CR>")
-tnoremap('<leader>t<', '<C-\\><C-n>:FloatermPrev<CR>')
-nnoremap('<leader>tt', ":FloatermToggle<CR>")
-tnoremap('<leader>tt', '<C-\\><C-n>:FloatermToggle<CR>')
-
--- LSP
-nnoremap('<leader>lr', "<cmd>lua vim.lsp.buf.rename()<CR>")
-nnoremap('<leader>lx', ":LspRestart<CR>")
-nnoremap('<leader>lf', "<cmd>lua vim.lsp.buf.format()<CR>")
+nnoremap('<leader>fv', vim.cmd.Ex)
 
 -- Go back
 nnoremap('gb', '<C-o>')
@@ -44,6 +26,3 @@ nnoremap("<C-M-j>", ":resize +2<cr>")
 -- Visual --
 vnoremap("<", "<gv")
 vnoremap(">", ">gv")
-
--- Prettier --
-vnoremap("^", 'vi{:! prettier --parser html --stdin-filepath<CR>vi{>')

@@ -1,3 +1,4 @@
+-- install lazy.
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -16,9 +17,31 @@ local plugins = {
   'nvim-lua/popup.nvim',
   'nvim-lua/plenary.nvim',
 
-  -- floatterm
+  -- telescope
   {
-    'voldikss/vim-floaterm',
+    'nvim-telescope/telescope.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-dap.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+      'kyazdani42/nvim-web-devicons',
+    },
+    lazy = false,
+    config = require('config.telescope'),
+  },
+
+  -- LSP
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason-lspconfig.nvim',
+      { 'j-hui/fidget.nvim',       opts = {} },
+      'folke/neodev.nvim',
+      'hrsh7th/nvim-cmp',
+      'lukas-reineke/lsp-format.nvim',
+    },
+    config = require('config.lsp'),
   },
 
   -- copilot
@@ -27,13 +50,10 @@ local plugins = {
   -- comment
   {
     'numToStr/Comment.nvim',
-    config = function()
-      require('Comment').setup()
-    end
+    config = true,
+    opts = {},
+    lazy = false,
   },
-
-  -- comments
-  { 'terrortylor/nvim-comment', config = function() require('nvim_comment').setup() end },
 
   -- auto pairs
   {
@@ -41,16 +61,14 @@ local plugins = {
     config = true,
   },
 
-  -- context line
-  {
-    "SmiteshP/nvim-navic",
-    dependencies = { "neovim/nvim-lspconfig" },
-  },
-
   -- lua line
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons' },
+    dependencies = {
+      'kyazdani42/nvim-web-devicons',
+      'SmiteshP/nvim-navic',
+      'neovim/nvim-lspconfig',
+    },
     config = function()
       local colors = {
         dark_gray = '#403E41',
@@ -155,25 +173,21 @@ local plugins = {
     end
   },
 
-  -- telescope
+  -- auto complete
   {
-    'nvim-telescope/telescope.nvim',
+    -- Autocompletion
+    'hrsh7th/nvim-cmp',
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-dap.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-      'kyazdani42/nvim-web-devicons',
-    },
-    config = function()
-      require('telescope').setup({ defaults = { file_ignore_patterns = { "node_modules", ".git/" } } })
-      require('telescope').load_extension('dap')
-    end,
-    keys = {
-      { '<leader>ff', "<cmd>lua require('telescope.builtin').find_files({hidden=true})<cr>", mode = 'n', noremap = true },
-      { '<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>",               mode = 'n', noremap = true },
-      { '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>",                 mode = 'n', noremap = true },
-      { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>",               mode = 'n', noremap = true },
-      { '<leader>fk', ":Telescope keymaps<cr>",                                              mode = 'n', noremap = true },
+      -- Snippet Engine & its associated nvim-cmp source
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+
+      -- Adds LSP completion capabilities
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
+
+      -- Adds a number of user-friendly snippets
+      'rafamadriz/friendly-snippets',
     },
   },
 
@@ -203,7 +217,7 @@ local plugins = {
       require("nvim-tree").setup({ filters = { custom = { "^.git$" } } })
     end,
     keys = {
-      { '<leader>dt', ':NvimTreeToggle<cr>', mode = 'n', noremap = true },
+      { '<leader>ft', ':NvimTreeToggle<cr>', mode = 'n', noremap = true, desc = "[F]ile Project [T]ree" },
     },
   },
 
@@ -226,6 +240,9 @@ local plugins = {
   -- treesitter (syntax)
   {
     "nvim-treesitter/nvim-treesitter",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+    },
     config = require("config.treesitter"),
     build = ":TSUpdate",
   },
@@ -238,13 +255,9 @@ local plugins = {
     'ray-x/go.nvim',
     config = function() require('go').setup() end,
     keys = {
-      { '<leader>cr', ":GoCoverage<CR>",    mode = 'n', noremap = true },
-      { '<leader>ct', ":GoCoverage -t<CR>", mode = 'n', noremap = true },
-      { '<leader>r',  ":GoRun<CR>",         mode = 'n', noremap = true },
-      { '<leader>ta', ":GoTest<CR>",        mode = 'n', noremap = true },
-      { '<leader>tf', ":GoTestFile<CR>",    mode = 'n', noremap = true },
-      { '<leader>tu', ":GoTestFunc<CR>",    mode = 'n', noremap = true },
-      { '<leader>tp', ":GoTestPkg<CR>",     mode = 'n', noremap = true },
+      { '<leader>cr', ":GoCoverage<CR>",    mode = 'n', noremap = true, desc = "[G]o [C]overage" },
+      { '<leader>ct', ":GoCoverage -t<CR>", mode = 'n', noremap = true, desc = "[G]o -[t] Coverage" },
+      { '<leader>r',  ":GoRun<CR>",         mode = 'n', noremap = true, desc = "[G]o [R]un" },
     }
   },
   'ray-x/guihua.lua',
@@ -258,11 +271,11 @@ local plugins = {
       ]]
     end,
     keys = {
-      { '<leader>tt', ":TestNearest -strategy=neovim<cr>", mode = 'n', noremap = true },
-      { '<leader>tf', ":TestFile -strategy=neovim<cr>",    mode = 'n', noremap = true },
-      { '<leader>ts', ":TestSuite -strategy=neovim<cr>",   mode = 'n', noremap = true },
-      { '<leader>tl', ":TestLast -strategy=neovim<cr>",    mode = 'n', noremap = true },
-      { '<leader>tv', ":TestVisit -strategy=neovim<cr>",   mode = 'n', noremap = true },
+      { '<leader>tt', ":TestNearest -strategy=neovim<cr>", mode = 'n', noremap = true, desc = "[T]est nearest [T]est" },
+      { '<leader>tf', ":TestFile -strategy=neovim<cr>",    mode = 'n', noremap = true, desc = "[T]est [F]ile" },
+      { '<leader>ts', ":TestSuite -strategy=neovim<cr>",   mode = 'n', noremap = true, desc = "[T]est [S]uite" },
+      { '<leader>tl', ":TestLast -strategy=neovim<cr>",    mode = 'n', noremap = true, desc = "[T]est [L]ast" },
+      { '<leader>tv', ":TestVisit -strategy=neovim<cr>",   mode = 'n', noremap = true, desc = "[T]est [V]isit" },
     },
   },
 
@@ -279,19 +292,6 @@ local plugins = {
     end
   },
 
-  -- lsp
-  {
-    'williamboman/mason-lspconfig.nvim',
-    dependencies = {
-      'williamboman/mason.nvim',
-      'neovim/nvim-lspconfig',
-      'hrsh7th/cmp-nvim-lsp',
-      'lukas-reineke/lsp-format.nvim',
-    },
-    config = require('config.lsp')
-  },
-
-
   -- dap
   {
     'rcarriga/nvim-dap-ui',
@@ -301,6 +301,31 @@ local plugins = {
       'leoluz/nvim-dap-go',
     },
     config = require('config.dap'),
+  },
+
+  -- neoterm
+  {
+    "kassio/neoterm",
+    config = function()
+      vim.g.neoterm_size = tostring(0.3 * vim.o.columns)
+      vim.g.neoterm_autoinsert = true
+      vim.g.neoterm_default_mod = "botright vertical"
+    end,
+  },
+
+  -- task runner
+  {
+    "stevearc/overseer.nvim",
+    opts = {
+      task_list = {
+        direction = "bottom",
+        min_height = 25,
+        max_height = 25,
+        default_detail = 1,
+      },
+    },
+    config = require("config.overseer"),
+
   },
 }
 

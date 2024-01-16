@@ -38,6 +38,7 @@ end
 
 local globals = {
   ["mapleader"] = ' ',
+  ["maplocalleader"] = ' ',
   ["load_perl_provider"] = 0,
   ["load_ruby_provider"] = 0,
 }

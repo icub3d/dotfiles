@@ -36,7 +36,8 @@
 (setq shell-file-name "/bin/bash")             ; use bash
 (tool-bar-mode -1)                             ; hide tool bar
 (menu-bar-mode -1)                             ; hide menu bar
-(scroll-bar-mode -1)                           ; hide scroll bar
+(when window-system
+  (scroll-bar-mode -1))                        ; hide scroll bar
 (xterm-mouse-mode 1)                           ; mouse in terminal
 (setq inhibit-startup-screen t)                ; startup screen
 (setq-default tab-width 4)                     ; tab size
@@ -52,13 +53,12 @@
   :ensure t
   :straight t)
 
-;; libvterm
-;; (use-package vterm
-;;   :ensure t
-;;   :straight t
-;;   :config
-;;   (setq vterm-shell "/usr/bin/env fish")
-;;   (setq vterm-max-scrollback 100000))
+(if (cl-search "dev" (f-read-text "~/dev/dotfiles/.selected_packages"))
+	(setq my-dev t)
+  (setq my-dev nil))
+(if (cl-search "gui" (f-read-text "~/dev/dotfiles/.selected_packages"))
+	(setq my-gui t)
+  (setq my-gui nil))
 
 ;; backup stuff
 (setq
@@ -76,15 +76,15 @@
 (setq wl-copy-process nil)
 (defun wl-copy (text)
   (setq wl-copy-process (make-process :name "wl-copy"
-                                      :buffer nil
-                                      :command '("wl-copy" "-f" "-n")
-                                      :connection-type 'pipe))
+									  :buffer nil
+									  :command '("wl-copy" "-f" "-n")
+									  :connection-type 'pipe))
   (process-send-string wl-copy-process text)
   (process-send-eof wl-copy-process))
 (defun wl-paste ()
   (if (and wl-copy-process (process-live-p wl-copy-process))
-      nil ; should return nil if we're the current paste owner
-    (shell-command-to-string "wl-paste -n | tr -d \r")))
+	  nil ; should return nil if we're the current paste owner
+	(shell-command-to-string "wl-paste -n | tr -d \r")))
 (setq interprogram-cut-function 'wl-copy)
 (setq interprogram-paste-function 'wl-paste)
 
@@ -259,21 +259,6 @@
 		 ("C-c m n" . mc/mark-next-like-this)
 		 ("C-c m p" . mc/mark-previous-like-this)
 		 ("C-c m a" . mc/mark-all-like-this)))
-
-;;treesitter
-;; (use-package tree-sitter
-;;   :ensure t
-;;   :straight t
-;;   :diminish
-;;   :config
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-;; (use-package tree-sitter-langs
-;;   :ensure t
-;;   :straight t
-;;   :after tree-sitter
-;;   :config
-;;   (require 'tree-sitter-langs))
 
 ;; copilot
 (use-package copilot
