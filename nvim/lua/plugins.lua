@@ -17,6 +17,11 @@ local plugins = {
   'nvim-lua/popup.nvim',
   'nvim-lua/plenary.nvim',
 
+  {
+    'LhKipp/nvim-nu',
+    build = ":TSInstall nu"
+  },
+
   -- telescope
   {
     'nvim-telescope/telescope.nvim',
