@@ -79,12 +79,14 @@ def update-system [] {
     # install paru
     mkdir ~/dev/
     cd ~/dev/
+    rm -rf paru
     git clone https://aur.archlinux.org/paru.git
     cd paru
     makepkg -si
   }
 
   # check to see if the .selected_packages file is there.
+  cd ~/dev/dotfiles
   if (not (".selected_packages" | path exists)) {
     let full_list = (ls packages/pacman/ | each {|f| $f.name | str replace packages/pacman/ "" } | sort | uniq)
     echo $"($full_list)"
