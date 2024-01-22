@@ -82,7 +82,7 @@ def update-system [] {
     rm -rf paru
     git clone https://aur.archlinux.org/paru.git
     cd paru
-    makepkg -si
+    makepkg -si --noconfirm
   }
 
   # check to see if the .selected_packages file is there.
@@ -120,7 +120,7 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       echo $script_path
-      nu $"($script_path)"
+      nu -c $"source $nu.env-path; source $nu.config-path; nu ($script_path)"
     }
   }
 
@@ -128,7 +128,7 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       echo $script_path
-      nu $"($script_path)"
+      nu -c $"source $nu.env-path; source $nu.config-path; nu ($script_path)"
     }
   }
 
