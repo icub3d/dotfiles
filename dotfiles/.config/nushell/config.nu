@@ -158,10 +158,11 @@ def dotfiles [] {
   }
 
   # make sure we have all the diretories we need
-  ls -a ~/dev/dotfiles/dotfiles/** | 
-    get name | 
-    each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "~/" } | 
-    each {|f| mkdir $f}
+  ls -a ~/dev/dotfiles/dotfiles/** |
+     get name |
+     each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "" } |
+     each {|f| ($nu.home-path | path join $f) } |
+     each {|f| mkdir $f}
   mkdir ~/.ssh
   chmod 700 ~/.ssh
   chmod 700 ~/.gnupg
