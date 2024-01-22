@@ -6,4 +6,4 @@ rm -f ~/.config/nushell/config.nu
 ln -s ~/dev/dotfiles/dotfiles/.config/nushell/env.nu ~/.config/nushell/env.nu
 ln -s ~/dev/dotfiles/dotfiles/.config/nushell/config.nu ~/.config/nushell/config.nu
 
-nu -c update-system
+nu -c "source $nu.env-path; source $nun.config-path; update-system"
