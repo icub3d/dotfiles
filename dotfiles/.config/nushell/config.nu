@@ -75,7 +75,7 @@ def update-system [] {
 	sudo /usr/bin/sed -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
 
   # check to see if paru is installed
-  if (not ("paru" | command exists)) {
+  if (not ("/usr/bin/paru" | path exists)) {
     # install paru
     mkdir ~/dev/
     cd ~/dev/
