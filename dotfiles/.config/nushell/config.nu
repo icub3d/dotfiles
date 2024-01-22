@@ -113,7 +113,7 @@ def update-system [] {
   } | flatten
 
   # install packages
-  yes | paru -Syu --needed --noconfirm $packages
+  yes | paru -Syu --needed --noconfirm ...$packages
   
   # run the post install scripts
   for package in $packages {
@@ -158,7 +158,10 @@ def dotfiles [] {
   }
 
   # make sure we have all the diretories we need
-  ls -a ~/dev/dotfiles/dotfiles/** | get name | each {|d| mkdir $d}
+  ls -a ~/dev/dotfiles/dotfiles/** | 
+    get name | 
+    each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "~/" } | 
+    each {|f| mkdir $f}
   mkdir ~/.ssh
   chmod 700 ~/.ssh
   chmod 700 ~/.gnupg
