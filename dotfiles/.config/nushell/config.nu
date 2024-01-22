@@ -66,8 +66,6 @@ alias w = /usr/bin/watch
 
 def update-system [] {
   dotfiles
-  #source $nu.env-path
-  #source $nu.config-path
   cd ~/dev/dotfiles
   let package_location = "pacman"
 

@@ -2,11 +2,6 @@
 
 My dotfiles
 
-todo
-
-- normal paru -Syu
-- look for missing instead
-
 # Arch Linux
 
 You may want to use parallel downloads:
@@ -18,7 +13,7 @@ sed -i 's/#ParallelDownloads 5/ParallelDownloads 5/g' /etc/pacman.conf
 Do a basic install make sure you include:
 
 ``` 
-base base-devel linux linux-firmware fish git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release neovim efivar efibootmgr networkmanager
+base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release neovim efivar efibootmgr networkmanager inetutils
 ```
 
 ## Yubikey
