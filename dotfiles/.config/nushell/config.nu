@@ -157,6 +157,7 @@ def dotfiles [] {
 
   # make sure we have all the diretories we need
   ls -a ~/dev/dotfiles/dotfiles/** | get name | each {|d| mkdir $d}
+  mkdir ~/.ssh
   chmod 700 ~/.ssh
   chmod 700 ~/.gnupg
 
