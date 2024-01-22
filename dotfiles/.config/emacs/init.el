@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+;; reduce warning popup
+(setq warning-minimum-level :error)
+
 ;; Minimize garbage collection during startup
 (setq gc-cons-threshold 100000000)
 
@@ -47,6 +50,8 @@
 (setq vc-follow-symlinks t)                    ; follow symlinks
 (setq markdown-fontify-code-blocks-natively t) ; markdown code blocks
 ;; (setq-default indent-tabs-mode nil)			   ; no tabs
+
+(setq treesit-language-source-alist '((nu "https://github.com/nushell/tree-sitter-nu")))
 
 ;; f
 (use-package f
@@ -796,6 +801,20 @@
   :mode "\\.mmd\\'"
   :mode "\\.mermaid\\'")
 
+;; nushell
+(use-package nushell-ts-babel
+  :straight (nushell-ts-babel :type git :host github :repo "herbertjones/nushell-ts-babel"))
+(use-package nushell-ts-mode
+  :straight (nushell-ts-mode :type git :host github :repo "herbertjones/nushell-ts-mode")
+  :config
+  (require 'nushell-ts-babel)
+  (defun my/nushell/mode-hook ()
+    ;; (corfu-mode 1)
+    (highlight-parentheses-mode 1)
+    (electric-pair-local-mode 1)
+    (electric-indent-local-mode 1))
+  (add-hook 'nushell-ts-mode-hook 'my/nushell/mode-hook))
+ 
 ;; vim equivalent of ci
 (defun seek-backward-to-char (chr)
   "Seek backwards to a character"

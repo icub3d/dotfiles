@@ -7,7 +7,7 @@
 	signingkey = 0x8A18F7931D00BF38
 
 [core]
-	pager = delta --dark --minus-style="#CC2E55" --minus-emph-style="#B04C1B" --plus-emph-style="#B04C1B" --plus-style="#5D902A"
+	pager = delta
 	
 [color]
 	branch = auto
@@ -46,10 +46,30 @@
 	d = diff
 	search = !git rev-list --all | xargs git grep -F
 	
-	
 [push]
 	default = simple
+	
 [gpg]
 	program = gpg
+	
 [commit]
 	gpgsign = true
+
+[diff]
+	colorMoved = default
+
+[merge]
+	conflictstyle = diff3
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	features = dark side-by-side line-numebrs decorations my-styles
+
+[delta "my-styles"]
+	minus-style="#CC2E55"
+	minus-emph-style="#B04C1B"
+	plus-emph-style="#B04C1B"
+	plus-style="#5D902A"
