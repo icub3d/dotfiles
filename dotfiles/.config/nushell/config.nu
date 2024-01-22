@@ -64,7 +64,7 @@ alias w = /usr/bin/watch
 # todo
 # update.fish
 
-def update [] {
+def update-system [] {
   dotfiles
   #source $nu.env-path
   #source $nu.config-path

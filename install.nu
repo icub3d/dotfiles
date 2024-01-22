@@ -7,4 +7,4 @@ ln -s ~/dev/dotfiles/dotfiles/.config/nushell/config.nu ~/.config/nushell/config
 source $nu.env-path
 source $nu.config-path
 
-update
+update-system
