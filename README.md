@@ -4,7 +4,6 @@ My dotfiles
 
 # TODO 
 
-- don't install fish configs
 - filter components already installed
 - https://wiki.archlinux.org/title/rust#sccache
 

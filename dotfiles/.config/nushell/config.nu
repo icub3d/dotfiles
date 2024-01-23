@@ -26,10 +26,15 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 
 # General config
 $env.config = {
-  show_banner: false
+  show_banner: false,
+  edit_mode: vi,
+  history: {
+    max_size: 100000,
+  }
 }
 
 # aliases
+alias bench = hyperfine
 alias cat = bat
 alias d = docker
 alias dc = docker compose
@@ -41,11 +46,7 @@ alias grep = rg
 alias hexdump = hx
 alias iftop = bandwhich
 alias img = wezterm imgcat
-alias l = ls
-alias la = ls -a
 alias less = bat
-alias ll = ls -l
-alias lla = ls -la
 alias m = make
 alias mk = minikube
 alias objdump = bingrep
@@ -53,13 +54,28 @@ alias ping = prettyping
 alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
 alias rg = rg --hidden --glob '!.git'
 alias rme = /usr/bin/find -ih '~$' -x rm {} \;
-alias time = hyperfine
 alias v = nvim
 alias w = /usr/bin/watch
 
 #########################################################
 # functions
 #########################################################
+
+def "lla" [path = "."] {
+  ls -la $path | grid -c
+}
+
+def "la" [path = "."] {
+  ls -a $path | grid -c
+}
+
+def "ll" [path = "."] {
+  ls -l $path | grid -c
+}
+
+def "l" [path = "."] {
+  ls $path | grid -c
+}
 
 def update-system [] {
   dotfiles
@@ -405,9 +421,6 @@ def ykf [] {
   sudo systemctl restart pcscd
 }
 
-def wezterm-set-user-var [key, value] {
-  printf '\033]1337;setuservar=%s=%s\007' $key ($value | base64 -w0)
-}
 
 def nw [name = "", folder = ""] {
   let dev = $nu.home-path | path join "dev"
@@ -429,7 +442,7 @@ def nw [name = "", folder = ""] {
     $name
   }
 
-  wezterm-set-user-var create_workspace $"($name)|($folder)"
+  wezterm-set-user-var CREATE_WORKSPACE $"($name)|($folder)"
 }
 
 def wezterm-switch-workspace [] {
@@ -494,4 +507,8 @@ def liquidctl-colors [color] {
   liquidctl --serial 1305006473291217 set led2 color fixed $color
   liquidctl --serial 1805006373291A10 set led1 color fixed $color
   liquidctl --serial 1805006373291A10 set led2 color fixed $color
+}
+
+def wezterm-set-user-var [key, value] {
+  printf '\033]1337;SetUserVar=%s=%s\007' $key ($value | base64 -w0)
 }
