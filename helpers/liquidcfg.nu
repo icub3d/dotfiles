@@ -1,4 +1,4 @@
-#!/usr/bin/fish
+#!/usr/bin/env nu
 
 sudo cp ./99-liquidctl-custom.rules /etc/udev/rules.d
 sudo cp liquidcfg.service /etc/systemd/system

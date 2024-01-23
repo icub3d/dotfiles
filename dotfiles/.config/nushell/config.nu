@@ -163,6 +163,7 @@ def dotfiles [] {
      get name |
      each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "" } |
      each {|f| ($nu.home-path | path join $f) } |
+     find -v "fish" | # TODO: remove this once we no longer need fish
      each {|f| mkdir $f}
   mkdir ~/.ssh
   chmod 700 ~/.ssh
@@ -172,6 +173,7 @@ def dotfiles [] {
   let paths = ls -a ~/dev/dotfiles/dotfiles/**/* | 
     filter {|p| $p.type == "file"} | 
     get name | 
+    find -v "fish" | # TODO: remove this once we no longer need fish
     each {|n| $n | str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") ""} |
     each {|n|
       let $new_path = ($nu.home-path | path join $n)
@@ -481,4 +483,15 @@ def "k oti" [ns] {
 
 def "k otvm" [ns] {
   k config use-context $"otvm-containerized-($ns)"
+}
+
+def liquidctl-colors [color] {
+  liquidctl --serial 1305006473291217 set led1 color clear
+  liquidctl --serial 1305006473291217 set led2 color clear
+  liquidctl --serial 1805006373291A10 set led1 color clear
+  liquidctl --serial 1805006373291A10 set led2 color clear
+  liquidctl --serial 1305006473291217 set led1 color fixed $color
+  liquidctl --serial 1305006473291217 set led2 color fixed $color
+  liquidctl --serial 1805006373291A10 set led1 color fixed $color
+  liquidctl --serial 1805006373291A10 set led2 color fixed $color
 }
