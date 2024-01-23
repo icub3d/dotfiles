@@ -120,7 +120,7 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       echo $script_path
-      nu -c $"source $nu.env-path; source $nu.config-path; nu ($script_path)"
+      nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
     }
   }
 
@@ -128,7 +128,8 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       echo $script_path
-      nu -c $"source $nu.env-path; source $nu.config-path; nu ($script_path)"
+      nu $script_path
+      nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
     }
   }
 
