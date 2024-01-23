@@ -4,7 +4,6 @@ My dotfiles
 
 # TODO 
 
-- filter components already installed
 - https://wiki.archlinux.org/title/rust#sccache
 
 # Arch Linux
@@ -50,7 +49,7 @@ gpg-connect-agent /bye
 mkdir -p ~/dev
 git clone https://github.com/icub3d/dotfiles ~/dev/dotfiles
 pushd ~/dev/dotfiles
-fish install.fish
+nu install.nu
 ```
 
 # Syncthing
@@ -84,12 +83,8 @@ recognized?!?!?
 
 # Mirror List
 
-Set `/etc/pacman.d/mirrorlist` to:
-
 ```
-Server = https://mirrors.xtom.com/archlinux/$repo/os/$arch
-Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
-Server = https://mirrors.sonic.net/archlinux/$repo/os/$arch
+nu mirrors
 ```
 
 # Docker Slow Stopping

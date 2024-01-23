@@ -27,7 +27,10 @@ octave
 opensc
 openshot
 opentabletdriver
-ovmf
+dotnet-runtime
+dotnet-runtime-6.0
+dotnet-sdk
+edk2-ovmf
 pdftk
 texlive-binextra
 texlive-latexrecommended

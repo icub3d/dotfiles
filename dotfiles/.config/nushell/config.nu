@@ -77,6 +77,16 @@ def "l" [path = "."] {
   ls $path | grid -c
 }
 
+def missing-packages [] {
+  let installed = (pacman -Q | lines | parse "{package} {version}" | get package)
+  let selected_packages = (open ~/dev/dotfiles/.selected_packages | split words)
+  let missing = $selected_packages | filter { |p| not $p in $installed }
+  let packages = $selected_packages | each {|p|
+    let package_path = $"packages/pacman/($p)"
+    open $package_path | lines
+  } | flatten | filter { |p| not $p in $installed }
+}
+
 def update-system [] {
   dotfiles
   cd ~/dev/dotfiles
@@ -121,18 +131,23 @@ def update-system [] {
 
   # add multilib if we have selected gaming.
   if ("gaming" in $selected_packages) {
-    if (not ("[multilib]" | in (open /etc/pacman.conf))) {
+    if ((open /etc/pacman.conf | lines | find -r '^\[multilib\]' | length) < 1) {
       echo "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf out> /dev/null
     }
   }
 
+  let installed = (pacman -Q | lines | parse "{package} {version}" | get package)
   let packages = $selected_packages | each {|p|
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
-  } | flatten
+  } | flatten | filter { |p| not $p in $installed }
+
+  echo $"missing packages: ($packages)"
 
   # install packages
-  yes | paru -Syu --needed --noconfirm ...$packages
+  do -i {
+    yes | paru -Syu --needed --noconfirm ...$packages
+  }
   
   # run the post install scripts
   for package in $packages {
@@ -218,7 +233,7 @@ def update-cli-tools [] {
 
   $sha512 | save -f $existing_path
   http get https://files.marsh.gg/cli-tools.($env.ARCH).zip | save -f cli-tools.zip
-  unzip cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null
+  unzip -o cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null
   rm cli-tools.zip
 }
 
@@ -273,8 +288,12 @@ def monokai [] {
     echo $"(ansi --escape $color)($color.bg)(ansi reset)"
   }
 }
+
 def mirrors [] {
-	http get 'https://archlinux.org/mirrorlist/?country=us&protocol=https&ip_version=4&use_mirror_status=on' | sed -e 's/^#server/server/' -e '/^#/d' | rankmirrors -n 5 - | sudo tee /etc/pacman.d/mirrorlist
+  http get 'https://archlinux.org/mirrorlist/?country=US&protocol=https&ip_version=4&use_mirror_status=on' |
+    sed -e 's/^#Server/Server/' -e '/^#/d' |
+    rankmirrors -n 5 - | 
+    sudo tee /etc/pacman.d/mirrorlist
 }
 
 def "mctl files put" [...files] {
