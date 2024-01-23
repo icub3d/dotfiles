@@ -67,9 +67,15 @@ def update-system [] {
   let package_location = "pacman"
 
 	# Pacman/Makepkg configurations
-	sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf
-	sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
-	sudo /usr/bin/sed -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
+  sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf
+  sudo /usr/bin/sed -i -e 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'(nproc)'"/g' /etc/makepkg.conf
+  sudo /usr/bin/sed -i -e 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
+
+  # install rustup - paru needs it and dev will need it.
+  if (not ("/usr/bin/rustup" | path exists)) {
+    sudo pacman -S rustup --noconfirm
+  }
+  rustup toolchain add stable
 
   # check to see if paru is installed
   if (not ("/usr/bin/paru" | path exists)) {
@@ -116,7 +122,6 @@ def update-system [] {
   for package in $packages {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
-      echo $script_path
       nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
     }
   }
@@ -124,7 +129,6 @@ def update-system [] {
   for package in $selected_packages {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
-      echo $script_path
       nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
     }
   }

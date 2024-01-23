@@ -2,6 +2,11 @@
 
 My dotfiles
 
+# TODO 
+
+- filter components already installed
+- https://wiki.archlinux.org/title/rust#sccache
+
 # Arch Linux
 
 You may want to use parallel downloads:
