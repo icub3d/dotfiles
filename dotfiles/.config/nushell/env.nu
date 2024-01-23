@@ -12,7 +12,7 @@ $env.PAGER = "bat -p"
 $env.DELTA_FEATURES = "dark side-by-side line-numbers decorations my-styles"
 
 # NPM
-$env.NPM_PACKAGES = $nu.home-path + "/.npm-packages"
+$env.NPM_PACKAGES = ($nu.home-path | path join ".npm-packages")
 mkdir $env.NPM_PACKAGES + "/bin"
 
 # Python
@@ -20,7 +20,7 @@ $env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
 
 # Yubikey
 $env.GPG_TTY = (tty)
-$env.SSH_AUTH_SOCK = "/run/user/" + (id -u) + "/gnupg/S.gpg-agent.ssh"
+$env.SSH_AUTH_SOCK = $"/run/user/(id -u)/gnupg/S.gpg-agent.ssh"
 gpg-connect-agent updatestartuptty /bye out+err> /dev/null
 
 # Prompt
