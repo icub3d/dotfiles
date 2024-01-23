@@ -61,9 +61,6 @@ alias w = /usr/bin/watch
 # functions
 #########################################################
 
-# todo
-# update.fish
-
 def update-system [] {
   dotfiles
   cd ~/dev/dotfiles
@@ -128,7 +125,6 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       echo $script_path
-      nu $script_path
       nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
     }
   }
@@ -200,7 +196,7 @@ def update-cli-tools [] {
 
   $sha512 | save -f $existing_path
   http get https://files.marsh.gg/cli-tools.($env.ARCH).zip | save -f cli-tools.zip
-  unzip cli-tools.zip -d ($nu.home-path | path join "bin")
+  unzip cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null err> /dev/null
   rm cli-tools.zip
 }
 
