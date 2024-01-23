@@ -196,7 +196,7 @@ def update-cli-tools [] {
 
   $sha512 | save -f $existing_path
   http get https://files.marsh.gg/cli-tools.($env.ARCH).zip | save -f cli-tools.zip
-  unzip cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null err> /dev/null
+  unzip cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null
   rm cli-tools.zip
 }
 
