@@ -332,7 +332,7 @@ def add-service [service] {
 }
 
 def add-user-service [service] {
-  sudo systemctl --user --now enable $service
+  systemctl --user --now enable $service
 }
 
 def bw-get-token [name] {
