@@ -430,14 +430,19 @@ wezterm.on('update-status', function(window, pane)
   if not cwd then
     return
   end
-  cwd = cwd:gsub("file://", "")
-  cwd = cwd:gsub(wezterm.hostname(), "")
+
+  local gwd = cwd:gsub("file://", "")
+  if gwd:sub(1, #wezterm.hostname()) == wezterm.hostname() then
+    gwd = gwd:sub(#wezterm.hostname() + 1)
+  end
+
+
 
   local entries = {}
   local cur_bg = colors.dark_gray
 
   -- git information
-  local branch = git_branch_name(cwd)
+  local branch = git_branch_name(gwd)
 
   if branch then
     branch = " " .. branch
@@ -450,7 +455,7 @@ wezterm.on('update-status', function(window, pane)
     cur_bg = colors.violet
   end
 
-  local status = git_status(cwd)
+  local status = git_status(gwd)
   if status then
     status = " " .. status
     table.insert(entries, { Background = { Color = cur_bg } })
@@ -462,8 +467,14 @@ wezterm.on('update-status', function(window, pane)
     cur_bg = colors.yellow
   end
 
-  -- After we've done the git stuf, replace the home dir with ~
-  cwd = cwd:gsub(wezterm.home_dir, "~")
+  -- After we've done the git stuff, replace the home dir with ~
+  cwd = cwd:gsub("file://", "")
+  if cwd:sub(1, #wezterm.hostname()) == wezterm.hostname() then
+    cwd = cwd:sub(#wezterm.hostname() + 1)
+    cwd = cwd:gsub(wezterm.home_dir, "~")
+  else
+    cwd = cwd:gsub(wezterm.home_dir, ":~")
+  end
   cwd = " " .. cwd
   -- If there are more than 2 directors, truncate the middle
   -- ones.
