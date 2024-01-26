@@ -253,15 +253,18 @@ def smoke-test-ligatures [] {
 }
 
 def scan-help [path] {
-  cd $path
-  ls | each {|file|
+  ls $path | each {|file|
     xdg-open $file.name
-    let name = input $"name ($file.name)> "
-    if ($name != "") {
-      let name = [$name, '.pdf'] | str join
-      mv $file.name $name
-		  gdrive files upload --parent 1e4lapzxcxz3famcloflomw9ixnd-balu $name
+    let base = $file.name | path basename
+    let name = input $"name ($base)> "
+    let name = if ($name == "") {
+      $file.name
+    } else {
+      $name 
     }
+    let name = ($path | path join ([$name, '.pdf'] | str join))
+    mv $file.name $name
+    gdrive files upload --parent "1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" $name
   }
   xdg-open $path
 }
@@ -377,6 +380,10 @@ def add-user-service [service] {
 }
 
 def bw-get-token [name] {
+  let login_check = do { bw login --check } | complete
+  if ($login_check.exit_code != 0) {
+    bw login
+  }
   bw list items --search $name | from json | first | get login | get password
 }
 
@@ -440,7 +447,6 @@ def ykf [] {
   sudo systemctl restart pcscd
 }
 
-
 def nw [name = "", folder = ""] {
   let dev = $nu.home-path | path join "dev"
   let folder = if ($folder == "") {
@@ -487,17 +493,17 @@ def "k ns" [namespace] {
 }
 
 def "k bash" [pod] {
-  let pod = k get po -o name | lines | find cli-tools | first
+  let pod = k get po -o name | lines | find $pod | first
   k exec -it $pod -- bash
 }
 
 def "k sh" [pod] {
-  let pod = k get po -o name | lines | find cli-tools | first
+  let pod = k get po -o name | lines | find $pod | first
   k exec -it $pod -- sh
 }
 
 def "k run" [pod, ...args] {
-  let pod = k get po -o name | lines | find cli-tools | first
+  let pod = k get po -o name | lines | find $pod | first
   k exec -it $pod -- $args
 }
 

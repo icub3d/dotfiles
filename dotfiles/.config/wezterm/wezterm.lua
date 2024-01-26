@@ -312,7 +312,7 @@ end
 
 table.insert(launch_menu, {
   label = "nw (new workspace)",
-  args = { "nu", "-c", "nw" },
+  args = { "nu", "-l", "-c", "nw" },
 })
 
 config.launch_menu = launch_menu
