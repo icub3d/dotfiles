@@ -367,9 +367,7 @@ def iommu [] {
 }
 
 def add-group [group] {
-  if ((open /etc/group | find $group | length) == 0) {
-    sudo groupadd $group
-  }
+  sudo usermod -aG $group $env.USER
 }
 
 def add-service [service] {
