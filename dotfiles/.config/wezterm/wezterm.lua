@@ -431,18 +431,11 @@ wezterm.on('update-status', function(window, pane)
     return
   end
 
-  local gwd = cwd:gsub("file://", "")
-  if gwd:sub(1, #wezterm.hostname()) == wezterm.hostname() then
-    gwd = gwd:sub(#wezterm.hostname() + 1)
-  end
-
-
-
   local entries = {}
   local cur_bg = colors.dark_gray
 
   -- git information
-  local branch = git_branch_name(gwd)
+  local branch = git_branch_name(cwd.path)
 
   if branch then
     branch = " " .. branch
@@ -455,7 +448,7 @@ wezterm.on('update-status', function(window, pane)
     cur_bg = colors.violet
   end
 
-  local status = git_status(gwd)
+  local status = git_status(cwd.path)
   if status then
     status = " " .. status
     table.insert(entries, { Background = { Color = cur_bg } })
@@ -468,14 +461,11 @@ wezterm.on('update-status', function(window, pane)
   end
 
   -- After we've done the git stuff, replace the home dir with ~
-  cwd = cwd:gsub("file://", "")
-  if cwd:sub(1, #wezterm.hostname()) == wezterm.hostname() then
-    cwd = cwd:sub(#wezterm.hostname() + 1)
+  local path = cwd
+  cwd = cwd.path
+  if cwd:gmatch(wezterm.home_dir) then
     cwd = cwd:gsub(wezterm.home_dir, "~")
-  else
-    cwd = cwd:gsub(wezterm.home_dir, ":~")
   end
-  cwd = " " .. cwd
   -- If there are more than 2 directors, truncate the middle
   -- ones.
   local dirs = {}
@@ -489,6 +479,13 @@ wezterm.on('update-status', function(window, pane)
     end
     cwd = dirs[1] .. "/" .. middle .. dirs[#dirs]
   end
+
+  -- Add the host if it's not our host.
+  if path.host ~= wezterm.hostname() then
+    cwd = path.host .. ":" .. cwd
+  end
+  cwd = " " .. cwd
+
   table.insert(entries, { Background = { Color = cur_bg } })
   table.insert(entries, { Foreground = { Color = colors.blue } })
   table.insert(entries, { Text = SOLID_LEFT_ARROW })
