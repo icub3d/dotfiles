@@ -104,5 +104,4 @@ return function()
   lspconfig.jdtls.setup(default)
   lspconfig.cssls.setup(default)
   lspconfig.html.setup(default)
-  lspconfig.solargraph.setup(default)
 end
