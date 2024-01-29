@@ -140,13 +140,14 @@ def update-system [] {
   let packages = $selected_packages | each {|p|
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
-  } | flatten | filter { |p| not $p in $installed }
+  } | flatten
+  let needed = $packages | filter { |p| not $p in $installed }
 
-  echo $"missing packages: ($packages)"
+  echo $"missing packages: ($needed)"
 
   # install packages
   do -i {
-    yes | paru -Syu --needed --noconfirm ...$packages
+    yes | paru -Syu --needed --noconfirm ...$needed
   }
   
   # run the post install scripts
