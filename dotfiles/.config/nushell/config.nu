@@ -141,7 +141,7 @@ def update-system [] {
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
   } | flatten
-  let needed = $packages | filter { |p| not $p in $installed }
+  let needed = $packages | filter { |p| not $p in ...$installed }
 
   echo $"missing packages: ($needed)"
 
