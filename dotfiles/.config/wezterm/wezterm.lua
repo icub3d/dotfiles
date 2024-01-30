@@ -74,30 +74,28 @@ local git_status = function(cwd)
   return result.sub(result, 1, -4)
 end
 
-local spawn_workspace = function(name, cwd, title, text, tabs)
+local spawn_workspace = function(name, cwd, title, args, tabs)
   -- create the new workspace
   local tab, pane, window = mux.spawn_window({
     workspace = name,
     cwd = cwd,
+    args = args,
   })
 
   -- Set values if we are given them.
   if title ~= "" and title ~= nil then
     tab:set_title(title)
   end
-  if text ~= "" and text ~= nil then
-    pane:send_text(text .. "\n")
-  end
 
   -- Do the same for each additional tab
   for _, tab_info in ipairs(tabs) do
-    local new_tab, _, _ = window:spawn_tab {}
+    local new_tab, _, _ = window:spawn_tab {
+      cwd = cwd,
+      args = tab_info.args,
+    }
 
     if tab_info.title ~= "" and tab_info.title ~= nil then
       new_tab:set_title(tab_info.title)
-    end
-    if tab_info.text ~= "" and tab_info.text ~= nil then
-      new_tab:send_text(tab_info.text .. "\n")
     end
   end
 
@@ -323,14 +321,14 @@ wezterm.on('gui-startup', function(_)
   local _, _, window = spawn_workspace("home",
     wezterm.home_dir,
     "nu",
-    "",
+    nil,
     {})
 
   -- dotfiles
   spawn_workspace("dot",
     wezterm.home_dir .. '/dev/dotfiles',
     "nv",
-    "v .",
+    { "nu", "-e", "v ." },
     { { title = "nu", } })
 
   -- work stuff
@@ -338,12 +336,12 @@ wezterm.on('gui-startup', function(_)
     spawn_workspace("oti",
       wezterm.home_dir .. '/dev/oti-azure',
       "nv",
-      "v .",
+      { "nu", "-e", "v ." },
       { { title = "logs", }, { title = "nu", } })
     spawn_workspace("otvm",
       wezterm.home_dir .. '/dev/edi-oti-otvm_containerized',
       "nv",
-      "v .",
+      { "nu", "-e", "v ." },
       { { title = "logs", }, { title = "nu", } })
   end
 
@@ -518,7 +516,7 @@ wezterm.on("user-var-changed", function(window, pane, name, value)
     local _, new_pane, _ = spawn_workspace(window_name,
       new_cwd,
       "nv",
-      "v .",
+      { "nu", "-e", "v ." },
       { { title = "nu", } })
     window:perform_action(
       wezterm.action.SwitchToWorkspace {
