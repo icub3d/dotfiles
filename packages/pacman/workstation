@@ -22,7 +22,10 @@ inkscape
 john
 libfido2
 libvterm
-obs-studio-amf
+obs-studio
+obs-vkcapture
+obs-gstreamer
+gstreamer-vaapi
 octave
 opensc
 openshot

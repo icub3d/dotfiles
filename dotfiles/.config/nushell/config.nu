@@ -2,18 +2,18 @@
 let paths = [
   # bin paths
   "/usr/local/bin",
-  ($nu.home-path | path join "/bin"),
-  ($nu.home-path | path join "/.local/bin"),
+  ($nu.home-path | path join "bin"),
+  ($nu.home-path | path join ".local/bin"),
   
   # rust
   "/usr/local/cargo/bin",
-  ($nu.home-path | path join "/.cargo/bin"),
+  ($nu.home-path | path join ".cargo/bin"),
   
   # npm
-  ($nu.home-path | path join "/.npm-packages/bin"),
+  ($nu.home-path | path join ".npm-packages/bin"),
   
   # go
-  ($nu.home-path | path join "/go/bin"),
+  ($nu.home-path | path join "go/bin"),
   "/usr/local/go/bin",
   "/usr/lib/go/bin",
 ];
