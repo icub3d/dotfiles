@@ -22,8 +22,8 @@
         (url-retrieve-synchronously
          "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)2
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
+		 (goto-char (point-max))
+		 (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 
@@ -78,20 +78,21 @@
  version-control t)           ; use versioned backups
 
 ;; copy/paste with clipboard (wayland specific)
-(setq wl-copy-process nil)
-(defun wl-copy (text)
-  (setq wl-copy-process (make-process :name "wl-copy"
-									  :buffer nil
-									  :command '("wl-copy" "-f" "-n")
-									  :connection-type 'pipe))
-  (process-send-string wl-copy-process text)
-  (process-send-eof wl-copy-process))
-(defun wl-paste ()
-  (if (and wl-copy-process (process-live-p wl-copy-process))
-	  nil ; should return nil if we're the current paste owner
-	(shell-command-to-string "wl-paste -n | tr -d \r")))
-(setq interprogram-cut-function 'wl-copy)
-(setq interprogram-paste-function 'wl-paste)
+(when my-gui
+  (setq wl-copy-process nil)
+  (defun wl-copy (text)
+	(setq wl-copy-process (make-process :name "wl-copy"
+										:buffer nil
+										:command '("wl-copy" "-f" "-n")
+										:connection-type 'pipe))
+	(process-send-string wl-copy-process text)
+	(process-send-eof wl-copy-process))
+  (defun wl-paste ()
+	(if (and wl-copy-process (process-live-p wl-copy-process))
+		nil ; should return nil if we're the current paste owner
+	  (shell-command-to-string "wl-paste -n | tr -d \r")))
+  (setq interprogram-cut-function 'wl-copy)
+  (setq interprogram-paste-function 'wl-paste))
 
 ;; general bindings
 (global-set-key (kbd "C-c e r") 'eval-region)
@@ -146,6 +147,15 @@
 							 (nil . (telephone-line-major-mode-segment))
 							 (accent . (telephone-line-airline-position-segment))))
   (telephone-line-mode 1))
+
+;; multiple cursors
+(use-package multiple-cursors
+  :ensure t
+  :straight t
+  :bind (("C-c m c" . mc/edit-lines)
+		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m p" . mc/mark-previous-like-this)
+		 ("C-c m a" . mc/mark-all-like-this)))
 
 ;; rainbow colors
 (use-package rainbow-mode
@@ -216,81 +226,6 @@
   :config
   (global-command-log-mode))
 
-;; flycheck
-(use-package flycheck
-  :diminish
-  :ensure t
-  :straight t)
-(use-package flycheck-status-emoji
-  :diminish
-  :ensure t
-  :straight t
-  :after flycheck
-  :config
-  (flycheck-status-emoji-mode))
-
-;; company
-(use-package company
-  :ensure t
-  :straight t
-  :diminish
-  :bind (:map company-active-map
-              ("C-n" . company-select-next)
-              ("C-p" . company-select-previous))
-  :config
-  (setq company-idle-delay 0.0)
-  (global-company-mode t))
-
-;; yasnippet
-(use-package yasnippet
-  :ensure t
-  :straight t
-  :diminish yas-minor-mode
-  :config
-  (setq
-   yas-verbosity 1
-   yas-wrap-around-region t)
-  (yas-global-mode))
-
-(use-package yasnippet-snippets
-  :straight t
-  :ensure t)
-
-;; multiple cursors
-(use-package multiple-cursors
-  :ensure t
-  :straight t
-  :bind (("C-c m c" . mc/edit-lines)
-		 ("C-c m n" . mc/mark-next-like-this)
-		 ("C-c m p" . mc/mark-previous-like-this)
-		 ("C-c m a" . mc/mark-all-like-this)))
-
-;; copilot
-(use-package copilot
-  :ensure t
-  :init
-  (add-hook 'prog-mode-hook 'copilot-mode)
-  :diminish
-  :config
-  (setq copilot-max-char 1000000)
-  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
-  (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
-  (define-key copilot-completion-map (kbd "M-RET") 'copilot-accept-completion-by-line)  
-  :straight (:host github :repo "zerolfx/copilot.el"
-                   :files ("dist" "*.el")))
-
-;; ellama
-(use-package ellama
-  :straight t
-  :config
-  (global-set-key (kbd "M-0") 'ellama-chat))
-
-;; ;; chatgpt
-;; (use-package shell-maker
-;;   :ensure t
-;;   :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
 
 ;; ripgrep
 (use-package rg
@@ -298,16 +233,8 @@
   :straight t
   :config
   (setq rg-command-line-flags
-   '("--hidden" "--glob" "!.git"))
+		'("--hidden" "--glob" "!.git"))
   (rg-enable-default-bindings))
-
-;; elcord
-(use-package elcord
-  :ensure t
-  :straight t
-  :config
-  (when (not (file-exists-p "~/.atwork"))
-	(elcord-mode)))
 
 ;; treemacs
 (use-package treemacs
@@ -345,477 +272,555 @@
 ;; 													  (insert-file-contents file-path)
 ;; 													  (buffer-string)))))))
 
-;; lsp-mode
-(use-package lsp-mode
-  :ensure t
-  :straight t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :config
-  (setq lsp-prefer-flymake nil)
-  :commands (lsp lsp-mode lsp-deferred))
+(when my-dev
+  ;; flycheck
+  (use-package flycheck
+	:diminish
+	:ensure t
+	:straight t)
+  (use-package flycheck-status-emoji
+	:diminish
+	:ensure t
+	:straight t
+	:after flycheck
+	:config
+	(flycheck-status-emoji-mode))
 
-(use-package lsp-ui
-  :ensure t
-  :straight t
-  :commands lsp-ui-mode)
+  ;; company
+  (use-package company
+	:ensure t
+	:straight t
+	:diminish
+	:bind (:map company-active-map
+				("C-n" . company-select-next)
+				("C-p" . company-select-previous))
+	:config
+	(setq company-idle-delay 0.0)
+	(global-company-mode t))
 
-(use-package lsp-ivy
-  :ensure t
-  :straight t)
+  ;; yasnippet
+  (use-package yasnippet
+	:ensure t
+	:straight t
+	:diminish yas-minor-mode
+	:config
+	(setq
+	 yas-verbosity 1
+	 yas-wrap-around-region t)
+	(yas-global-mode))
 
-;; lisp / slime
-(use-package slime
-  :ensure t
-  :straight t
-  :config
-  (setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq slime-contribs '(slime-fancy)))
+  (use-package yasnippet-snippets
+	:straight t
+	:ensure t)
 
-;; haskell
-;; (use-package lsp-haskell :ensure t :straight t)
-;; (use-package haskell-mode
-;;   :ensure t
-;;   :straight t
-;;   :mode "\\.hs\\'"
-;;   :bind (:map haskell-mode-map
-;; 			  ("M-j" . lsp-ui-imenu)
-;; 			  ("M-?" . lsp-find-references)
-;; 			  ("M-g l" . flycheck-list-errors)
-;; 			  ("M-g a" . lsp-execute-code-action)
-;; 			  ("M-g r" . lsp-rename)
-;; 			  ("M-g q" . lsp-workspace-restart)
-;; 			  ("M-g Q" . lsp-workspace-shutdown))
-;;   :hook ((haskell-mode . lsp-deferred)
-;; 		 (haskell-mode . my/haskell-config-hooks)
-;; 		 (haskell-mode . my/haskell-save-hooks))
-;;   :config
-;;   (defun my/haskell-config-hooks ())
-;;   (defun my/haskell-save-hooks ()
-;; 	"save hooks"
-;; 	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; copilot
+  (use-package copilot
+	:ensure t
+	:init
+	(add-hook 'prog-mode-hook 'copilot-mode)
+	:diminish
+	:config
+	(setq copilot-max-char 1000000)
+	(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+	(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+	(define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
+	(define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
+	(define-key copilot-completion-map (kbd "M-RET") 'copilot-accept-completion-by-line)  
+	:straight (:host github :repo "zerolfx/copilot.el"
+					 :files ("dist" "*.el")))
 
-;; svelte
-(use-package svelte-mode
-  :ensure t
-  :straight t
-  :mode "\\.svelte\\'"
-  :bind (:map svelte-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((svelte-mode . lsp-deferred)
-		 (svelte-mode . my/svelte-config-hooks)
-		 (svelte-mode . my/svelte-save-hooks))
-  :config
-  (defun my/svelte-config-hooks ())
-  (defun my/svelte-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; ellama
+  (use-package ellama
+	:straight t
+	:config
+	(global-set-key (kbd "M-0") 'ellama-chat))
 
-;; Go
-(use-package gotest :ensure t :straight t)
-(use-package go-mode
-  :ensure t
-  :straight t
-  :mode "\\.go\\'"
-  :bind (:map go-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g f" . go-test-current-file)
-			  ("M-g b" . go-test-current-benchmark)
-			  ("M-g p" . go-test-current-project)
-			  ("M-g t" . go-test-current-test)
-			  ("M-g R" . go-run)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((go-mode . lsp-deferred)
-		 (go-mode . my/go-config-hooks)
-		 (go-mode . my/go-save-hooks))
-  :config
-  (defun my/go-config-hooks ()
-    (setq tab-width 4)
-    )
-  (defun my/go-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
-    (add-hook 'before-save-hook #'lsp-organize-imports t t)))
+  ;; ;; chatgpt
+  ;; (use-package shell-maker
+  ;;   :ensure t
+  ;;   :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
 
-;; Rust
-(use-package rustic
-  :ensure t
-  :straight t
-  :hook ((rustic-mode . lsp-deferred)
-		 (rustic-mode . my/rustic-mode-hook))
-  :bind (:map rustic-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("C-c C-c C-e" . rustic-cargo-run-release)
-			  ("M-g b" . rustic-cargo-bench)
-			  ("M-g t" . rustic-cargo-test)
-			  ("M-g A" . rustic-cargo-add)
-			  ("M-g f" . leptos-format-buffer)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown)
-			  ("M-g s" . lsp-rust-analyzer-status))
-  :config
-  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
-  (defun rustic-cargo-run-release () (interactive) (rustic-cargo-run-command "-r"))
-  (defun leptos-format-buffer ()
-	(let ((temp-point (point))
-		  (temp-start (window-start)))
-	  (shell-command-on-region
-	   (point-min)
-	   (point-max)
-	   "fish -c leptosfmt_helper"
-	   nil
-	   t)
-	  (goto-char (point-min))
-	  (set-window-start (selected-window) temp-start)
-	  (goto-char temp-point)))
-  (defun my/rustic-mode-hook ()
-	(when buffer-file-name
-      (setq-local buffer-save-without-query t))
-	(add-hook 'before-save-hook 'leptos-format-buffer t t)
-	(add-hook 'before-save-hook 'lsp-format-buffer t t)))
-
-;; Python
-(use-package pyvenv
-  :ensure t
-  :straight t
-  :config
-  (setq pyvenv-workon ".venv")
-  (pyvenv-tracking-mode 1))
-(use-package python-black
-  :ensure t
-  :straight t
-  :diminish python-black-on-save-mode
-  :after python
-  :hook (python-mode . python-black-on-save-mode))
-(use-package python-pytest :ensure t :straight t)
-(use-package python-mode
-  :hook ((python-mode . lsp-deferred))
-  :bind (:map python-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g t" . python-pytest)
-			  ("M-g f" . python-pytest-file)
-			  ("M-g p" . python-pytest)
-			  ("M-g F" . python-pytest-function)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown)
-			  ("M-g s" . lsp-rust-analyzer-status)))
-
-;; lua
-(use-package lua-mode
-  :ensure t
-  :straight t
-  :mode "\\.lua\\'"
-  :bind (:map lua-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((lua-mode . lsp-deferred)
-		 (lua-mode . my/lua-config-hooks)
-		 (lua-mode . my/lua-save-hooks))
-  :config
-  (defun my/lua-config-hooks ())
-  (defun my/lua-save-hooks ()
-	"save hooks"
-	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
-
-;; Fish
-(use-package fish-mode
-  :ensure t
-  :straight t)
-
-;; Terraform
-(use-package terraform-mode
-  :ensure t
-  :straight t
-  :hook ((terraform-mode . lsp-deferred)
-		 (terraform-mode . my/terraform-save-hooks))
-  :config
-  (defun my/terraform-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; elcord
+  (use-package elcord
+	:ensure t
+	:straight t
+	:config
+	(when (not (file-exists-p "~/.atwork"))
+	  (elcord-mode)))
 
 
-;; markdown
-(use-package markdown-mode
-  :ensure t
-  :straight t)
+  ;; lsp-mode
+  (use-package lsp-mode
+	:ensure t
+	:straight t
+	:init
+	(setq lsp-keymap-prefix "C-c l")
+	:config
+	(setq lsp-prefer-flymake nil)
+	(lsp-register-client
+	 (make-lsp-client :new-connection (lsp-stdio-connection '("nu" "--lsp"))
+					  :major-modes '(nushell-ts-mode)
+					  :server-id 'nushell-ts))
+	(add-to-list 'lsp-language-id-configuration '(nushell-ts-mode . "nushell"))
+	:commands (lsp lsp-mode lsp-deferred))
 
-;; chatgpt
-(use-package shell-maker
-  :ensure t
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+  (use-package lsp-ui
+	:ensure t
+	:straight t
+	:commands lsp-ui-mode)
 
-;; mdlp
-(use-package mdlp-mode
-  :ensure t
-;;  :hook (markdown-mode . mdlp-mode)
-  :straight (:host github :repo "icub3d/mdlp" :files ("mdlp-mode.el"))
-  :config
-  (setq mdlp-github-token (string-trim (f-read-text "~/Documents/ssssh/github-pat"))))
+  (use-package lsp-ivy
+	:ensure t
+	:straight t)
 
-;; grip (for makrdown preview)
-;; (use-package grip-mode
-;;   :ensure t
-;;   :straight t
-;;   :hook ((markdown-mode . grip-mode))
-;;   :config
-;;   (setq grip-github-user "icub3d")
-;;   (setq grip-github-password (f-read-text "~/Documents/ssssh/github-pat"))
-;;   (setq grip-preview-use-webkit t)
-;;   (setq grip-update-after-change nil))
+  ;; lisp / slime
+  (use-package slime
+	:ensure t
+	:straight t
+	:config
+	(setq inferior-lisp-program "/usr/bin/sbcl")
+	(setq slime-contribs '(slime-fancy)))
+
+  ;; haskell
+  ;; (use-package lsp-haskell :ensure t :straight t)
+  ;; (use-package haskell-mode
+  ;;   :ensure t
+  ;;   :straight t
+  ;;   :mode "\\.hs\\'"
+  ;;   :bind (:map haskell-mode-map
+  ;; 			  ("M-j" . lsp-ui-imenu)
+  ;; 			  ("M-?" . lsp-find-references)
+  ;; 			  ("M-g l" . flycheck-list-errors)
+  ;; 			  ("M-g a" . lsp-execute-code-action)
+  ;; 			  ("M-g r" . lsp-rename)
+  ;; 			  ("M-g q" . lsp-workspace-restart)
+  ;; 			  ("M-g Q" . lsp-workspace-shutdown))
+  ;;   :hook ((haskell-mode . lsp-deferred)
+  ;; 		 (haskell-mode . my/haskell-config-hooks)
+  ;; 		 (haskell-mode . my/haskell-save-hooks))
+  ;;   :config
+  ;;   (defun my/haskell-config-hooks ())
+  ;;   (defun my/haskell-save-hooks ()
+  ;; 	"save hooks"
+  ;; 	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+  ;; svelte
+  (use-package svelte-mode
+	:ensure t
+	:straight t
+	:mode "\\.svelte\\'"
+	:bind (:map svelte-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((svelte-mode . lsp-deferred)
+		   (svelte-mode . my/svelte-config-hooks)
+		   (svelte-mode . my/svelte-save-hooks))
+	:config
+	(defun my/svelte-config-hooks ())
+	(defun my/svelte-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+  ;; Go
+  (use-package gotest :ensure t :straight t)
+  (use-package go-mode
+	:ensure t
+	:straight t
+	:mode "\\.go\\'"
+	:bind (:map go-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g f" . go-test-current-file)
+				("M-g b" . go-test-current-benchmark)
+				("M-g p" . go-test-current-project)
+				("M-g t" . go-test-current-test)
+				("M-g R" . go-run)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((go-mode . lsp-deferred)
+		   (go-mode . my/go-config-hooks)
+		   (go-mode . my/go-save-hooks))
+	:config
+	(defun my/go-config-hooks ()
+      (setq tab-width 4)
+      )
+	(defun my/go-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)
+      (add-hook 'before-save-hook #'lsp-organize-imports t t)))
+
+  ;; Rust
+  (use-package rustic
+	:ensure t
+	:straight t
+	:hook ((rustic-mode . lsp-deferred)
+		   (rustic-mode . my/rustic-mode-hook))
+	:bind (:map rustic-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("C-c C-c C-e" . rustic-cargo-run-release)
+				("M-g b" . rustic-cargo-bench)
+				("M-g t" . rustic-cargo-test)
+				("M-g A" . rustic-cargo-add)
+				("M-g f" . leptos-format-buffer)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown)
+				("M-g s" . lsp-rust-analyzer-status))
+	:config
+	(setq lsp-rust-analyzer-cargo-watch-command "clippy")
+	(defun rustic-cargo-run-release () (interactive) (rustic-cargo-run-command "-r"))
+	(defun leptos-format-buffer ()
+	  (let ((temp-point (point))
+			(temp-start (window-start)))
+		(shell-command-on-region
+		 (point-min)
+		 (point-max)
+		 "fish -c leptosfmt_helper"
+		 nil
+		 t)
+		(goto-char (point-min))
+		(set-window-start (selected-window) temp-start)
+		(goto-char temp-point)))
+	(defun my/rustic-mode-hook ()
+	  (when buffer-file-name
+		(setq-local buffer-save-without-query t))
+	  (add-hook 'before-save-hook 'leptos-format-buffer t t)
+	  (add-hook 'before-save-hook 'lsp-format-buffer t t)))
+
+  ;; Python
+  (use-package pyvenv
+	:ensure t
+	:straight t
+	:config
+	(setq pyvenv-workon ".venv")
+	(pyvenv-tracking-mode 1))
+  (use-package python-black
+	:ensure t
+	:straight t
+	:diminish python-black-on-save-mode
+	:after python
+	:hook (python-mode . python-black-on-save-mode))
+  (use-package python-pytest :ensure t :straight t)
+  (use-package python-mode
+	:hook ((python-mode . lsp-deferred))
+	:bind (:map python-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g t" . python-pytest)
+				("M-g f" . python-pytest-file)
+				("M-g p" . python-pytest)
+				("M-g F" . python-pytest-function)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown)
+				("M-g s" . lsp-rust-analyzer-status)))
+
+  ;; lua
+  (use-package lua-mode
+	:ensure t
+	:straight t
+	:mode "\\.lua\\'"
+	:bind (:map lua-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((lua-mode . lsp-deferred)
+		   (lua-mode . my/lua-config-hooks)
+		   (lua-mode . my/lua-save-hooks))
+	:config
+	(defun my/lua-config-hooks ())
+	(defun my/lua-save-hooks ()
+	  "save hooks"
+	  (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+  ;; Terraform
+  (use-package terraform-mode
+	:ensure t
+	:straight t
+	:hook ((terraform-mode . lsp-deferred)
+		   (terraform-mode . my/terraform-save-hooks))
+	:config
+	(defun my/terraform-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+
+  ;; markdown
+  (use-package markdown-mode
+	:ensure t
+	:straight t)
+
+  ;; chatgpt
+  (use-package shell-maker
+	:ensure t
+	:straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
+  ;; mdlp
+  (use-package mdlp-mode
+	:ensure t
+	;;  :hook (markdown-mode . mdlp-mode)
+	:straight (:host github :repo "icub3d/mdlp" :files ("mdlp-mode.el"))
+	:config
+	(setq mdlp-github-token (string-trim (f-read-text "~/Documents/ssssh/github-pat"))))
+
+  ;; grip (for makrdown preview)
+  ;; (use-package grip-mode
+  ;;   :ensure t
+  ;;   :straight t
+  ;;   :hook ((markdown-mode . grip-mode))
+  ;;   :config
+  ;;   (setq grip-github-user "icub3d")
+  ;;   (setq grip-github-password (f-read-text "~/Documents/ssssh/github-pat"))
+  ;;   (setq grip-preview-use-webkit t)
+  ;;   (setq grip-update-after-change nil))
 
 
-;; docker-compose
-(use-package docker-compose-mode
-  :ensure t
-  :straight t)
+  ;; docker-compose
+  (use-package docker-compose-mode
+	:ensure t
+	:straight t)
 
-;; dockerfile
-(use-package dockerfile-mode
-  :ensure t
-  :straight t)
+  ;; dockerfile
+  (use-package dockerfile-mode
+	:ensure t
+	:straight t)
 
-;; yaml
-(use-package yaml-mode
-  :ensure t
-  :straight t
-  :mode "\\.yaml\\'"
-  :mode "\\.yml\\'"
-  :config
-  (defun my/yaml-config-hooks ()
-    (setq tab-width 4))
-  (defun my/yaml-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t))
-  :hook
-  ((yaml-mode . my/yaml-config-hooks)
-   (yaml-mode . my/yaml-save-hooks)
-   (yaml-mode . lsp-deferred)))
+  ;; yaml
+  (use-package yaml-mode
+	:ensure t
+	:straight t
+	:mode "\\.yaml\\'"
+	:mode "\\.yml\\'"
+	:config
+	(defun my/yaml-config-hooks ()
+      (setq tab-width 4))
+	(defun my/yaml-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t))
+	:hook
+	((yaml-mode . my/yaml-config-hooks)
+	 (yaml-mode . my/yaml-save-hooks)
+	 (yaml-mode . lsp-deferred)))
 
-;; Jenkinsfile
-(use-package jenkinsfile-mode
-  :ensure t
-  :straight t)
+  ;; Jenkinsfile
+  (use-package jenkinsfile-mode
+	:ensure t
+	:straight t)
 
-;; js-mode
-(use-package js
-  :ensure nil
-  :straight nil
-  :bind (:map js-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((js-mode . lsp-deferred)
-		 (js-mode . my/js-config-hooks)
-		 (js-mode . my/js-save-hooks))
-  :config
-  (defun my/js-config-hooks ()
-	(setq js-jsx-syntax t))
-  (defun my/js-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; js-mode
+  (use-package js
+	:ensure nil
+	:straight nil
+	:bind (:map js-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((js-mode . lsp-deferred)
+		   (js-mode . my/js-config-hooks)
+		   (js-mode . my/js-save-hooks))
+	:config
+	(defun my/js-config-hooks ()
+	  (setq js-jsx-syntax t))
+	(defun my/js-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
-;; emmet-mode
-(use-package emmet-mode
-  :ensure t
-  :straight t
-  :hook ((mhtml-mode . emmet-mode)
-		 (css-mode . emmet-mode)
-		 (js-mode . emmet-mode)
-		 (typescript-mode . emmet-mode)
-		 (web-mode . emmet-mode)))
+  ;; emmet-mode
+  (use-package emmet-mode
+	:ensure t
+	:straight t
+	:hook ((mhtml-mode . emmet-mode)
+		   (css-mode . emmet-mode)
+		   (js-mode . emmet-mode)
+		   (typescript-mode . emmet-mode)
+		   (web-mode . emmet-mode)))
 
-;; css
-(use-package css-mode
-  :ensure nil
-  :straight (:type built-in)
-  :bind (:map css-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((css-mode . lsp-deferred)
-		 (css-mode . my/css-config-hooks)
-		 (css-mode . my/css-save-hooks))
-  :config
-  (setq lsp-css-lint-unknown-at-rules "ignore")
-  (defun my/css-config-hooks ())
-  (defun my/css-save-hooks ()
-	"save hooks"
-	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; css
+  (use-package css-mode
+	:ensure nil
+	:straight (:type built-in)
+	:bind (:map css-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((css-mode . lsp-deferred)
+		   (css-mode . my/css-config-hooks)
+		   (css-mode . my/css-save-hooks))
+	:config
+	(setq lsp-css-lint-unknown-at-rules "ignore")
+	(defun my/css-config-hooks ())
+	(defun my/css-save-hooks ()
+	  "save hooks"
+	  (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
-;; tailwind
-(use-package lsp-tailwindcss
-  :ensure t
-  :straight (:host github :repo "merrickluo/lsp-tailwindcss"))
+  ;; tailwind
+  (use-package lsp-tailwindcss
+	:ensure t
+	:straight (:host github :repo "merrickluo/lsp-tailwindcss"))
 
-;; html
-(use-package mhtml-mode
-  :ensure nil
-  :straight (:type built-in)
-  :bind (:map html-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((html-mode . lsp-deferred)
-		 (html-mode . my/html-config-hooks)
-		 (html-mode . my/html-save-hooks))
-  :config
-  (defun my/html-config-hooks ())
-  (defun my/html-save-hooks ()
-	(add-hook 'before-save-hook #'lsp-format-buffer t t)))
+  ;; html
+  (use-package mhtml-mode
+	:ensure nil
+	:straight (:type built-in)
+	:bind (:map html-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((html-mode . lsp-deferred)
+		   (html-mode . my/html-config-hooks)
+		   (html-mode . my/html-save-hooks))
+	:config
+	(defun my/html-config-hooks ())
+	(defun my/html-save-hooks ()
+	  (add-hook 'before-save-hook #'lsp-format-buffer t t)))
 
-;; prettier
-(use-package prettier-js
-  :ensure t
-  :straight t
-  :hook ((js-mode . prettier-js-mode)
-		 (typescript-mode . prettier-js-mode)
-		 (css-mode . prettier-js-mode)
-		 (html-mode . prettier-js-mode)
-		 (mhtml-mode . prettier-js-mode)))
+  ;; prettier
+  (use-package prettier-js
+	:ensure t
+	:straight t
+	:hook ((js-mode . prettier-js-mode)
+		   (typescript-mode . prettier-js-mode)
+		   (css-mode . prettier-js-mode)
+		   (html-mode . prettier-js-mode)
+		   (mhtml-mode . prettier-js-mode)))
 
-;; typescript
-(use-package typescript-mode
-  :ensure t
-  :straight t
-  :mode "\\.ts\\'"
-  :mode "\\.tsx\\'"
-  :bind (:map typescript-mode-map
-			  ("M-j" . lsp-ui-imenu)
-			  ("M-?" . lsp-find-references)
-			  ("M-g l" . flycheck-list-errors)
-			  ("M-g a" . lsp-execute-code-action)
-			  ("M-g r" . lsp-rename)
-			  ("M-g q" . lsp-workspace-restart)
-			  ("M-g Q" . lsp-workspace-shutdown))
-  :hook ((typescript-mode . lsp-deferred)
-		 (typescript-mode . my/typescript-config-hooks)
-		 (typescript-mode . my/typescript-save-hooks))
-  :config
-  (defun my/typescript-config-hooks ())
-  (defun my/typescript-save-hooks ()))
+  ;; typescript
+  (use-package typescript-mode
+	:ensure t
+	:straight t
+	:mode "\\.ts\\'"
+	:mode "\\.tsx\\'"
+	:bind (:map typescript-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("M-g l" . flycheck-list-errors)
+				("M-g a" . lsp-execute-code-action)
+				("M-g r" . lsp-rename)
+				("M-g q" . lsp-workspace-restart)
+				("M-g Q" . lsp-workspace-shutdown))
+	:hook ((typescript-mode . lsp-deferred)
+		   (typescript-mode . my/typescript-config-hooks)
+		   (typescript-mode . my/typescript-save-hooks))
+	:config
+	(defun my/typescript-config-hooks ())
+	(defun my/typescript-save-hooks ()))
 
-;; json
-(use-package json-mode
-  :ensure t
-  :straight t
-  :mode "\\.json\\'"
-  :config
-  (defun my/json-config-hooks ()
-    (setq tab-width 4))
-  (defun my/json-save-hooks ()
-    "save hooks"
-    (add-hook 'before-save-hook #'lsp-format-buffer t t))
-  :hook
-  ((json-mode . my/json-config-hooks)
-   (json-mode . my/json-save-hooks)
-   (json-mode . lsp-deferred)))
+  ;; json
+  (use-package json-mode
+	:ensure t
+	:straight t
+	:mode "\\.json\\'"
+	:config
+	(defun my/json-config-hooks ()
+      (setq tab-width 4))
+	(defun my/json-save-hooks ()
+      "save hooks"
+      (add-hook 'before-save-hook #'lsp-format-buffer t t))
+	:hook
+	((json-mode . my/json-config-hooks)
+	 (json-mode . my/json-save-hooks)
+	 (json-mode . lsp-deferred)))
 
-;; dap-mode
-(use-package dap-mode
-  :ensure t
-  :straight t
-  :demand t
-  :bind
-  :bind (:map lsp-mode-map
-			  ("M-g d" . dap-debug)
-			  ("M-g h" . dap-hydra))
-  :bind (:map dap-mode-map
-			  ("<left>" . dap-continue)
-			  ("<right>" . dap-next)
-			  ("<down>" . dap-step-in)
-			  ("<up>" . dap-step-out))
-  :custom
-  (dap-auto-configure-mode t)
-  :config
-  (dap-ui-mode 1)
-  (dap-tooltip-mode 1)
-  (dap-ui-controls-mode 1)
-  
-  ;; chrome
-  (require 'dap-chrome)
-  (setq dap-chrome-debug-program  `("node"
-                                    ,"/home/jmarsh/dev/vscode-chrome-debug/out/src/chromeDebug.js"))
-  ;; firefox
-  (require 'dap-firefox)
-  (dap-firefox-setup)
-  (setq dap-firefox-debug-program  `("node"
-                                     ,"/home/jmarsh/dev/vscode-firefox-debug/dist/adapter.bundle.js"))
-  (defun dap-firefox--populate-start-file-args (conf)
-	"Populate CONF with the required arguments."
-	(-> conf
-		(dap--put-if-absent :dap-server-path dap-firefox-debug-program)
-		(dap--put-if-absent :type "Firefox")
-		(dap--put-if-absent :cwd default-directory)
-		(dap--put-if-absent :name "Firefox Debug")))
-  
-  ;; go
-  (require 'dap-dlv-go)
-  ;; gdb // rust
-  (require 'dap-lldb)
-  (require 'dap-gdb-lldb)
-  (dap-gdb-lldb-setup)
-  ;; python
-  (require 'dap-python)
-  (setq dap-python-debugger 'debugpy))
+  ;; dap-mode
+  (use-package dap-mode
+	:ensure t
+	:straight t
+	:demand t
+	:bind
+	:bind (:map lsp-mode-map
+				("M-g d" . dap-debug)
+				("M-g h" . dap-hydra))
+	:bind (:map dap-mode-map
+				("<left>" . dap-continue)
+				("<right>" . dap-next)
+				("<down>" . dap-step-in)
+				("<up>" . dap-step-out))
+	:custom
+	(dap-auto-configure-mode t)
+	:config
+	(dap-ui-mode 1)
+	(dap-tooltip-mode 1)
+	(dap-ui-controls-mode 1)
+	
+	;; chrome
+	(require 'dap-chrome)
+	(setq dap-chrome-debug-program  `("node"
+                                      ,"/home/jmarsh/dev/vscode-chrome-debug/out/src/chromeDebug.js"))
+	;; firefox
+	(require 'dap-firefox)
+	(dap-firefox-setup)
+	(setq dap-firefox-debug-program  `("node"
+                                       ,"/home/jmarsh/dev/vscode-firefox-debug/dist/adapter.bundle.js"))
+	(defun dap-firefox--populate-start-file-args (conf)
+	  "Populate CONF with the required arguments."
+	  (-> conf
+		  (dap--put-if-absent :dap-server-path dap-firefox-debug-program)
+		  (dap--put-if-absent :type "Firefox")
+		  (dap--put-if-absent :cwd default-directory)
+		  (dap--put-if-absent :name "Firefox Debug")))
+	
+	;; go
+	(require 'dap-dlv-go)
+	;; gdb // rust
+	(require 'dap-lldb)
+	(require 'dap-gdb-lldb)
+	(dap-gdb-lldb-setup)
+	;; python
+	(require 'dap-python)
+	(setq dap-python-debugger 'debugpy))
 
-;; mermaid-mode
-(use-package mermaid-mode
-  :ensure t
-  :straight t
-  :mode "\\.mmd\\'"
-  :mode "\\.mermaid\\'")
+  ;; mermaid-mode
+  (use-package mermaid-mode
+	:ensure t
+	:straight t
+	:mode "\\.mmd\\'"
+	:mode "\\.mermaid\\'")
 
-;; nushell
-(use-package nushell-ts-babel
-  :straight (nushell-ts-babel :type git :host github :repo "herbertjones/nushell-ts-babel"))
-(use-package nushell-ts-mode
-  :straight (nushell-ts-mode :type git :host github :repo "herbertjones/nushell-ts-mode")
-  :mode "\\.nu\\'"
-  :config
-  (require 'nushell-ts-babel)
-  (defun my/nushell/mode-hook ()
-    ;; (corfu-mode 1)
-    ;; (highlight-parentheses-mode 1)
-    (electric-pair-local-mode 1)
-    (electric-indent-local-mode 1))
-  (add-hook 'nushell-ts-mode-hook 'my/nushell/mode-hook))
- 
+  ;; nushell
+  (use-package nushell-ts-babel
+	:straight (nushell-ts-babel :type git :host github :repo "herbertjones/nushell-ts-babel"))
+  (use-package nushell-ts-mode
+	:straight (nushell-ts-mode :type git :host github :repo "herbertjones/nushell-ts-mode")
+	:mode "\\.nu\\'"
+	:config
+	(require 'nushell-ts-babel)
+	(defun my/nushell/mode-hook ()
+      ;; (corfu-mode 1)
+      ;; (highlight-parentheses-mode 1)
+      (electric-pair-local-mode 1)
+      (electric-indent-local-mode 1))
+	(add-hook 'nushell-ts-mode-hook 'my/nushell/mode-hook))
+
+  ) ;; end when my-dev
+
 ;; vim equivalent of ci
 (defun seek-backward-to-char (chr)
   "Seek backwards to a character"

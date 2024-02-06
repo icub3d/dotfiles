@@ -27,6 +27,7 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 # General config
 $env.config = {
   show_banner: false,
+  edit_mode: "vi",
   history: {
     max_size: 100000,
   }
