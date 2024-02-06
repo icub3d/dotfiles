@@ -306,7 +306,7 @@
   :ensure t
   :straight t
   :config
-  (when (not (string= (getenv "ATWORK") "true"))
+  (when (not (file-exists-p "~/.atwork"))
 	(elcord-mode)))
 
 ;; treemacs
@@ -806,11 +806,12 @@
   :straight (nushell-ts-babel :type git :host github :repo "herbertjones/nushell-ts-babel"))
 (use-package nushell-ts-mode
   :straight (nushell-ts-mode :type git :host github :repo "herbertjones/nushell-ts-mode")
+  :mode "\\.nu\\'"
   :config
   (require 'nushell-ts-babel)
   (defun my/nushell/mode-hook ()
     ;; (corfu-mode 1)
-    (highlight-parentheses-mode 1)
+    ;; (highlight-parentheses-mode 1)
     (electric-pair-local-mode 1)
     (electric-indent-local-mode 1))
   (add-hook 'nushell-ts-mode-hook 'my/nushell/mode-hook))
