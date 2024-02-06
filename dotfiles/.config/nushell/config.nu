@@ -27,7 +27,6 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 # General config
 $env.config = {
   show_banner: false,
-  edit_mode: vi,
   history: {
     max_size: 100000,
   }
@@ -127,7 +126,7 @@ def update-system [] {
       return
     }
   }
-  let selected_packages = (open .selected_packages | split words)
+  let selected_packages = (open .selected_packages | str trim | split row " ")
 
   # add multilib if we have selected gaming.
   if ("gaming" in $selected_packages) {
@@ -141,7 +140,7 @@ def update-system [] {
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
   } | flatten
-  let needed = $packages | filter { |p| not $p in ...$installed }
+  let needed = $packages | filter { |p| not $p in $installed }
 
   echo $"missing packages: ($needed)"
 

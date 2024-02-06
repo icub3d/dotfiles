@@ -2,7 +2,7 @@
 $env.DISTRO = (lsb_release -is)
 $env.ARCH = (uname -m)
 $env.HOSTNAME = (hostname)
-$env.EDITOR = "nvim"
+$env.EDITOR = "emacsclient --create-frame --alternate-editor="" -nw"
 $env.ATWORK = if (($nu.home-path | path join ".atwork") | path exists) { "true" } else { "false" }
 
 # bat
@@ -28,7 +28,7 @@ gpg-connect-agent updatestartuptty /bye out+err> /dev/null
 $env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_INSERT = $"(ansi green)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi blue)λ (ansi reset)"
-$env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)λ (ansi reset)"
+$env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)| (ansi reset)"
 $env.PROMPT_COMMAND_RIGHT = {||}
 $env.PROMPT_COMMAND = {|| 
   echo
