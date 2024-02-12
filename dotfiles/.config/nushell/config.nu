@@ -112,7 +112,12 @@ def update-system [] {
     git clone https://aur.archlinux.org/paru.git
     cd paru
     makepkg -si --noconfirm
+  } else {
+    cd ~/dev/paru
+    git pull
+    makepkg -si --noconfirm
   }
+
 
   # check to see if the .selected_packages file is there.
   cd ~/dev/dotfiles
