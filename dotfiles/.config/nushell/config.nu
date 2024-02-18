@@ -19,7 +19,7 @@ let paths = [
 ];
 
 # Load the environment from the system profiles.
-bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not $x.n in $env) or $x.v != ($env | get $x.n) } | where not n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"] | transpose --header-row | into record | load-env
+bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
 
 # Add our custom paths to the PATH variable and clean it up
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
@@ -42,6 +42,7 @@ alias diff = delta
 alias e = emacsclient --create-frame --alternate-editor="" -nw
 alias em = emacs -nw
 alias g = git
+alias gg = lazygit
 alias grep = rg
 alias hexdump = hx
 alias iftop = bandwhich
@@ -80,11 +81,11 @@ def "l" [path = "."] {
 def missing-packages [] {
   let installed = (pacman -Q | lines | parse "{package} {version}" | get package)
   let selected_packages = (open ~/dev/dotfiles/.selected_packages | split words)
-  let missing = $selected_packages | filter { |p| not $p in $installed }
+  let missing = $selected_packages | filter { |p| not ($p in $installed) }
   let packages = $selected_packages | each {|p|
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
-  } | flatten | filter { |p| not $p in $installed }
+  } | flatten | filter { |p| not ($p in $installed) }
 }
 
 def update-system [] {
@@ -146,7 +147,7 @@ def update-system [] {
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
   } | flatten
-  let needed = $packages | filter { |p| not $p in $installed }
+  let needed = $packages | filter { |p| not ($p in $installed) }
 
   echo $"missing packages: ($needed)"
 
