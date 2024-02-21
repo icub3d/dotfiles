@@ -19,7 +19,9 @@ let paths = [
 ];
 
 # Load the environment from the system profiles.
-bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
+if ($env.OS == "linux") {
+  bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
+}
 
 # Add our custom paths to the PATH variable and clean it up
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);

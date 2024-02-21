@@ -26,7 +26,7 @@ local colors = {
 ------------ Helper Functions ------------
 local git_branch_name = function(cwd)
   -- Get our branch name
-  local rev = io.popen("git -C " .. cwd .. " rev-parse --abbrev-ref HEAD")
+  local rev = io.popen("git -C \"" .. cwd .. "\" rev-parse --abbrev-ref HEAD")
   if not rev then
     return false
   end
@@ -48,7 +48,7 @@ end
 
 local git_status = function(cwd)
   -- Get our statuses
-  local status = io.popen("git -C " .. cwd .. " status --porcelain")
+  local status = io.popen("git -C \"" .. cwd .. "\" status --porcelain")
   if not status then
     return false
   end
@@ -277,6 +277,9 @@ config.font = wezterm.font 'JetBrains Mono'
 config.font_size = 17.0
 
 -- Window
+-- config.window_background_image = wezterm.home_dir .. "/Pictures/marshians-green-background-2k.png"
+-- config.window_background_opacity = 0.9
+-- config.text_background_opacity = 0.9
 config.window_padding = {
   left = 0,
   right = 0,
@@ -428,12 +431,16 @@ wezterm.on('update-status', function(window, pane)
   if not cwd then
     return
   end
+  local file_path = cwd.file_path
+  if string.find(file_path, "/%u:/") == 1 then
+    file_path = file_path:sub(2)
+  end
 
   local entries = {}
   local cur_bg = colors.dark_gray
 
   -- git information
-  local branch = git_branch_name(cwd.path)
+  local branch = git_branch_name(file_path)
 
   if branch then
     branch = " " .. branch
@@ -446,7 +453,7 @@ wezterm.on('update-status', function(window, pane)
     cur_bg = colors.violet
   end
 
-  local status = git_status(cwd.path)
+  local status = git_status(file_path)
   if status then
     status = " " .. status
     table.insert(entries, { Background = { Color = cur_bg } })
@@ -479,7 +486,7 @@ wezterm.on('update-status', function(window, pane)
   end
 
   -- Add the host if it's not our host.
-  if path.host ~= wezterm.hostname() then
+  if path.host ~= nil and path.host ~= wezterm.hostname() then
     cwd = path.host .. ":" .. cwd
   end
   cwd = " " .. cwd

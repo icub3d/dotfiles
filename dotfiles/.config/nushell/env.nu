@@ -1,6 +1,7 @@
 # standard variables
-$env.DISTRO = (lsb_release -is)
-$env.ARCH = (uname -m)
+$env.OS = $nu.os-info.name
+$env.DISTRO = if ($env.OS == "linux") { (lsb_release -is) } else { "windows" }
+$env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (hostname)
 $env.EDITOR = "nvim"
 $env.ATWORK = if (($nu.home-path | path join ".atwork") | path exists) { "true" } else { "false" }
@@ -20,9 +21,11 @@ mkdir ($env.NPM_PACKAGES | path join "bin")
 $env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
 
 # Yubikey
-$env.GPG_TTY = (tty)
+$env.GPG_TTY = if ($env.OS == "linux") { (tty) } else { "" }
 $env.SSH_AUTH_SOCK = $"/run/user/(id -u)/gnupg/S.gpg-agent.ssh"
-gpg-connect-agent updatestartuptty /bye out+err> /dev/null
+if ($env.OS == "linux") {
+  gpg-connect-agent updatestartuptty /bye out+err> /dev/null
+}
 
 # Prompt
 $env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
