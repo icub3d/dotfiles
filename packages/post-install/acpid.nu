@@ -1,1 +1,3 @@
-add-service "acpid"
+do -i {
+  add-service "acpid"
+}

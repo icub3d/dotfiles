@@ -1,2 +1,4 @@
-add-group docker
-add-service docker
+do -i {
+  add-group docker
+  add-service docker
+}

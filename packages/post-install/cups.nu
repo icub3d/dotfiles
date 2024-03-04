@@ -1,1 +1,3 @@
-add-service cups
+do -i {
+  add-service cups
+}

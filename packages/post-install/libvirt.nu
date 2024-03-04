@@ -1,2 +1,4 @@
-add-group libvirt
-add-service libvirtd
+do -i {
+  add-group libvirt
+  add-service libvirtd
+}

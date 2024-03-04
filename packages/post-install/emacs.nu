@@ -1,1 +1,3 @@
-systemctl enable --user --now emacs
+do -i {
+  systemctl enable --user --now emacs
+}

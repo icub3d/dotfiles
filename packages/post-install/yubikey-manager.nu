@@ -1,1 +1,3 @@
-add-service pcscd
+do -i {
+  add-service pcscd
+}

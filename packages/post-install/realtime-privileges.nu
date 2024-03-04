@@ -1,1 +1,3 @@
-add-group realtime
+do -i {
+  add-group realtime
+}

@@ -162,14 +162,18 @@ def update-system [] {
   for package in $packages {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
-      nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
+      do -i {
+        nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
+      }
     }
   }
 
   for package in $selected_packages {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
-      nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
+      do -i {
+        nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
+      }
     }
   }
 
