@@ -3,25 +3,9 @@ local wezterm = require 'wezterm'
 local mux = wezterm.mux
 local act = wezterm.action
 
--- Colors --
-local colors = {
-  black = '#19181a',
-  light_black = '#221f22',
-  background = '#2d2a2e',
-  darker_gray = '#403e41',
-  dark_gray = '#5b595c',
-  gray = '#727072',
-  light_gray = '#939293',
-  ligher_gray = '#c1c0c0',
-  white = '#fcfcfa',
-  blue = '#78dce8',
-  green = '#a9dc76',
-  violet = '#ab9df2',
-  orange = '#fc9867',
-  red = '#ff6188',
-  yellow = '#ffd866',
-}
 
+-- Colors --
+local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
 
 ------------ Helper Functions ------------
 local git_branch_name = function(cwd)
@@ -226,45 +210,8 @@ for i = 0, 9 do
   })
 end
 
--- Color Palette - Monokai Pro
-config.colors = {
-  background = colors.background,
-  foreground = colors.white,
-  cursor_bg = colors.white,
-  cursor_fg = colors.background,
-  cursor_border = colors.lighter_gray,
-  selection_fg = colors.darker_gray,
-  selection_bg = colors.white,
-  split = colors.lighter_gray,
-  ansi = {
-    colors.darker_gray,
-    colors.red,
-    colors.green,
-    colors.orange,
-    colors.blue,
-    colors.violet,
-    colors.blue,
-    colors.white,
-  },
-  brights = {
-    colors.gray,
-    colors.red,
-    colors.green,
-    colors.orange,
-    colors.blue,
-    colors.violet,
-    colors.blue,
-    colors.white,
-  },
-  tab_bar = {
-    background = colors.dark_gray,
-    new_tab = {
-      bg_color = colors.dark_gray,
-      fg_color = colors.green,
-      intensity = 'Bold',
-    }
-  },
-}
+-- Color Palette
+config.color_scheme = "Catppuccin Mocha"
 
 -- Don't darken inactive panes
 config.inactive_pane_hsb = {
@@ -291,12 +238,12 @@ config.window_frame = {
     family = "JetBrains Mono",
   },
   font_size = 14.0,
-  active_titlebar_bg = colors.background,
-  inactive_titlebar_bg = colors.background,
-  button_bg = colors.background,
-  button_fg = colors.green,
-  button_hover_fg = colors.red,
-  button_hover_bg = colors.light_black
+  active_titlebar_bg = scheme.background,
+  inactive_titlebar_bg = scheme.background,
+  button_bg = scheme.background,
+  button_fg = scheme.ansi[3],
+  button_hover_fg = scheme.background,
+  button_hover_bg = scheme.ansi[3]
 }
 config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
@@ -361,15 +308,15 @@ local SOLID_RIGHT_ARROW = ' '
 wezterm.on(
   'format-tab-title',
   function(tab, tabs, _, _, hover, max_width)
-    local edge_background = colors.dark_gray
-    local background = colors.blue
-    local foreground = colors.background
+    local edge_background = scheme.cursor_fg
+    local background = scheme.ansi[7]
+    local foreground = scheme.cursor_fg
     if tab.is_active then
-      background = colors.orange
-      foreground = colors.background
+      background = scheme.indexed[16]
+      foreground = scheme.cursor_fg
     elseif hover then
-      background = colors.red
-      foreground = colors.background
+      background = scheme.ansi[2]
+      foreground = scheme.cursor_fg
     end
 
     local edge_foreground = background
@@ -410,17 +357,17 @@ wezterm.on('update-status', function(window, pane)
   workspace = workspace .. " "
 
   local left_format = wezterm.format({
-    { Foreground = { Color = colors.background } },
-    { Background = { Color = colors.red } },
+    { Foreground = { Color = scheme.cursor_fg } },
+    { Background = { Color = scheme.ansi[2] } },
     { Text = name },
-    { Foreground = { Color = colors.red } },
-    { Background = { Color = colors.green } },
+    { Foreground = { Color = scheme.ansi[2] } },
+    { Background = { Color = scheme.ansi[3] } },
     { Text = SOLID_RIGHT_ARROW },
-    { Foreground = { Color = colors.background } },
-    { Background = { Color = colors.green } },
+    { Foreground = { Color = scheme.cursor_fg } },
+    { Background = { Color = scheme.ansi[3] } },
     { Text = workspace },
-    { Foreground = { Color = colors.green } },
-    { Background = { Color = colors.dark_gray } },
+    { Foreground = { Color = scheme.ansi[3] } },
+    { Background = { Color = scheme.cursor_fg } },
     { Text = SOLID_RIGHT_ARROW },
 
   })
@@ -437,7 +384,7 @@ wezterm.on('update-status', function(window, pane)
   end
 
   local entries = {}
-  local cur_bg = colors.dark_gray
+  local cur_bg = scheme.cursor_fg
 
   -- git information
   local branch = git_branch_name(file_path)
@@ -445,24 +392,24 @@ wezterm.on('update-status', function(window, pane)
   if branch then
     branch = " " .. branch
     table.insert(entries, { Background = { Color = cur_bg } })
-    table.insert(entries, { Foreground = { Color = colors.violet } })
+    table.insert(entries, { Foreground = { Color = scheme.ansi[5] } })
     table.insert(entries, { Text = SOLID_LEFT_ARROW })
-    table.insert(entries, { Background = { Color = colors.violet } })
-    table.insert(entries, { Foreground = { Color = colors.background } })
+    table.insert(entries, { Background = { Color = scheme.ansi[5] } })
+    table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
     table.insert(entries, { Text = branch })
-    cur_bg = colors.violet
+    cur_bg = scheme.ansi[5]
   end
 
   local status = git_status(file_path)
   if status then
     status = " " .. status
     table.insert(entries, { Background = { Color = cur_bg } })
-    table.insert(entries, { Foreground = { Color = colors.yellow } })
+    table.insert(entries, { Foreground = { Color = scheme.ansi[4] } })
     table.insert(entries, { Text = SOLID_LEFT_ARROW })
-    table.insert(entries, { Background = { Color = colors.yellow } })
-    table.insert(entries, { Foreground = { Color = colors.background } })
+    table.insert(entries, { Background = { Color = scheme.ansi[4] } })
+    table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
     table.insert(entries, { Text = status })
-    cur_bg = colors.yellow
+    cur_bg = scheme.ansi[4]
   end
 
   -- After we've done the git stuff, replace the home dir with ~
@@ -492,10 +439,10 @@ wezterm.on('update-status', function(window, pane)
   cwd = " " .. cwd
 
   table.insert(entries, { Background = { Color = cur_bg } })
-  table.insert(entries, { Foreground = { Color = colors.blue } })
+  table.insert(entries, { Foreground = { Color = scheme.ansi[7] } })
   table.insert(entries, { Text = SOLID_LEFT_ARROW })
-  table.insert(entries, { Background = { Color = colors.blue } })
-  table.insert(entries, { Foreground = { Color = colors.background } })
+  table.insert(entries, { Background = { Color = scheme.ansi[7] } })
+  table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
   table.insert(entries, { Text = cwd })
 
   local right_format = wezterm.format(entries)

@@ -66,6 +66,31 @@ local plugins = {
     config = true,
   },
 
+  -- colorscheme: monokai-pro
+  -- {
+  --   "loctvl842/monokai-pro.nvim",
+  --   priority = 1000,
+  --   lazy = false,
+  --   init = function()
+  --     require("monokai-pro").setup()
+  --     vim.cmd.colorscheme("monokai-pro")
+  --   end,
+  -- },
+
+  -- colorscheme: catppucin
+  {
+    "catppuccin/nvim",
+    name = "catppucin",
+    priority = 1000,
+    lazy = false,
+    init = function()
+      require("catppuccin").setup({
+        flavour = "mocha",
+      })
+      vim.cmd.colorscheme("catppuccin")
+    end,
+  },
+
   -- lua line
   {
     'nvim-lualine/lualine.nvim',
@@ -75,40 +100,9 @@ local plugins = {
       'neovim/nvim-lspconfig',
     },
     config = function()
-      local colors = {
-        dark_gray = '#403E41',
-        black     = '#221f22',
-        gray      = '#c1c0c0',
-        white     = '#fcfcfa',
-        cyan      = '#78dce8',
-        green     = '#a9dc76',
-        orange    = '#fc9867',
-        pink      = '#ff6188',
-        red       = '#ff6188',
-        yellow    = '#ffd866',
-      }
-
-      local my_theme = {
-        normal = {
-          a = { fg = colors.black, bg = colors.cyan, gui = 'bold' },
-          b = { fg = colors.white, bg = colors.dark_gray },
-          c = { fg = colors.orange, bg = colors.black },
-          x = { fg = colors.white, bg = colors.black },
-          y = { fg = colors.white, bg = colors.dark_gray },
-          z = { fg = colors.black, bg = colors.red },
-        },
-        insert = { a = { fg = colors.black, bg = colors.green, gui = 'bold' } },
-        visual = { a = { fg = colors.black, bg = colors.yellow, gui = 'bold' } },
-        replace = { a = { fg = colors.black, bg = colors.red, gui = 'bold' } },
-        inactive = {
-          a = { fg = colors.pink, bg = colors.black, gui = 'bold' },
-          b = { fg = colors.white, bg = colors.pink },
-          c = { fg = colors.gray, bg = colors.black },
-        },
-      }
       local navic = require('nvim-navic')
       require('lualine').setup({
-        options = { theme = my_theme },
+        options = { theme = 'catppuccin' },
         extensions = { 'nvim-tree' },
         sections = {
           lualine_a = { 'mode' },
@@ -136,46 +130,6 @@ local plugins = {
         }
       })
     end,
-  },
-
-
-  -- monokai theme
-  {
-    'tanvirtin/monokai.nvim',
-    lazy = false,
-    priotiy = 1000,
-    init = function()
-      local monokai = require('monokai')
-      monokai.setup {
-        palette = {
-          base0 = '#222426',
-          base1 = '#211F22',
-          base2 = '#2d2a2e',
-          base3 = '#5b595c',
-          base4 = '#333842',
-          base5 = '#4d5154',
-          base6 = '#72696A',
-          base7 = '#fcfcfa',
-          base8 = '#e3e3e1',
-          border = '#A1B5B1',
-          brown = '#504945',
-          white = '#FFF1F3',
-          grey = '#72696A',
-          black = '#000000',
-          pink = '#FF6188',
-          green = '#A9DC76',
-          aqua = '#78DCE8',
-          yellow = '#FFD866',
-          orange = '#FC9867',
-          purple = '#AB9DF2',
-          red = '#ff6188',
-          diff_add = '#3d5213',
-          diff_remove = '#4a0f23',
-          diff_change = '#27406b',
-          diff_text = '#23324d',
-        }
-      }
-    end
   },
 
   -- auto complete
@@ -258,7 +212,7 @@ local plugins = {
   -- go tools
   {
     'ray-x/go.nvim',
-    config = function() require('go').setup() end,
+    config = function() require('go').setup({}) end,
     keys = {
       { '<leader>cr', ":GoCoverage<CR>",    mode = 'n', noremap = true, desc = "[G]o [C]overage" },
       { '<leader>ct', ":GoCoverage -t<CR>", mode = 'n', noremap = true, desc = "[G]o -[t] Coverage" },

@@ -87,6 +87,13 @@ return function()
     on_attach = on_attach,
     settings = {
       ['rust-analyzer'] = {
+        -- procMacro = {
+        --   ignored = {
+        --     leptos_macro = {
+        --       "server",
+        --     },
+        --   },
+        -- },
         checkOnSave = {
           allFeatures = true,
           overrideCommand = {

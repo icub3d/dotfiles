@@ -20,11 +20,12 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action  'susp
 # gsettings set org.gnome.settings-daemon.plugins.power lid-close-suspend-with-external-monitor 'false'
 # gsettings set org.gnome.settings-daemon.plugins.power lid-close-battery-action 'suspend'
 
+dconf write /org/gnome/shell/extensions/user-theme/name 'Catppuccin-Mocha-Standard-Green-Dark'
+dconf write /org/gnome/desktop/interface/gtk-theme 'Catppuccin-Mocha-Standard-Green-Dark'
 dconf write /org/gnome/shell/enabled-extensions "['desktop-icons@csoriano', 'trayIconsReloaded@selfmade.pl', 'user-theme@gnome-shell-extensions.gcampax.github.com']"
 dconf write /org/gnome/shell/extensions/desktop-icons/show-home false
 dconf write /org/gnome/shell/extensions/desktop-icons/show-trash false
 dconf write /org/gnome/shell/favorite-apps "['firefoxdeveloperedition.desktop', 'org.wezfurlong.wezterm.desktop', 'discord.desktop', 'com.obsproject.Studio.desktop', 'org.gnome.Nautilus.desktop', 'virt-manager.desktop', 'net.lutris.Lutris.desktop', 'steam-native.desktop', 'minecraft-launcher.desktop']"
-# dconf write /org/gnome/shell/extensions/user-theme/name 'marshians'
 dconf write /org/gnome/mutter/keybindings/switch-monitor '@as []'
 
 # stylus
@@ -40,3 +41,8 @@ dconf write '/org/gnome/desktop/peripherals/tablets/256c:006d/left-handed' true
 # default browser
 xdg-settings set default-web-browser firefoxdeveloperedition.desktop
 
+if not (~/.config/gtk-4.0/assets | path exists) {
+  ln -sf /usr/share/themes/Catppuccin-Mocha-Standard-Green-Dark/gtk-4.0/assets/ ~/.config/gtk-4.0/assets
+  ln -sf /usr/share/themes/Catppuccin-Mocha-Standard-Green-Dark/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk.css
+  ln -sf /usr/share/themes/Catppuccin-Mocha-Standard-Green-Dark/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/gtk-dark.css
+}

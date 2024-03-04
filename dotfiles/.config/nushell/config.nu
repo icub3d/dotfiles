@@ -278,6 +278,29 @@ def scan-help [path] {
   xdg-open $path
 }
 
+def catppuccin [] {
+  let colors = [
+    {"bg": "#11111b", "fg": "#f5e0dc"},
+    {"bg": "#181825", "fg": "#f5e0dc"},
+    {"bg": "#1e1e2e", "fg": "#f5e0dc"},
+    {"bg": "#313244", "fg": "#f5e0dc"},
+    {"bg": "#45475a", "fg": "#f5e0dc"},
+    {"bg": "#585b70", "fg": "#f5e0dc"},
+    {"bg": "#6c7086", "fg": "#f5e0dc"},
+    {"bg": "#9399b2", "fg": "#f5e0dc"},
+    {"bg": "#f5e0dc", "fg": "#2d2a2e"},
+    {"bg": "#89b4fa", "fg": "#f5e0dc"},
+    {"bg": "#a6e3a1", "fg": "#f5e0dc"},
+    {"bg": "#b4befe", "fg": "#f5e0dc"},
+    {"bg": "#fab387", "fg": "#f5e0dc"},
+    {"bg": "#f38ba8", "fg": "#f5e0dc"},
+    {"bg": "#f9e2af", "fg": "#f5e0dc"},
+  ];
+  for color in $colors {
+    echo $"(ansi --escape $color)($color.bg)(ansi reset)"
+  }
+}
+
 def monokai [] {
   let colors = [
     {"bg": "#19181a", "fg": "#fcfcfa"},
