@@ -292,13 +292,13 @@ def catppuccin [] {
     {"bg": "#585b70", "fg": "#f5e0dc"},
     {"bg": "#6c7086", "fg": "#f5e0dc"},
     {"bg": "#9399b2", "fg": "#f5e0dc"},
-    {"bg": "#f5e0dc", "fg": "#2d2a2e"},
+    {"bg": "#f5e0dc", "fg": "#1e1e2e"},
     {"bg": "#89b4fa", "fg": "#f5e0dc"},
     {"bg": "#a6e3a1", "fg": "#f5e0dc"},
     {"bg": "#b4befe", "fg": "#f5e0dc"},
     {"bg": "#fab387", "fg": "#f5e0dc"},
     {"bg": "#f38ba8", "fg": "#f5e0dc"},
-    {"bg": "#f9e2af", "fg": "#f5e0dc"},
+    {"bg": "#f9e2af", "fg": "#1e1e2e"},
   ];
   for color in $colors {
     echo $"(ansi --escape $color)($color.bg)(ansi reset)"

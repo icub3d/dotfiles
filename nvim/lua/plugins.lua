@@ -18,6 +18,17 @@ local plugins = {
   'nvim-lua/plenary.nvim',
 
   {
+    "stevearc/dressing.nvim",
+    config = function()
+      require("dressing").setup({
+        input = {
+          insert_only = false,
+        }
+      })
+    end,
+  },
+
+  {
     'LhKipp/nvim-nu',
     build = ":TSInstall nu"
   },
