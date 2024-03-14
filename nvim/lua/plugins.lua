@@ -77,17 +77,6 @@ local plugins = {
     config = true,
   },
 
-  -- colorscheme: monokai-pro
-  -- {
-  --   "loctvl842/monokai-pro.nvim",
-  --   priority = 1000,
-  --   lazy = false,
-  --   init = function()
-  --     require("monokai-pro").setup()
-  --     vim.cmd.colorscheme("monokai-pro")
-  --   end,
-  -- },
-
   -- colorscheme: catppucin
   {
     "catppuccin/nvim",

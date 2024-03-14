@@ -2,10 +2,6 @@
 
 My dotfiles
 
-# TODO 
-
-- https://wiki.archlinux.org/title/rust#sccache
-
 # Arch Linux
 
 You may want to use parallel downloads:
