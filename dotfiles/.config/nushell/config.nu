@@ -107,6 +107,7 @@ def update-system [] {
   rustup toolchain add stable
 
   # check to see if paru is installed
+  sudo pacman -Sy
   if (not ("/usr/bin/paru" | path exists)) {
     # install paru
     mkdir ~/dev/
