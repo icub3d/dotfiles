@@ -257,6 +257,7 @@ local plugins = {
     dependencies = {
       'mfussenegger/nvim-dap',
       'mfussenegger/nvim-dap-python', -- :TSInstall python
+      'nvim-neotest/nvim-nio',
       'leoluz/nvim-dap-go',
     },
     config = require('config.dap'),

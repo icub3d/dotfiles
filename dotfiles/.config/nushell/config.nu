@@ -301,9 +301,7 @@ def catppuccin [] {
     {"bg": "#f38ba8", "fg": "#f5e0dc"},
     {"bg": "#f9e2af", "fg": "#1e1e2e"},
   ];
-  for color in $colors {
-    echo $"(ansi --escape $color)($color.bg)(ansi reset)"
-  }
+  $colors | each {|$color| echo $"(ansi --escape $color)($color.bg)(ansi reset)"}
 }
 
 def monokai [] {
@@ -571,4 +569,19 @@ def liquidctl-colors [color] {
 
 def wezterm-set-user-var [key, value] {
   printf '\033]1337;SetUserVar=%s=%s\007' $key ($value | base64 -w0)
+}
+
+# A command to handle date and time
+def "dt unix" [
+  --nano (-n)               # If set, the given timestamp is in nanoseconds
+  --zone (-z) = "l"         # The timezone to use (u)tc, (l)ocal
+  timestamp: string         # The unix timestamp to convert, defaults to now
+  ] {
+  let timestamp = if ($nano == true) {
+    $timestamp
+  } else {
+    ($timestamp | into int) * 1_000_000_000
+  }
+
+  $"($timestamp)" | into datetime -z $zone | format date "%+"
 }
