@@ -62,6 +62,22 @@ local plugins = {
 
   -- copilot
   { 'github/copilot.vim' },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "canary",
+    dependencies = {
+      { "github/copilot.vim" },
+      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+    },
+    opts = {
+      debug = true, -- Enable debugging
+      -- See Configuration section for rest
+    },
+    keys = {
+      { '<leader>cc', ':CopilotChatOpen<CR>', mode = 'n', noremap = true, desc = "[C]opilot [C]hat Open" },
+      { '<leader>cc', ':CopilotChatOpen<CR>', mode = 'v', noremap = true, desc = "[C]opilot [C]hat Open" },
+    },
+  },
 
   -- comment
   {
@@ -285,7 +301,18 @@ local plugins = {
       },
     },
     config = require("config.overseer"),
+  },
 
+  -- gen
+  {
+    "David-Kunz/gen.nvim",
+    opts = {
+      model = "llama3",
+    },
+    keys = {
+      { '<leader>gg', ':Gen<CR>', mode = 'n', noremap = true, desc = "[G]en Model" },
+      { '<leader>gg', ':Gen<CR>', mode = 'v', noremap = true, desc = "[G]en Model" },
+    },
   },
 }
 

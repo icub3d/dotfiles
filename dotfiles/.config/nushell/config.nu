@@ -16,6 +16,9 @@ let paths = [
   ($nu.home-path | path join "go/bin"),
   "/usr/local/go/bin",
   "/usr/lib/go/bin",
+
+  # fnm
+  ($nu.home-path | path join ".local/share/fnm"),
 ];
 
 # Load the environment from the system profiles.
@@ -25,6 +28,10 @@ if ($env.OS == "linux") {
 
 # Add our custom paths to the PATH variable and clean it up
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
+
+# fnm
+load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column = | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
+$env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
 # General config
 $env.config = {
@@ -278,7 +285,7 @@ def scan-help [path] {
     }
     let name = ($path | path join ([$name, '.pdf'] | str join))
     mv $file.name $name
-    gdrive files upload --parent "1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" $name
+    gdrive files upload --parent "1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" $"($name)"
   }
   xdg-open $path
 }

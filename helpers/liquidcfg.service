@@ -11,8 +11,8 @@ After=suspend.target
 [Service]
 Type=oneshot
 ExecStart=liquidctl initialize all
-ExecStart=liquidctl --serial 1305006473291217 set fan1 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1305006473291217 set fan6 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1305006473291217 set fan1 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 2
+ExecStart=liquidctl --serial 1305006473291217 set fan6 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 2
 ExecStart=liquidctl --serial 1305006473291217 set led1 color fixed a9dc76
 ExecStart=liquidctl --serial 1305006473291217 set led2 color fixed a9dc76
 
