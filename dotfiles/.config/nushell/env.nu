@@ -35,5 +35,6 @@ $env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)|   (ansi reset)"
 $env.PROMPT_COMMAND_RIGHT = {||}
 $env.PROMPT_COMMAND = {|| 
   echo
-  printf '\033]7;file://%s%s\033\\' $env.HOSTNAME $env.PWD
+  let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
+  ansi --osc $file_info
 }

@@ -242,7 +242,7 @@ def update-cli-tools [] {
   mkdir ($nu.home-path | path join ".config/cli-tools")
 
   # check to see if we have a different sha512
-  let sha512 = (http get https://files.marsh.gg/cli-tools.($env.ARCH).zip.sha512)
+  let sha512 = (http get $"https://files.marsh.gg/cli-tools.($env.ARCH).zip.sha512")
   let existing_path = ($nu.home-path | path join ".config/cli-tools/sha512")
   if ($existing_path | path exists) {
     let existing = (cat $existing_path)
@@ -253,7 +253,7 @@ def update-cli-tools [] {
   }
 
   $sha512 | save -f $existing_path
-  http get https://files.marsh.gg/cli-tools.($env.ARCH).zip | save -f cli-tools.zip
+  http get $"https://files.marsh.gg/cli-tools.($env.ARCH).zip" | save -f cli-tools.zip
   unzip -o cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null
   rm cli-tools.zip
 }
@@ -309,29 +309,6 @@ def catppuccin [] {
     {"bg": "#f9e2af", "fg": "#1e1e2e"},
   ];
   $colors | each {|$color| echo $"(ansi --escape $color)($color.bg)(ansi reset)"}
-}
-
-def monokai [] {
-  let colors = [
-    {"bg": "#19181a", "fg": "#fcfcfa"},
-    {"bg": "#221f22", "fg": "#fcfcfa"},
-    {"bg": "#2d2a2e", "fg": "#fcfcfa"},
-    {"bg": "#403e41", "fg": "#fcfcfa"},
-    {"bg": "#5b595c", "fg": "#fcfcfa"},
-    {"bg": "#727072", "fg": "#fcfcfa"},
-    {"bg": "#939293", "fg": "#fcfcfa"},
-    {"bg": "#c1c0c0", "fg": "#fcfcfa"},
-    {"bg": "#fcfcfa", "fg": "#2d2a2e"},
-    {"bg": "#78dce8", "fg": "#fcfcfa"},
-    {"bg": "#a9dc76", "fg": "#fcfcfa"},
-    {"bg": "#ab9df2", "fg": "#fcfcfa"},
-    {"bg": "#fc9867", "fg": "#fcfcfa"},
-    {"bg": "#ff6188", "fg": "#fcfcfa"},
-    {"bg": "#ffd866", "fg": "#fcfcfa"},
-  ];
-  for color in $colors {
-    echo $"(ansi --escape $color)($color.bg)(ansi reset)"
-  }
 }
 
 def mirrors [] {
@@ -392,8 +369,8 @@ def jwt [] {
 def journal [file] {
   let parent = 13ezgh0lonuj2y1yhne5_dfo7p0pfkoci
   let base = $file | path parse | get stem
-  ffmpeg -i $file -vn -acodec copy ($base).aac
-  whisper ($base).aac --model medium --language en
+  ffmpeg -i $file -vn -acodec copy $"($base).aac"
+  whisper $"($base).aac" --model medium --language en
   ls $"($base)*" | each {|f|
     gdrive files upload --parent $parent $f
   }
@@ -401,7 +378,7 @@ def journal [file] {
 
 def iommu [] {
   ls /sys/kernel/iommu_groups | get name | path basename | sort -n | each {|group|
-    ls /sys/kernel/iommu_groups/($group)/devices | get name | path basename | each {|device|
+    ls $"/sys/kernel/iommu_groups/($group)/devices" | get name | path basename | each {|device|
       {"group": $group, "device":$device, "info": (lspci -nns $device) }
     }
   } | flatten
@@ -529,7 +506,7 @@ def "k gn" [] {
 }
 
 def "k ns" [namespace] {
-  k config set-context --current --namespace=$namespace
+  k config set-context --current $"--namespace=($namespace)"
 }
 
 def "k bash" [pod] {
