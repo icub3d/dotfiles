@@ -8,54 +8,16 @@ local act = wezterm.action
 local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
 
 ------------ Helper Functions ------------
-local git_branch_name = function(cwd)
-  -- Get our branch name
-  local rev = io.popen("git -C \"" .. cwd .. "\" rev-parse --abbrev-ref HEAD")
-  if not rev then
+local git_info = function(cwd)
+  local info = io.popen("git-status-tracker get -p \"" .. cwd .. "\"")
+  if not info then
     return false
   end
-  local branch = rev:read("*l")
-
-  -- If we're not on a branch, return false
-  if not branch then
-    return false
+  local lines = {}
+  for line in info:lines() do
+    table.insert(lines, line)
   end
-
-  -- If the command failed, return false
-  if branch:sub(1, 5) == "fatal" then
-    return false
-  end
-
-  -- Otherwise, return the branch name
-  return branch
-end
-
-local git_status = function(cwd)
-  -- Get our statuses
-  local status = io.popen("git -C \"" .. cwd .. "\" status --porcelain")
-  if not status then
-    return false
-  end
-
-  -- Combine them into counts
-  local entries = {}
-  for line in status:lines() do
-    local part = string.sub(line, 1, 2)
-    part = string.gsub(part, " ", "_")
-    entries[part] = (entries[part] or 0) + 1
-  end
-
-  -- If there are no entries, return false
-  if next(entries) == nil then
-    return false
-  end
-
-  -- Otherwise, build a string of the entries
-  local result = ""
-  for k, v in pairs(entries) do
-    result = result .. v .. " " .. k .. " | "
-  end
-  return result.sub(result, 1, -4)
+  return lines[1], lines[2]
 end
 
 local spawn_workspace = function(name, cwd, title, args, tabs)
@@ -387,7 +349,7 @@ wezterm.on('update-status', function(window, pane)
   local cur_bg = scheme.cursor_fg
 
   -- git information
-  local branch = git_branch_name(file_path)
+  local branch, status = git_info(file_path)
 
   if branch then
     branch = " " .. branch
@@ -400,7 +362,6 @@ wezterm.on('update-status', function(window, pane)
     cur_bg = scheme.ansi[5]
   end
 
-  local status = git_status(file_path)
   if status then
     status = " " .. status
     table.insert(entries, { Background = { Color = cur_bg } })

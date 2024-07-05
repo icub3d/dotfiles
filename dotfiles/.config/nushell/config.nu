@@ -275,7 +275,7 @@ def smoke-test-ligatures [] {
 
 def scan-help [path] {
   ls $path | each {|file|
-    xdg-open $file.name
+    firefox-developer-edition $file.name
     let base = $file.name | path basename
     let name = input $"name ($base)> "
     let name = if ($name == "") {
@@ -287,7 +287,6 @@ def scan-help [path] {
     mv $file.name $name
     gdrive files upload --parent "1e4LApZXcXz3FamcLofLOmW9Ixnd-bAlU" $"($name)"
   }
-  xdg-open $path
 }
 
 def catppuccin [] {
@@ -569,3 +568,4 @@ def "dt unix" [
 
   $"($timestamp)" | into datetime -z $zone | format date "%+"
 }
+

@@ -27,6 +27,17 @@ if ($env.OS == "linux") {
   gpg-connect-agent updatestartuptty /bye out+err> /dev/null
 }
 
+def "git-status-tracker-save" [pwd] {
+  let path_cmd = git -C $"($pwd)" rev-parse --show-toplevel | complete
+  if ($path_cmd.exit_code != 0) {
+    return
+  }
+  let path = $path_cmd.stdout | str trim
+  let branch = git -C $"($pwd)" rev-parse --abbrev-ref HEAD
+  let status = do -i { git -C $"($pwd)" status --porcelain } | lines | str substring 0..1 | str replace ' ' '_' | sort | uniq -c | format pattern '{count} {value}' | str join '|'
+  git-status-tracker put -b $"($branch)" -g $"($status)" -p $"($path)"
+}
+
 # Prompt
 $env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_INSERT = $"(ansi green)λ (ansi reset)"
@@ -37,4 +48,5 @@ $env.PROMPT_COMMAND = {||
   echo
   let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
   ansi --osc $file_info
+  git-status-tracker-save $"($env.PWD)"
 }
