@@ -3,6 +3,11 @@ local wezterm = require 'wezterm'
 local mux = wezterm.mux
 local act = wezterm.action
 
+local nu = "nu"
+if wezterm.target_triple == "aarch64-apple-darwin" then
+  nu = "/opt/homebrew/bin/nu"
+end
+
 
 -- Colors --
 local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
@@ -79,7 +84,7 @@ config.set_environment_variables = {
 }
 
 -- default values
-config.default_prog = { "nu", "-l" }
+config.default_prog = { nu, "-l" }
 
 -- Keybindings
 config.leader = { key = "o", mods = "CTRL", timeout_milliseconds = 1000 }
@@ -213,16 +218,16 @@ config.use_fancy_tab_bar = false
 -- Launcher
 local launch_menu = {}
 
-if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+if wezterm.target_triple == "aarch64-apple-darwin" or wezterm.target_triple == "x86_64-unknown-linux-gnu" then
   table.insert(launch_menu, {
     label = "top",
-    args = { "nu", "-c", "bpytop" },
+    args = { nu, "-c", "bpytop" },
   })
 end
 
 table.insert(launch_menu, {
   label = "nw (new workspace)",
-  args = { "nu", "-l", "-c", "nw" },
+  args = { nu, "-l", "-c", "nw" },
 })
 
 config.launch_menu = launch_menu
@@ -232,7 +237,7 @@ wezterm.on('gui-startup', function(_)
   -- home
   local _, _, window = spawn_workspace("home",
     wezterm.home_dir,
-    "nu",
+    nu,
     nil,
     {})
 
@@ -240,7 +245,7 @@ wezterm.on('gui-startup', function(_)
   spawn_workspace("dot",
     wezterm.home_dir .. '/dev/dotfiles',
     "nv",
-    { "nu", "-e", "v ." },
+    { nu, "-e", "v ." },
     { { title = "nu", } })
 
   -- work stuff
@@ -248,12 +253,12 @@ wezterm.on('gui-startup', function(_)
     spawn_workspace("oti",
       wezterm.home_dir .. '/dev/oti-azure',
       "nv",
-      { "nu", "-e", "v ." },
+      { nu, "-e", "v ." },
       { { title = "logs", }, { title = "nu", } })
     spawn_workspace("otvm",
       wezterm.home_dir .. '/dev/edi-oti-otvm_containerized',
       "nv",
-      { "nu", "-e", "v ." },
+      { nu, "-e", "v ." },
       { { title = "logs", }, { title = "nu", } })
   end
 
@@ -306,10 +311,12 @@ wezterm.on(
 
 ---------- Status Bar ----------
 wezterm.on('update-status', function(window, pane)
+  local hostname = string.lower(wezterm.hostname())
+
   -- domain name
   local name = mux.get_domain():name()
   if name == "local" then
-    name = " " .. wezterm.hostname() .. " "
+    name = " " .. hostname .. " "
   else
     name = " " .. name .. " "
   end
@@ -394,8 +401,8 @@ wezterm.on('update-status', function(window, pane)
   end
 
   -- Add the host if it's not our host.
-  if path.host ~= nil and path.host ~= wezterm.hostname() then
-    cwd = path.host .. ":" .. cwd
+  if path.host ~= nil and string.lower(path.host) ~= wezterm.hostname() then
+    cwd = string.lower(path.host) .. ":" .. cwd
   end
   cwd = " " .. cwd
 
@@ -431,7 +438,7 @@ wezterm.on("user-var-changed", function(window, pane, name, value)
     local _, new_pane, _ = spawn_workspace(window_name,
       new_cwd,
       "nv",
-      { "nu", "-e", "v ." },
+      { nu, "-e", "v ." },
       { { title = "nu", } })
     window:perform_action(
       wezterm.action.SwitchToWorkspace {

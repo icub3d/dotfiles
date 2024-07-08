@@ -47,6 +47,7 @@ alias bench = hyperfine
 alias cat = bat
 alias d = docker
 alias dc = docker compose
+alias pc = pdoman compose
 alias diff = delta
 alias e = emacsclient --create-frame --alternate-editor="" -nw
 alias em = emacs -nw

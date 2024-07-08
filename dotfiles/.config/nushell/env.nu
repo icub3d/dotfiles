@@ -27,6 +27,10 @@ if ($env.OS == "linux") {
   gpg-connect-agent updatestartuptty /bye out+err> /dev/null
 }
 
+# source os specific files
+source ($nu.home-path | path join ".config" | path join "nushell" | path join $"($nu.os-info.name).nu")
+
+# Git status tracking
 def "git-status-tracker-save" [pwd] {
   let path_cmd = git -C $"($pwd)" rev-parse --show-toplevel | complete
   if ($path_cmd.exit_code != 0) {
