@@ -4,8 +4,10 @@ local mux = wezterm.mux
 local act = wezterm.action
 
 local nu = "nu"
+local gst = "git-status-tracker"
 if wezterm.target_triple == "aarch64-apple-darwin" then
   nu = "/opt/homebrew/bin/nu"
+  gst = "/Users/jmars23/.cargo/bin/git-status-tracker"
 end
 
 
@@ -14,7 +16,7 @@ local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
 
 ------------ Helper Functions ------------
 local git_info = function(cwd)
-  local info = io.popen("git-status-tracker get -p \"" .. cwd .. "\"")
+  local info = io.popen(gst .. " get -p \"" .. cwd .. "\"")
   if not info then
     return false
   end
