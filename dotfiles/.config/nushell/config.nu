@@ -406,7 +406,7 @@ def bw-get-token [name] {
 
 def allowance [] {
   let mongo_uri = bw-get-token "mongo-bank-cloud-uri"
-  bankctl -u $mongo_uri -d bank add 1000 james.marshian@gmail.com allowance
+  bankctl -u $mongo_uri -d bank add 808 james.marshian@gmail.com allowance
   bankctl -u $mongo_uri -d bank add 1500 william.marshian@gmail.com allowance
   bankctl -u $mongo_uri -d bank add 1308 samuel.marshian@gmail.com allowance
 }
