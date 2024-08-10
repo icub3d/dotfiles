@@ -570,3 +570,7 @@ def "dt unix" [
   $"($timestamp)" | into datetime -z $zone | format date "%+"
 }
 
+def "update-mirrors" [] {
+	rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
+}
+
