@@ -2,6 +2,10 @@
 
 My dotfiles
 
+# NixOS
+
+* Upgrade - `nixos-rebuild switch --upgrade`
+
 # Arch Linux
 
 You may want to use parallel downloads:

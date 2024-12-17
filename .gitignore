@@ -1,3 +1,4 @@
 .selected_packages
 *~
 .nvimlog
+history.txt

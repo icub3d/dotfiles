@@ -21,6 +21,31 @@ let paths = [
   ($nu.home-path | path join ".local/share/fnm"),
 ];
 
+# Git status tracking
+def "git-status-tracker-save" [pwd] {
+  let path_cmd = git -C $"($pwd)" rev-parse --show-toplevel | complete
+  if ($path_cmd.exit_code != 0) {
+    return
+  }
+  let path = $path_cmd.stdout | str trim
+  let branch = git -C $"($pwd)" rev-parse --abbrev-ref HEAD
+  let status = do -i { git -C $"($pwd)" status --porcelain } | lines | str substring 0..1 | str replace ' ' '_' | sort | uniq -c | format pattern '{count} {value}' | str join '|'
+  git-status-tracker put -b $"($branch)" -g $"($status)" -p $"($path)"
+}
+
+# Prompt
+$env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
+$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi green)λ (ansi reset)"
+$env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi blue)λ (ansi reset)"
+$env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)|   (ansi reset)"
+$env.PROMPT_COMMAND_RIGHT = {||}
+$env.PROMPT_COMMAND = {|| 
+  echo
+  let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
+  ansi --osc $file_info
+  git-status-tracker-save $"($env.PWD)"
+}
+
 # Load the environment from the system profiles.
 if ($env.OS == "linux") {
   bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
@@ -30,7 +55,7 @@ if ($env.OS == "linux") {
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 
 # fnm
-load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column = | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
+load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
 $env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
 # General config
