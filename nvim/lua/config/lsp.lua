@@ -42,7 +42,7 @@ return function()
       "pyright",
       "rust_analyzer",
       "tailwindcss",
-      "tsserver",
+      "ts_ls",
     }
   }
 
@@ -105,7 +105,7 @@ return function()
     }
   })
   lspconfig.clangd.setup(default)
-  lspconfig.tsserver.setup(default)
+  lspconfig.ts_ls.setup(default)
   lspconfig.pyright.setup(default)
   lspconfig.gopls.setup(default)
   lspconfig.jdtls.setup(default)

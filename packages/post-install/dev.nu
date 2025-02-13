@@ -1,7 +1,7 @@
 do -i {
   mkdir ~/bin
 
-  update-cli-tools
+  # update-cli-tools
 
   rustup toolchain add nightly
   rustup default stable

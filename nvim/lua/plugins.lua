@@ -217,6 +217,7 @@ local plugins = {
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
+      "nushell/tree-sitter-nu",
     },
     config = require("config.treesitter"),
     build = ":TSUpdate",

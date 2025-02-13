@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGai
 vim.api.nvim_create_autocmd({ "BufWritePost", "FileWritePost" }, {
   callback = function(data)
     local path = data.file:match("(.*[/\\])")
-    os.execute("nu -c \"source \\$nu.env-path; git-status-tracker-save \'" .. path .. "\'\"")
+    os.execute("nu -c \"source \\$nu.env-path; source \\$nu.config-path; git-status-tracker-save \'" .. path .. "\'\"")
   end,
   pattern = { "*" },
   group = group,

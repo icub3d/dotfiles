@@ -1,3 +1,5 @@
+$env.config.shell_integration.osc133 = false
+
 # A list of all of our custom paths.
 let paths = [
   # bin paths
@@ -509,11 +511,18 @@ def nw [name = "", folder = ""] {
     $name
   }
 
-  wezterm-set-user-var CREATE_WORKSPACE $"($name)|($folder)"
+  if ("TMUX_PANE" in $env) {
+    tmux new-session -d -c $folder -s $name -n "v"
+    tmux send-keys -t $"($name):0" "v . " C-m
+    tmux new-window -d -c $folder -t $"($name):1" -n "🆕"
+    tmux new-window -d -c $folder -t $"($name):2" -n "🏃"
+  } else {
+    wezterm-set-user-var CREATE_WORKSPACE $"($name)|($folder)"
+  }
 }
 
 def wezterm-switch-workspace [] {
-  wezter-set-user-var WORKSPACE_CHANGED ($in | fzf --reverse --border=rounded --prompt "workspace> ")
+  wezterm-set-user-var WORKSPACE_CHANGED ($in | fzf --reverse --border=rounded --prompt "workspace> ")
 }
 alias sw = wezterm-switch-workspace
 
@@ -599,3 +608,27 @@ def "update-mirrors" [] {
 	rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
 }
 
+def tx [] {
+  $env.SIMPLE_PROMPT = true
+  tmux new-session -d -c ~/dev/dotfiles -s • -n "e"
+  tmux send-keys -t •:0 "v ." C-m
+  tmux new-window -d -c ~/dev/dotfiles -t •:1 -n "🐟"
+
+  tmux new-session -d -c ~ -s 🏠 -n "🏠"
+  tmux new-window -d -c ~/dev -t 🏠:1 -n "🤖"
+  tmux new-window -d -c ~ -t 🏠:2 -n "🏢"
+
+  if ($env.ATWORK == "true") {
+    tmux new-session -d -c ~/dev/oti-azure -s oti -n "e"
+    tmux send-keys -t oti:0 "v ." C-m
+    tmux new-window -d -c ~/dev/oti-azure -t oti:1 -n "🐟"
+    tmux new-window -d -c ~/dev/oti-azure -t oti:2 -n "🏃"
+
+    tmux new-session -d -c ~/dev/edi-oti-otvm_containerized -s otvm -n "e"
+    tmux send-keys -t otvm:0 "v ." C-m
+    tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:1 -n "🐟"
+    tmux new-window -d -c ~/dev/edi-oti-otvm_containerized -t otvm:2 -n "🏃"
+  }
+
+  tmux attach -t 🏠
+}
