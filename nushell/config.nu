@@ -1,3 +1,4 @@
+# somthing, something, windows?
 $env.config.shell_integration.osc133 = false
 
 # A list of all of our custom paths.
@@ -25,14 +26,25 @@ let paths = [
 
 # Git status tracking
 def "git-status-tracker-save" [pwd] {
+  # Get the path of the git repo we are currently in.
   let path_cmd = git -C $"($pwd)" rev-parse --show-toplevel | complete
   if ($path_cmd.exit_code != 0) {
     return
   }
   let path = $path_cmd.stdout | str trim
-  let branch = git -C $"($pwd)" rev-parse --abbrev-ref HEAD
+
+  # Get the branch we are currently in.
+  let head = git -C $"($pwd)" rev-parse --abbrev-ref HEAD | complete
+  if ($head.exit_code != 0 or ($head.stderr | str contains "fatal:")) {
+    return
+  }
+  let branch = $head.stdout | str trim
+
+  # If we got both of those, we can get the current status and update our status tracker.
   let status = do -i { git -C $"($pwd)" status --porcelain } | lines | str substring 0..1 | str replace ' ' '_' | sort | uniq -c | format pattern '{count} {value}' | str join '|'
-  git-status-tracker put -b $"($branch)" -g $"($status)" -p $"($path)"
+  if ((which git-status-tracker | length) > 0) {
+    git-status-tracker put -b $"($branch)" -g $"($status)" -p $"($path)"
+  }
 }
 
 # Prompt
@@ -49,7 +61,7 @@ $env.PROMPT_COMMAND = {||
 }
 
 # Load the environment from the system profiles.
-if ($env.OS == "linux") {
+if ($nu.os-info.name == "linux") {
   bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
 }
 
@@ -57,8 +69,8 @@ if ($env.OS == "linux") {
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 
 # fnm
-load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
-$env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
+load-env (if ((which fnm | length) > 0) {fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )}})
+$env.PATH = if ((which fnm | length) > 0) { ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin") } else { $env.PATH }
 
 # General config
 $env.config = {
@@ -74,10 +86,9 @@ alias bench = hyperfine
 alias cat = bat
 alias d = docker
 alias dc = docker compose
-alias pc = pdoman compose
+alias p = podman
+alias pc = podman compose
 alias diff = delta
-alias e = emacsclient --create-frame --alternate-editor="" -nw
-alias em = emacs -nw
 alias g = git
 alias gg = lazygit
 alias grep = rg
@@ -91,9 +102,9 @@ alias objdump = bingrep
 alias ping = prettyping
 alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
 alias rg = rg --hidden --glob '!.git'
-alias rme = /usr/bin/find -ih '~$' -x rm {} \;
 alias v = nvim
-alias w = /usr/bin/watch
+alias w = viddy
+alias watch = viddy
 
 #########################################################
 # functions
@@ -243,7 +254,6 @@ def dotfiles [] {
      get name |
      each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "" } |
      each {|f| ($nu.home-path | path join $f) } |
-     find -v "fish" | # TODO: remove this once we no longer need fish
      each {|f| mkdir $f}
   mkdir ~/.ssh
   chmod 700 ~/.ssh
@@ -253,7 +263,6 @@ def dotfiles [] {
   let paths = ls -a ~/dev/dotfiles/dotfiles/**/* | 
     filter {|p| $p.type == "file"} | 
     get name | 
-    find -v "fish" | # TODO: remove this once we no longer need fish
     each {|n| $n | str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") ""} |
     each {|n|
       let $new_path = ($nu.home-path | path join $n)

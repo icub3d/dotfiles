@@ -29,4 +29,5 @@ terraform
 terraform-ls
 usbutils
 valgrind
+viddy
 wasm-pack
