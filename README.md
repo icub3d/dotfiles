@@ -59,6 +59,12 @@ Add this to ~/.gitconfig.local
 	signingkey = 0xC7CF28F258E2750C
 ```
 
+If you are using `gh` then:
+
+```bash
+gh auth setup-git
+```
+
 # Syncthing
 
 * Enable syncthing

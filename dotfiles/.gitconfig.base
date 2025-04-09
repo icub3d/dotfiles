@@ -73,11 +73,3 @@
   minus-emph-style="#B04C1B"
   plus-emph-style="#B04C1B"
   plus-style="#5D902A"
-
-[credential "https://github.com"]
-  helper = 
-  helper = !/usr/bin/gh auth git-credential
-
-[credential "https://gist.github.com"]
-  helper = 
-  helper = !/usr/bin/gh auth git-credential
