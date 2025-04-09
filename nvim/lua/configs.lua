@@ -24,6 +24,7 @@ local opts = {
   swapfile = false,
   termguicolors = true,
   signcolumn = 'number',
+  clipboard = 'unnamedplus',
 }
 
 for k, v in pairs(opts) do

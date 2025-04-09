@@ -1,6 +1,6 @@
 return function()
   require("nvim-treesitter.configs").setup({
-    ensure_installed = { "toml", "c", "go", "lua", "rust", "css", "fish", "gomod", "javascript", "java", "json", "make",
+    ensure_installed = { "nu", "toml", "c", "go", "lua", "rust", "css", "fish", "gomod", "javascript", "java", "json", "make",
       "nu",
       "proto", "typescript", "yaml" },
     sync_install = false,

@@ -4,6 +4,8 @@ $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"
 $env.ATWORK = if (($nu.home-path | path join ".atwork") | path exists) { "true" } else { "false" }
+$env.DOCKER_COMMAND = "podman"
+$env.PODMAN_COMPOSE_WARNING_LOGS = "false"
 
 # bat
 $env.BAT_THEME = "ansi"
@@ -27,4 +29,4 @@ if ($nu.os-info.name == "linux") {
 }
 
 # source os specific files
-source ($nu.home-path | path join ".config" | path join "nushell" | path join $"($nu.os-info.name).nu")
+source ($nu.default-config-dir | path join $"($nu.os-info.name).nu")
