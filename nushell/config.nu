@@ -136,10 +136,22 @@ def missing-packages [] {
   } | flatten | filter { |p| not ($p in $installed) }
 }
 
+def git-config-setup [] {
+  # Append our includes in .gitconfig if they are not there.
+  let includes = "\n\n#dotfiles-includes\n[include]\n  path = ~/.gitconfig.base\n  path = ~/.gitconfig.local\n"
+  if (not ("~/.gitconfig" | path exists)) {
+    $includes | save ~/.gitconfig
+  } else if ((open ~/.gitconfig | lines | find "#dotfiles-includes" | length) < 1) {
+      $includes | save -a ~/.gitconfig
+  }
+}
+
 def update-system [] {
   dotfiles
   cd ~/dev/dotfiles
   let package_location = "pacman"
+
+  git-config-setup
 
 	# Pacman/Makepkg configurations
   sudo /usr/bin/sed -i -e 's/#Color/Color/g' /etc/pacman.conf

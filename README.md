@@ -48,6 +48,17 @@ pushd ~/dev/dotfiles
 nu install.nu
 ```
 
+## Setup Git
+
+Add this to ~/.gitconfig.local
+
+```conf
+[user]
+	name = Joshua Marsh (icub3d)
+	email = joshua.marshian@gmail.com
+	signingkey = 0xC7CF28F258E2750C
+```
+
 # Syncthing
 
 * Enable syncthing
