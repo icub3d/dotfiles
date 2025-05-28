@@ -54,10 +54,10 @@ $env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi blue)λ (ansi reset)"
 $env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)|   (ansi reset)"
 $env.PROMPT_COMMAND_RIGHT = {||}
 $env.PROMPT_COMMAND = {|| 
-  echo
-  let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
-  ansi --osc $file_info
-  git-status-tracker-save $"($env.PWD)"
+  # echo
+  # let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
+  # ansi --osc $file_info
+  # git-status-tracker-save $"($env.PWD)"
 }
 
 # Load the environment from the system profiles.
@@ -77,7 +77,20 @@ $env.config = {
   show_banner: false,
   edit_mode: "vi",
   history: {
-    max_size: 100000,
+    max_size: 1_000_000,
+    sync_on_enter: true,
+    isolation: true,
+    file_format: sqlite,
+  }
+  hooks: {
+    pre_prompt: [
+      {
+        print " " 
+        let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
+        ansi --osc $file_info
+        git-status-tracker-save $"($env.PWD)"
+      }
+    ]
   }
 }
 
@@ -338,25 +351,20 @@ def scan-help [path] {
   }
 }
 
-def catppuccin [] {
-  let colors = [
-    {"bg": "#11111b", "fg": "#f5e0dc"},
-    {"bg": "#181825", "fg": "#f5e0dc"},
-    {"bg": "#1e1e2e", "fg": "#f5e0dc"},
-    {"bg": "#313244", "fg": "#f5e0dc"},
-    {"bg": "#45475a", "fg": "#f5e0dc"},
-    {"bg": "#585b70", "fg": "#f5e0dc"},
-    {"bg": "#6c7086", "fg": "#f5e0dc"},
-    {"bg": "#9399b2", "fg": "#f5e0dc"},
-    {"bg": "#f5e0dc", "fg": "#1e1e2e"},
-    {"bg": "#89b4fa", "fg": "#f5e0dc"},
-    {"bg": "#a6e3a1", "fg": "#f5e0dc"},
-    {"bg": "#b4befe", "fg": "#f5e0dc"},
-    {"bg": "#fab387", "fg": "#f5e0dc"},
-    {"bg": "#f38ba8", "fg": "#f5e0dc"},
-    {"bg": "#f9e2af", "fg": "#1e1e2e"},
-  ];
-  $colors | each {|$color| echo $"(ansi --escape $color)($color.bg)(ansi reset)"}
+def catppuccin [palette = "mocha"] {
+  let colors = http get https://raw.githubusercontent.com/catppuccin/palette/refs/heads/main/palette.json | 
+    get $palette | get colors | values | sort-by order -n;
+
+  $colors | each {|color| 
+    let display = { fg: '#000000', bg: $color.hex };
+    let preview = $"(ansi --escape $display)        (ansi reset)";
+    let rgb = $"rgb\(($color.rgb.r), ($color.rgb.g), ($color.rgb.b))";
+    let h = ($color.hsl.h | into string --decimals 2);
+    let s = ($color.hsl.s | into string --decimals 2);
+    let l = ($color.hsl.l | into string --decimals 2);
+    let hsl = $"hsl\(($h), ($s), ($l))";
+    {"preview": $preview, "name": $color.name, "hex": $color.hex, "rgb": $rgb, "hsl": $hsl}
+  }
 }
 
 def mirrors [] {
