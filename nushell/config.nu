@@ -62,15 +62,20 @@ $env.PROMPT_COMMAND = {||
 
 # Load the environment from the system profiles.
 if ($nu.os-info.name == "linux") {
-  bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | filter { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | filter {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
+  bash -c $"[ -f /etc/profile ] && source /etc/profile; [ -f ($env.HOME)/.profile ] && source ($env.HOME)/.profile; env" | lines | parse "{n}={v}" | where { |x| (not ($x.n in $env)) or $x.v != ($env | get $x.n) } | where {|x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION"])} | transpose --header-row | into record | load-env
 }
 
 # Add our custom paths to the PATH variable and clean it up
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 
-# fnm
-load-env (if ((which fnm | length) > 0) {fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )}})
-$env.PATH = if ((which fnm | length) > 0) { ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin") } else { $env.PATH }
+# fnm setup
+if ((which fnm | length) > 0) {
+  # Load fnm environment variables
+  load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
+  
+  # Add fnm's current node path to PATH (no /bin subdirectory needed)
+  $env.PATH = ($env.PATH | prepend $env.FNM_MULTISHELL_PATH)
+}
 
 # General config
 $env.config = {
@@ -142,11 +147,11 @@ def "l" [path = "."] {
 def missing-packages [] {
   let installed = (pacman -Q | lines | parse "{package} {version}" | get package)
   let selected_packages = (open ~/dev/dotfiles/.selected_packages | split words)
-  let missing = $selected_packages | filter { |p| not ($p in $installed) }
+  let missing = $selected_packages | where { |p| not ($p in $installed) }
   let packages = $selected_packages | each {|p|
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
-  } | flatten | filter { |p| not ($p in $installed) }
+  } | flatten | where { |p| not ($p in $installed) }
 }
 
 def git-config-setup [] {
@@ -221,7 +226,7 @@ def update-system [] {
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
   } | flatten
-  let needed = $packages | filter { |p| not ($p in $installed) }
+  let needed = $packages | where { |p| not ($p in $installed) }
 
   echo $"missing packages: ($needed)"
 
@@ -286,7 +291,7 @@ def dotfiles [] {
 
   # make symlinks for all the files
   let paths = ls -a ~/dev/dotfiles/dotfiles/**/* | 
-    filter {|p| $p.type == "file"} | 
+    where {|p| $p.type == "file"} | 
     get name | 
     each {|n| $n | str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") ""} |
     each {|n|
