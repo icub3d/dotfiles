@@ -1,6 +1,3 @@
-# somthing, something, windows?
-$env.config.shell_integration.osc133 = false
-
 # A list of all of our custom paths.
 let paths = [
   # bin paths
@@ -96,7 +93,49 @@ $env.config = {
         git-status-tracker-save $"($env.PWD)"
       }
     ]
-  }
+  },
+  keybindings: [
+    {
+      name: "fzf_dir_cd",
+      modifier: control,
+      keycode: char_t,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "let folder = (select-folder $env.PWD); if ($folder | is-empty) { } else { cd $folder }"
+      }
+    },
+    {
+      name: "fzf_dir_cd_dev_depth3",
+      modifier: control,
+      keycode: char_d,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "let folder = (select-folder ($nu.home-path | path join dev) 3); if ($folder | is-empty) { } else { cd $folder }"
+      }
+    },
+    {
+      name: "fzf_dir_insert",
+      modifier: alt,
+      keycode: char_t,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "let folder = (select-folder $env.PWD); if ($folder | is-empty) { } else { commandline edit -i $folder }"
+      }
+    },
+    {
+      name: "fzf_dir_insert_dev_depth3",
+      modifier: alt,
+      keycode: char_d,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "let folder = (select-folder ($nu.home-path | path join dev) 3); if ($folder | is-empty) { } else { commandline edit -i $folder }"
+      }
+    }
+  ]
 }
 
 # aliases
@@ -122,7 +161,6 @@ alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
 alias rg = rg --hidden --glob '!.git'
 alias v = nvim
 alias w = viddy
-alias watch = viddy
 
 #########################################################
 # functions
@@ -524,6 +562,28 @@ def ykf [] {
   gpg-connect-agent reloadagent /bye
   sudo systemctl restart pcscd
 }
+
+def select-folder [path, depth = 0] {
+  let selected_path_rel = (
+    (if $depth == 0 {
+      fd --type d --strip-cwd-prefix --path-separator="/" --base-directory $path
+    } else {
+      fd --type d --strip-cwd-prefix --path-separator="/" --base-directory $path --max-depth $depth
+    })
+    | fzf --reverse --border=rounded --prompt "path> "
+  )
+
+  if ($selected_path_rel | is-empty) {
+    return ""
+  }
+
+  let folder = ($path | path join $selected_path_rel)
+
+  $folder
+}
+
+alias goto = cd (select-folder ($nu.home-path | path join dev))
+alias gotol = cd (select-folder $env.PWD)
 
 def nw [name = "", folder = ""] {
   let dev = $nu.home-path | path join "dev"
