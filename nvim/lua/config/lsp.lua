@@ -1,115 +1,43 @@
-return function()
-  -- We don't need any of this unless we the word 'dev' is in our `.selected_packages` file.
-  local selected_packages = vim.fn.readfile(vim.fn.expand('~/dev/dotfiles/.selected_packages'))
-  selected_packages = table.concat(selected_packages, ' ')
-  if not string.find(selected_packages, 'dev') then
-    return
-  end
+local builtin = require('telescope.builtin')
 
-  local builtin = require('telescope.builtin')
-  local remap = require('remap')
-  remap.nnoremap('<leader>ld', vim.lsp.buf.definition, { desc = "LSP: [D]efinition" })
-  remap.nnoremap('<leader>lD', vim.lsp.buf.declaration, { desc = "LSP: [D]eclaration" })
-  remap.nnoremap('<leader>lh', vim.lsp.buf.hover, { desc = "LSP: [H]over" })
-  remap.nnoremap('<leader>lr', builtin.lsp_references, { desc = "LSP: [R]eferences" })
-  remap.nnoremap('<leader>lE', vim.lsp.buf.references, { desc = "LSP: [R]eferences" })
-  remap.nnoremap('<leader>li', vim.lsp.buf.implementation, { desc = "LSP: [I]mplementation" })
-  remap.nnoremap('<leader>ls', builtin.lsp_document_symbols, { desc = "LSP: [D]ocument Symbols" })
-  remap.nnoremap('<leader>lt', vim.lsp.buf.type_definition, { desc = "LSP: [T]ype Definition" })
-  remap.nnoremap('<leader>lR', vim.lsp.buf.rename, { desc = "LSP: [R]ename symbol" })
-  remap.nnoremap('<leader>la', vim.lsp.buf.code_action, { desc = "LSP: Code [A]ction" })
-  remap.nnoremap('<leader>l[', vim.diagnostic.goto_prev, { desc = "LSP: next diagnostic" })
-  remap.nnoremap('<leader>l]', vim.diagnostic.goto_next, { desc = "LSP: prev diagnostic" })
-  remap.nnoremap('<leader>le', vim.diagnostic.open_float, { desc = "LSP: Diagnostic op[e]n float" })
-  remap.nnoremap('<leader>lQ', vim.diagnostic.setloclist, { desc = "LSP: Setloclist" })
-  remap.nnoremap('<leader>lw', vim.lsp.buf.add_workspace_folder, { desc = "LSP: [W]orkspace Add" })
-  remap.nnoremap('<leader>lW', vim.lsp.buf.remove_workspace_folder, { desc = "LSP: [W]orkspace Remove" })
-  remap.nnoremap('<leader>lf', vim.lsp.buf.format, { desc = "LSP: [F]ormat" })
+vim.keymap.set("n", "<leader>ld", vim.lsp.buf.definition, { desc = "LSP: [D]efinition" })
+vim.keymap.set("n", '<leader>lD', vim.lsp.buf.declaration, { desc = "LSP: [D]eclaration" })
+vim.keymap.set("n", '<leader>lh', vim.lsp.buf.hover, { desc = "LSP: [H]over" })
+vim.keymap.set("n", '<leader>lr', builtin.lsp_references, { desc = "LSP: [R]eferences" })
+vim.keymap.set("n", '<leader>lE', vim.lsp.buf.references, { desc = "LSP: [R]eferences" })
+vim.keymap.set("n", '<leader>li', vim.lsp.buf.implementation, { desc = "LSP: [I]mplementation" })
+vim.keymap.set("n", '<leader>ls', builtin.lsp_document_symbols, { desc = "LSP: [D]ocument Symbols" })
+vim.keymap.set("n", '<leader>lt', vim.lsp.buf.type_definition, { desc = "LSP: [T]ype Definition" })
+vim.keymap.set("n", '<leader>lR', vim.lsp.buf.rename, { desc = "LSP: [R]ename symbol" })
+vim.keymap.set("n", '<leader>la', vim.lsp.buf.code_action, { desc = "LSP: Code [A]ction" })
+vim.keymap.set("n", '<leader>l]', function() vim.diagnostic.jump({ count = 1, float = true, wrap = true }) end,
+  { desc = "LSP: next diagnostic" })
+vim.keymap.set("n", '<leader>l[', function() vim.diagnostic.jump({ count = -1, float = true, wrap = true }) end,
+  { desc = "LSP: prev diagnostic" })
+vim.keymap.set("n", '<leader>l{', function() vim.diagnostic.jump({ count = -10000000, float = true, wrap = false }) end,
+  { desc = "LSP: first diagnostic" })
+vim.keymap.set("n", '<leader>l}', function() vim.diagnostic.jump({ count = 10000000, float = true, wrap = false }) end,
+  { desc = "LSP: last diagnostic" })
+vim.keymap.set("n", '<leader>le', vim.diagnostic.open_float, { desc = "LSP: Diagnostic op[e]n float" })
+vim.keymap.set("n", '<leader>lQ', vim.diagnostic.setloclist, { desc = "LSP: Setloclist" })
+vim.keymap.set("n", '<leader>lw', vim.lsp.buf.add_workspace_folder, { desc = "LSP: [W]orkspace Add" })
+vim.keymap.set("n", '<leader>lW', vim.lsp.buf.remove_workspace_folder, { desc = "LSP: [W]orkspace Remove" })
+vim.keymap.set("n", '<leader>lf', vim.lsp.buf.format, { desc = "LSP: [F]ormat" })
 
-  require("mason").setup {
-    automatic_installation = true,
-  }
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
+  callback = function(args)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-  require("mason-lspconfig").setup {
-    automatic_installation = true,
-    ensure_installed = {
-      "clangd",
-      "cssls",
-      "emmet_ls",
-      "gopls",
-      "html",
-      "lua_ls",
-      "pyright",
-      "rust_analyzer",
-      "tailwindcss",
-      "ts_ls",
-    }
-  }
-
-  -- Use an on_attach function to only map the following keys
-  -- after the language server attaches to the current buffer
-  local on_attach = function(client, bufnr)
-    require("lsp-format").on_attach(client, bufnr)
-
-    -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-    -- context line
-    local navic = require("nvim-navic")
-    navic.attach(client, bufnr)
-  end
-
-  local lspconfig = require("lspconfig")
-  local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-  local default = {
-    capabilities = capabilities,
-    on_attach = on_attach,
-  }
-  lspconfig.lua_ls.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      Lua = {
-        workspace = { checkThirdParty = false },
-        telemetry = { enable = false },
-        diagnostics = {
-          globals = { 'vim' }
-        }
-      }
-    }
-  }
-  lspconfig.emmet_ls.setup {
-    capabilities = capabilities,
-    filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
-  }
-  lspconfig.rust_analyzer.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      ['rust-analyzer'] = {
-        -- procMacro = {
-        --   ignored = {
-        --     leptos_macro = {
-        --       "server",
-        --     },
-        --   },
-        -- },
-        checkOnSave = {
-          allFeatures = true,
-          overrideCommand = {
-            'cargo', 'clippy', '--workspace', '--message-format=json',
-            '--all-targets', '--all-features'
-          }
-        }
-      }
-    }
-  })
-  lspconfig.clangd.setup(default)
-  lspconfig.ts_ls.setup(default)
-  lspconfig.pyright.setup(default)
-  lspconfig.gopls.setup(default)
-  lspconfig.jdtls.setup(default)
-  lspconfig.cssls.setup(default)
-  lspconfig.html.setup(default)
-  lspconfig.nushell.setup(default)
-end
+    -- Only set up format on save if the client supports formatting
+    if client and client.server_capabilities.documentFormattingProvider then
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.buf.format({ bufnr = bufnr })
+        end,
+      })
+    end
+  end,
+})
