@@ -8,4 +8,4 @@ makepkg -sric
 fnm install
 cd ~/dev/dotfiles
 
-nu -c "source $nu.env-path; source $nu.config-path; update-system"
+#nu -c "source $nu.env-path; source $nu.config-path; update-system"

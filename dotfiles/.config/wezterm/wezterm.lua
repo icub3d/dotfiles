@@ -1,92 +1,25 @@
--- Pull in the wezterm API
 local wezterm = require 'wezterm'
 local mux = wezterm.mux
 local act = wezterm.action
 
-local nu = "nu"
-local gst = "git-status-tracker"
-if wezterm.target_triple == "aarch64-apple-darwin" then
-  nu = "/opt/homebrew/bin/nu"
-  gst = "/Users/jmars23/.cargo/bin/git-status-tracker"
-end
 
 
--- Colors --
-local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
+local NU = "nu"
 
------------- Helper Functions ------------
-local git_info = function(cwd)
-  local info = io.popen(gst .. " get -p \"" .. cwd .. "\"")
-  if not info then
-    return false
-  end
-  local lines = {}
-  for line in info:lines() do
-    table.insert(lines, line)
-  end
-  return lines[1], lines[2]
-end
-
-local spawn_workspace = function(name, cwd, title, args, tabs)
-  -- create the new workspace
-  local tab, pane, window = mux.spawn_window({
-    workspace = name,
-    cwd = cwd,
-    args = args,
-  })
-
-  -- Set values if we are given them.
-  if title ~= "" and title ~= nil then
-    tab:set_title(title)
-  end
-
-  -- Do the same for each additional tab
-  for _, tab_info in ipairs(tabs) do
-    local new_tab, _, _ = window:spawn_tab {
-      cwd = cwd,
-      args = tab_info.args,
-    }
-
-    if tab_info.title ~= "" and tab_info.title ~= nil then
-      new_tab:set_title(tab_info.title)
-    end
-  end
-
-  -- Return the originals
-  return tab, pane, window
-end
-
--- This function will return the title for a tab.
-local tab_title = function(index, tab_info)
-  local title = tab_info.tab_title
-  -- if the tab title is explicitly set, take that
-  if title and #title > 0 then
-    return index .. ":" .. title
-  end
-  -- Otherwise, use the title from the active pane
-  -- in that tab
-  return index .. ":" .. tab_info.active_pane.title
-end
-
-
----------- General Config ----------
-
--- This table will hold the configuration.
+-- Initialize Config
 local config = {}
-
--- In newer versions of wezterm, use the config_builder which will
--- help provide clearer error messages
 if wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
--- use the simple prompt because we'll have a status bar
-config.set_environment_variables = {
-  SIMPLE_PROMPT = "true",
-}
+if wezterm.target_triple:find("windows") then
+  config.default_domain = "WSL:archlinux"
+end
 
--- default values
-config.default_prog = { nu, "-l" }
+-- General Setup
+config.automatically_reload_config = true
+config.default_prog = { NU, "-l" }
+config.scrollback_lines = 100000
 
 -- Keybindings
 config.leader = { key = "o", mods = "CTRL", timeout_milliseconds = 1000 }
@@ -112,6 +45,22 @@ config.keys = {
     action = act.SplitVertical { domain = "CurrentPaneDomain" },
   },
   {
+    key = "p",
+    mods = "LEADER",
+    action = act.ActivateKeyTable {
+      name = 'activate_pane',
+      one_shot = false,
+    }
+  },
+  {
+    key = "r",
+    mods = "LEADER",
+    action = act.ActivateKeyTable {
+      name = 'resize_pane',
+      one_shot = false,
+    }
+  },
+  {
     key = "o",
     mods = "LEADER",
     action = act.ActivatePaneDirection "Next",
@@ -119,7 +68,9 @@ config.keys = {
   {
     key = "c",
     mods = "LEADER",
-    action = act.EmitEvent 'my-spawn-tab',
+    action = act.SpawnCommandInNewTab {
+      args = { NU, "-l", "-c", "wezterm cli set-tab-title nu; nu" }
+    }
   },
   {
     key = "k",
@@ -154,6 +105,11 @@ config.keys = {
     },
   },
   {
+    key = "]",
+    mods = "LEADER",
+    action = act.Search { CaseInSensitiveString = '' },
+  },
+  {
     key = "[",
     mods = "LEADER",
     action = act.ActivateCopyMode,
@@ -167,7 +123,45 @@ config.keys = {
     key = "}",
     mods = "LEADER|SHIFT",
     action = act.ActivateTabRelative(1),
-  }
+  },
+  { key = 'PageUp',   mods = 'SHIFT', action = act.ScrollByPage(-1) },
+  { key = 'PageDown', mods = 'SHIFT', action = act.ScrollByPage(1) },
+}
+
+config.key_tables = {
+  resize_pane = {
+    { key = 'LeftArrow',  action = act.AdjustPaneSize { 'Left', 1 } },
+    { key = 'h',          action = act.AdjustPaneSize { 'Left', 1 } },
+
+    { key = 'RightArrow', action = act.AdjustPaneSize { 'Right', 1 } },
+    { key = 'l',          action = act.AdjustPaneSize { 'Right', 1 } },
+
+    { key = 'UpArrow',    action = act.AdjustPaneSize { 'Up', 1 } },
+    { key = 'k',          action = act.AdjustPaneSize { 'Up', 1 } },
+
+    { key = 'DownArrow',  action = act.AdjustPaneSize { 'Down', 1 } },
+    { key = 'j',          action = act.AdjustPaneSize { 'Down', 1 } },
+
+    -- Cancel the mode by pressing escape
+    { key = 'Escape',     action = 'PopKeyTable' },
+  },
+
+  activate_pane = {
+    { key = 'LeftArrow',  action = act.ActivatePaneDirection 'Left' },
+    { key = 'h',          action = act.ActivatePaneDirection 'Left' },
+
+    { key = 'RightArrow', action = act.ActivatePaneDirection 'Right' },
+    { key = 'l',          action = act.ActivatePaneDirection 'Right' },
+
+    { key = 'UpArrow',    action = act.ActivatePaneDirection 'Up' },
+    { key = 'k',          action = act.ActivatePaneDirection 'Up' },
+
+    { key = 'DownArrow',  action = act.ActivatePaneDirection 'Down' },
+    { key = 'j',          action = act.ActivatePaneDirection 'Down' },
+
+    -- Cancel the mode by pressing escape
+    { key = 'Escape',     action = 'PopKeyTable' },
+  },
 }
 
 -- Use leader + [0-9] to select tabs.
@@ -179,23 +173,13 @@ for i = 0, 9 do
   })
 end
 
--- Color Palette
+-- Setup color scheme
+local scheme = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
 config.color_scheme = "Catppuccin Mocha"
-
--- Don't darken inactive panes
-config.inactive_pane_hsb = {
-  saturation = 1.0,
-  brightness = 0.85,
-}
-
--- Font
 config.font = wezterm.font 'JetBrains Mono'
-config.font_size = 17.0
+config.font_size = 12.0
 
--- Window
--- config.window_background_image = wezterm.home_dir .. "/Pictures/marshians-green-background-2k.png"
--- config.window_background_opacity = 0.9
--- config.text_background_opacity = 0.9
+-- Window Frame
 config.window_padding = {
   left = 0,
   right = 0,
@@ -217,66 +201,28 @@ config.window_frame = {
 config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
 
--- Launcher
-local launch_menu = {}
-
-if wezterm.target_triple == "aarch64-apple-darwin" or wezterm.target_triple == "x86_64-unknown-linux-gnu" then
-  table.insert(launch_menu, {
-    label = "top",
-    args = { nu, "-c", "bpytop" },
-  })
-end
-
-table.insert(launch_menu, {
-  label = "nw (new workspace)",
-  args = { nu, "-l", "-c", "nw" },
-})
-
-config.launch_menu = launch_menu
-
--- Startup Behavior
-wezterm.on('gui-startup', function(_)
-  -- home
-  local _, _, window = spawn_workspace("home",
-    wezterm.home_dir,
-    nu,
-    nil,
-    {})
-
-  -- dotfiles
-  spawn_workspace("dot",
-    wezterm.home_dir .. '/dev/dotfiles',
-    "nv",
-    { nu, "-e", "v ." },
-    { { title = "nu", } })
-
-  -- work stuff
-  if os.getenv("ATWORK") == "true" then
-    spawn_workspace("oti",
-      wezterm.home_dir .. '/dev/oti-azure',
-      "nv",
-      { nu, "-e", "v ." },
-      { { title = "logs", }, { title = "nu", } })
-    spawn_workspace("otvm",
-      wezterm.home_dir .. '/dev/edi-oti-otvm_containerized',
-      "nv",
-      { nu, "-e", "v ." },
-      { { title = "logs", }, { title = "nu", } })
-  end
-
-  -- Not sure why these don't work yet.
-  -- window:gui_window():maximize()
-  -- window:gui_window():perform_action(act.ActivateTab(0))
-end)
-
 ---------- Tab Bar ----------
 config.status_update_interval = 2000
-local SOLID_LEFT_ARROW = ' '
-local SOLID_RIGHT_ARROW = ' '
+local SOLID_RIGHT_SIDE = wezterm.nerdfonts.pl_left_hard_divider .. ' '
+local SOLID_LEFT_SIDE = ' ' .. wezterm.nerdfonts.pl_right_hard_divider
+
+-- This function will return the title for a tab.
+local tab_title = function(index, tab_info)
+  local title = string.gsub(tab_info.tab_title, ".exe", "")
+  -- if the tab title is explicitly set, take that
+  if title and #title > 0 then
+    return index .. ":" .. title
+  end
+  -- Otherwise, use the title from the active pane
+  -- in that tab
+  title = string.gsub(tab_info.active_pane.title, ".exe", "")
+  return index .. ":" .. title
+end
+
 
 wezterm.on(
   'format-tab-title',
-  function(tab, tabs, _, _, hover, max_width)
+  function(tab, _, _, _, hover, max_width)
     local edge_background = scheme.cursor_fg
     local background = scheme.ansi[7]
     local foreground = scheme.cursor_fg
@@ -299,19 +245,113 @@ wezterm.on(
     return {
       { Background = { Color = edge_background } },
       { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_LEFT_ARROW },
+      { Text = SOLID_LEFT_SIDE },
       { Background = { Color = background } },
       { Foreground = { Color = foreground } },
       { Text = title },
       { Background = { Color = edge_background } },
       { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_RIGHT_ARROW },
+      { Text = SOLID_RIGHT_SIDE },
     }
   end
-
 )
 
+
 ---------- Status Bar ----------
+local function uri_to_path(cwd_uri)
+  if not cwd_uri then
+    return nil
+  end
+  local s = tostring(cwd_uri)
+
+  -- Strip the "file://" prefix
+  s = s:gsub("^file://", "")
+
+  if wezterm.target_triple:find("windows") then
+    -- Remove leading slash before drive letter (e.g. /C:/ -> C:/)
+    s = s:gsub("^/", "")
+    s = s:gsub("/", "\\")
+  end
+
+  return s
+end
+local function get_git_info(cwd_uri)
+  if not cwd_uri then
+    return nil
+  end
+
+  local cwd = uri_to_path(cwd_uri)
+
+  -- Run `git rev-parse --is-inside-work-tree` to check if it's a git repo
+  local success, stdout = wezterm.run_child_process({
+    'git', '-C', cwd, 'rev-parse', '--is-inside-work-tree'
+  })
+
+  if not success or not stdout:match('true') then
+    return nil
+  end
+
+  -- Use porcelain v2 for structured output
+  success, stdout, stderr = wezterm.run_child_process({
+    'git', '-C', cwd, 'status', '--porcelain=2', '--branch'
+  })
+  if not success then
+    return nil
+  end
+
+  local branch, ahead, behind = nil, 0, 0
+  local staged, modified, untracked = 0, 0, 0
+
+  for line in stdout:gmatch("[^\r\n]+") do
+    -- Example: "# branch.head main"
+    local head = line:match("^# branch%.head (.+)")
+    if head then branch = head end
+
+    -- Example: "# branch.ab +1 -2"
+    local a, b = line:match("^# branch%.ab %+(%d+) %-(%d+)")
+    if a or b then
+      ahead = tonumber(a) or 0
+      behind = tonumber(b) or 0
+    end
+
+    -- Parse file statuses: "1 XY ..." lines (tracked files)
+    local xy = line:match("^1%s(..)%s")
+    if xy then
+      local x, y = xy:sub(1, 1), xy:sub(2, 2)
+      if x ~= '.' then staged = staged + 1 end
+      if y ~= '.' then modified = modified + 1 end
+    end
+
+    -- Parse untracked files: lines starting with '?'
+    if line:match("^%?%s") then
+      untracked = untracked + 1
+    end
+  end
+
+  if not branch then
+    return nil
+  end
+
+  -- Build a short, readable summary
+  local parts = {}
+  table.insert(parts, "  " .. branch)
+
+  if ahead > 0 or behind > 0 then
+    table.insert(parts, string.format("⇡%d ⇣%d", ahead, behind))
+  end
+
+  local changes = {}
+  if staged > 0 then table.insert(changes, "+" .. staged) end
+  if modified > 0 then table.insert(changes, "~" .. modified) end
+  if untracked > 0 then table.insert(changes, "?" .. untracked) end
+
+  if #changes > 0 then
+    table.insert(parts, table.concat(changes, " "))
+  end
+
+  return table.concat(parts, " ")
+end
+
 wezterm.on('update-status', function(window, pane)
   local hostname = string.lower(wezterm.hostname())
 
@@ -333,130 +373,73 @@ wezterm.on('update-status', function(window, pane)
     { Text = name },
     { Foreground = { Color = scheme.ansi[2] } },
     { Background = { Color = scheme.ansi[3] } },
-    { Text = SOLID_RIGHT_ARROW },
+    { Text = SOLID_RIGHT_SIDE },
     { Foreground = { Color = scheme.cursor_fg } },
     { Background = { Color = scheme.ansi[3] } },
     { Text = workspace },
     { Foreground = { Color = scheme.ansi[3] } },
     { Background = { Color = scheme.cursor_fg } },
-    { Text = SOLID_RIGHT_ARROW },
+    { Text = SOLID_RIGHT_SIDE },
 
   })
   window:set_left_status(left_format)
 
-  -- current path
-  local cwd = pane:get_current_working_dir()
-  if not cwd then
-    return
-  end
-  local file_path = cwd.file_path
-  if string.find(file_path, "/%u:/") == 1 then
-    file_path = file_path:sub(2)
-  end
+  local git_info = get_git_info(pane:get_current_working_dir()) or " nogit"
+  local right_format = wezterm.format({
+    { Foreground = { Color = scheme.ansi[4] } },
+    { Background = { Color = scheme.cursor_fg } },
+    { Text = SOLID_LEFT_SIDE },
+    { Background = { Color = scheme.ansi[4] } },
+    { Foreground = { Color = scheme.cursor_fg } },
+    { Text = git_info },
 
-  local entries = {}
-  local cur_bg = scheme.cursor_fg
-
-  -- git information
-  local branch, status = git_info(file_path)
-
-  if branch then
-    branch = " " .. branch
-    table.insert(entries, { Background = { Color = cur_bg } })
-    table.insert(entries, { Foreground = { Color = scheme.ansi[5] } })
-    table.insert(entries, { Text = SOLID_LEFT_ARROW })
-    table.insert(entries, { Background = { Color = scheme.ansi[5] } })
-    table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
-    table.insert(entries, { Text = branch })
-    cur_bg = scheme.ansi[5]
-  end
-
-  if status then
-    status = " " .. status
-    table.insert(entries, { Background = { Color = cur_bg } })
-    table.insert(entries, { Foreground = { Color = scheme.ansi[4] } })
-    table.insert(entries, { Text = SOLID_LEFT_ARROW })
-    table.insert(entries, { Background = { Color = scheme.ansi[4] } })
-    table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
-    table.insert(entries, { Text = status })
-    cur_bg = scheme.ansi[4]
-  end
-
-  -- After we've done the git stuff, replace the home dir with ~
-  local path = cwd
-  cwd = cwd.path
-  if cwd:gmatch(wezterm.home_dir) then
-    cwd = cwd:gsub(wezterm.home_dir, "~")
-  end
-  -- If there are more than 2 directors, truncate the middle
-  -- ones.
-  local dirs = {}
-  for dir in cwd:gmatch("[^/]+") do
-    table.insert(dirs, dir)
-  end
-  if #dirs > 2 then
-    local middle = ""
-    for i = 2, #dirs - 1 do
-      middle = middle .. dirs[i]:sub(1, 1) .. "/"
-    end
-    cwd = dirs[1] .. "/" .. middle .. dirs[#dirs]
-  end
-
-  -- Add the host if it's not our host.
-  if path.host ~= nil and string.lower(path.host) ~= wezterm.hostname() then
-    cwd = string.lower(path.host) .. ":" .. cwd
-  end
-  cwd = " " .. cwd
-
-  table.insert(entries, { Background = { Color = cur_bg } })
-  table.insert(entries, { Foreground = { Color = scheme.ansi[7] } })
-  table.insert(entries, { Text = SOLID_LEFT_ARROW })
-  table.insert(entries, { Background = { Color = scheme.ansi[7] } })
-  table.insert(entries, { Foreground = { Color = scheme.cursor_fg } })
-  table.insert(entries, { Text = cwd })
-
-  local right_format = wezterm.format(entries)
+  })
   window:set_right_status(right_format)
 end)
 
+-- Startup Behavior
+local spawn_workspace = function(name, cwd, title, args, tabs)
+  -- create the new workspace
+  local tab, pane, window = mux.spawn_window({
+    workspace = name,
+    cwd = cwd,
+    args = args,
+  })
 
----------- Custom Events ----------
-wezterm.on("user-var-changed", function(window, pane, name, value)
-  wezterm.log_info("user-var-changed: " .. name .. " = " .. value)
-  if name == "WORKSPACE_CHANGED" and string.len(value) > 0 then
-    -- This one currently doesn't work well. I just use the
-    -- launcher.
-    wezterm.GLOBAL.last_open_workspace = window:active_workspace()
-    window:perform_action(
-      wezterm.action.SwitchToWorkspace {
-        name = value,
-      },
-      pane
-    )
-  elseif name == "CREATE_WORKSPACE" and string.len(value) > 0 then
-    -- This one is sent from the `nw` script.
-    wezterm.GLOBAL.last_open_workspace = window:active_workspace()
-    local window_name, new_cwd = string.gmatch(value, "(%w+)|(.*)")()
-    local _, new_pane, _ = spawn_workspace(window_name,
-      new_cwd,
-      "nv",
-      { nu, "-e", "v ." },
-      { { title = "nu", } })
-    window:perform_action(
-      wezterm.action.SwitchToWorkspace {
-        name = window_name,
-      },
-      new_pane
-    )
+  -- Set values if we are given them.
+  if title ~= "" and title ~= nil then
+    tab:set_title(title)
   end
+
+  -- Do the same for each additional tab
+  for _, tab_info in ipairs(tabs) do
+    local new_tab, _, _ = window:spawn_tab {
+      cwd = cwd,
+      args = tab_info.args,
+    }
+
+    if tab_info.title ~= "" and tab_info.title ~= nil then
+      new_tab:set_title(tab_info.title)
+    end
+  end
+
+  -- Return the originals
+  return tab, pane, window
+end
+wezterm.on('gui-startup', function(_)
+  -- home
+  spawn_workspace("home",
+    wezterm.home_dir,
+    NU,
+    nil,
+    {})
+
+  -- dotfiles
+  spawn_workspace("dot",
+    wezterm.home_dir .. '/dev/icub3d/dotfiles',
+    "nv",
+    { NU, "-e", "v ." },
+    { { title = NU, } })
 end)
 
-wezterm.on('my-spawn-tab', function(window, _)
-  -- The key bind will trigger this and we change the
-  -- title to "nu" for the shell name.
-  local tab, _, _ = window:mux_window():spawn_tab {}
-  tab:set_title("nu")
-end)
-
--- Return the configuration to wezterm
 return config

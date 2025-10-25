@@ -1,6 +1,9 @@
 [init]
   defaultBranch = main
 
+[core]
+  pager = delta
+
 [color]
   branch = auto
   diff = auto
@@ -66,6 +69,7 @@
 
 [delta]
   navigate = true
+  paging = always
   features = dark side-by-side line-numebrs decorations my-styles
 
 [delta "my-styles"]

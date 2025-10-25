@@ -1,3 +1,9 @@
+# source our secret file if it exists.
+const secrets_path = ($nu.default-config-dir | path join ".env.nu")
+if ($secrets_path | path exists) {
+  source $secrets_path
+}
+
 # A list of all of our custom paths.
 let paths = [
   # bin paths
@@ -71,6 +77,7 @@ if ((which fnm | length) > 0) {
   load-env (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' | split column "=" | rename name value | where name != "FNM_ARCH" | where name != "PATH" | reduce -f {} {|it, acc| ($acc | upsert $it.name $it.value )})
   
   # Add fnm's current node path to PATH (no /bin subdirectory needed)
+  $env.PATH = ($env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join "bin"))
   $env.PATH = ($env.PATH | prepend $env.FNM_MULTISHELL_PATH)
 }
 
@@ -165,6 +172,59 @@ alias w = viddy
 #########################################################
 # functions
 #########################################################
+
+# A helper to print messages in a consistent style
+def "print-info" [message: string] {
+    print $"✅ ($message)"
+}
+
+# A helper to print error messages
+def "print-error" [message: string] {
+    print -e $"❌ ERROR: ($message)"
+}
+
+# Clear the terminal and scrollback so watch output starts from a clean buffer.
+def "reset-terminal" [] {
+    print -n "\u{001b}c"
+    print -n "\u{001b}[3J\u{001b}[H\u{001b}[2J"
+    print -n "\u{001b}[0m"
+}
+
+# Normalize and convert a debug-formatted Rust Duration string into a Nushell duration
+def "parse-duration" [value: string] {
+    $value
+    | str trim
+    | split row " "
+    | where {|part| not ($part | str trim | is-empty) }
+    | each {|part|
+        let normalized = (
+            if ($part | str ends-with "ms") {
+                $part
+            } else if ($part | str ends-with "µs") {
+                $part
+            } else if ($part | str ends-with "us") {
+                $part | str replace --regex "us$" "µs"
+            } else if ($part | str ends-with "ns") {
+                $part
+            } else if ($part | str ends-with "s") {
+                $part | str replace --regex "s$" "sec"
+            } else if ($part | str ends-with "m") {
+                $part | str replace --regex "m$" "min"
+            } else if ($part | str ends-with "h") {
+                $part | str replace --regex "h$" "hr"
+            } else if ($part | str ends-with "d") {
+                $part | str replace --regex "d$" "day"
+            } else if ($part | str ends-with "w") {
+                $part | str replace --regex "w$" "wk"
+            } else {
+                $part
+            }
+        )
+
+        try { $normalized | into duration } catch { 0ns }
+    }
+    | math sum
+}
 
 def "lla" [path = "."] {
   ls -la $path | grid -c

@@ -16,17 +16,13 @@ dust
 efibootmgr
 efitools
 efivar
-eza
 fd
-fish
 fnm
 fzf
 git
 git-delta
 gnupg
 hex
-httpie
-httping
 hyperfine
 inetutils
 iptables-nft
@@ -44,7 +40,6 @@ nfs-utils
 nmap
 openssh
 pacman-contrib
-parallel
 perf
 pipewire
 pkgfile
@@ -62,7 +57,6 @@ texinfo
 tmux
 traceroute
 unzip
-wezterm
 wget
 wireguard-tools
 wpa_supplicant

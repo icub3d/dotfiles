@@ -1,9 +1,6 @@
 aspell-en
 bingrep
 binwalk
-cargo-edit
-cargo-outdated
-cargo-update
 clang
 delve
 dmidecode
@@ -29,5 +26,4 @@ terraform
 terraform-ls
 usbutils
 valgrind
-viddy
 wasm-pack

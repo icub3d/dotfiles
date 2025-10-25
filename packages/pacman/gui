@@ -62,3 +62,4 @@ wl-clipboard
 xdg-desktop-portal
 xdg-user-dirs-gtk
 xorg-xinput
+wayland
