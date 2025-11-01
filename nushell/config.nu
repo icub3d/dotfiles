@@ -141,6 +141,41 @@ $env.config = {
         send: ExecuteHostCommand,
         cmd: "let folder = (select-folder ($nu.home-path | path join dev) 3); if ($folder | is-empty) { } else { commandline edit -i $folder }"
       }
+    },
+    {
+          name: paste_bash_as_nushell
+    modifier: alt
+    keycode: char_v
+    mode: [emacs, vi_normal, vi_insert]
+    event: {
+        send: executehostcommand
+        cmd: "
+            let clipboard = (
+                if ($nu.os-info.name == 'windows' or (('/proc/version' | path exists) and (open /proc/version | str contains \"microsoft\"))) {
+                    powershell.exe -command Get-Clipboard | str trim
+                } else if ($nu.os-info.name == 'macos') {
+                    pbpaste | str trim
+                } else {
+                    # Try wl-paste first (Wayland), fallback to xclip (X11)
+                    try {
+                        wl-paste | str trim
+                    } catch {
+                        xclip -selection clipboard -o | str trim
+                    }
+                }
+            )
+            
+            # Convert bash syntax to nushell
+            let converted = ($clipboard
+                | str replace --all --regex '\\\\$' ' '  # backslash at end
+                | str replace --all --regex '\\\\\\r?\\n' ' '  # backslash+newline
+                | str replace --all '&&' ';'                    # && to semicolon
+                | str replace --all --regex '\\s+;\\s+' '; '   # clean up spacing around semicolons
+            )
+            
+            commandline edit --replace $converted
+        "
+    }
     }
   ]
 }
@@ -224,6 +259,42 @@ def "parse-duration" [value: string] {
         try { $normalized | into duration } catch { 0ns }
     }
     | math sum
+}
+
+# Parse an ini file
+def "parse ini" [path?: path] {
+  let content = if ($path | is-empty) {
+    let data = $in
+    if ($data | describe | str contains "list<string>") {
+      $data
+    } else if ($data | describe | str contains "string") {
+      $data | lines
+    } else {
+      $data | into string | lines
+    }
+  } else {
+    open --raw $path | lines
+  }
+
+  $content
+  | where $it != "" and not ($it | str starts-with "#")  # ignore blanks and comments
+  | reduce -f {} {|line, acc|
+      if $line =~ '^\[.*\]$' {
+          let section = ($line | str replace -a -r '\[|\]' '')
+          $acc | upsert $section {} | upsert current_section $section
+      } else if $line =~ ':' {
+          let parts = ($line | split column -n 2 -r '[:=]' | each {|x| $x | str trim})
+          let key = ($parts | get 0.column1)
+          let val = ($parts | get 0.column2)
+          let section = ($acc.current_section | into string)
+          mut out = ($acc | reject current_section)
+          let current = (if ($out | get $section | is-empty) { {} } else { $out | get $section })
+          $out | upsert $section ($current | upsert $key $val) | upsert current_section $section
+      } else {
+          $acc
+      }
+  }
+  | reject current_section
 }
 
 def "lla" [path = "."] {
