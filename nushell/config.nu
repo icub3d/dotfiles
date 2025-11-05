@@ -720,11 +720,6 @@ def nw [name = "", folder = ""] {
   }
 }
 
-def wezterm-switch-workspace [] {
-  wezterm-set-user-var WORKSPACE_CHANGED ($in | fzf --reverse --border=rounded --prompt "workspace> ")
-}
-alias sw = wezterm-switch-workspace
-
 alias k = kubectl
 def "k gc" [] {
   k config get-contexts
@@ -763,14 +758,6 @@ def "k uc" [context] {
 
 def "k ga" [...args] {
   k get all $args
-}
-
-def "k oti" [ns] {
-  k config use-context $"aks-oti-($ns)-eastus-001"
-}
-
-def "k otvm" [ns] {
-  k config use-context $"otvm-containerized-($ns)"
 }
 
 def liquidctl-colors [color] {
