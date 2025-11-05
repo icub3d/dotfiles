@@ -18,13 +18,10 @@ imagemagick
 inkscape
 libvterm
 obs-studio
-obs-vkcapture
-obs-gstreamer
 gstreamer-vaapi
 octave
 opensc
 openshot
-opentabletdriver
 edk2-ovmf
 pdftk
 texlive-binextra
