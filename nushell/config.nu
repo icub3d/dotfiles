@@ -4,6 +4,8 @@ if ($secrets_path | path exists) {
   source $secrets_path
 }
 
+$env.config.shell_integration."osc133" = false
+
 # A list of all of our custom paths.
 let paths = [
   # bin paths
@@ -185,6 +187,7 @@ alias bench = hyperfine
 alias cat = bat
 alias d = docker
 alias dc = docker compose
+alias du = dust
 alias p = podman
 alias pc = podman compose
 alias diff = delta
@@ -673,17 +676,12 @@ def download-arch-iso [] {
 def get-marshian-images [] {
   let base = "https://logo.marsh.gg/dist/"
   let images = [
-	"marshians-text-green/marshians-text-green-background-2k.png",
 	"marshians-text-green/marshians-text-green-background-3k.png",
-	"marshians-text-green/marshians-text-green-background-4k.png",
-	"marshians-text-green/marshians-text-green-400.png",
-	"marshians-green/marshians-green-background-2k.png",
 	"marshians-green/marshians-green-background-3k.png",
-	"marshians-green/marshians-green-background-4k.png",
-	"marshians-green/marshians-green-400.png",
   ];
   for image in $images {
 	http get $"($base)($image)" | save -f ($nu.home-path | path join "Pictures" | path join ($image | path split | last))
+  http get "https://img.marsh.gg/avatar.png" | save -f $(nu.home-path | path join "Pictures/avatar.png")
   }
 }
 
@@ -737,12 +735,15 @@ def nw [name = "", folder = ""] {
   }
 
   if ("TMUX_PANE" in $env) {
-    tmux new-session -d -c $folder -s $name -n "v"
+    tmux new-session -d -c $folder -s $name -n "nv"
     tmux send-keys -t $"($name):0" "v . " C-m
-    tmux new-window -d -c $folder -t $"($name):1" -n "🐚"
-    tmux new-window -d -c $folder -t $"($name):2" -n "📒"
+    tmux new-window -d -c $folder -t $"($name):1" -n "nu"
   } else {
-    wezterm-set-user-var CREATE_WORKSPACE $"($name)|($folder)"
+    let id = (wezterm cli spawn --new-window --workspace $name --cwd $folder "nu" "-l" | str trim)
+    wezterm cli send-text --pane-id $id "wezterm cli set-tab-title nv\n"
+    wezterm cli send-text --pane-id $id "v .\n"
+    let id = (wezterm cli spawn --pane-id $id "nu" "-l" | str trim)
+    wezterm cli send-text --pane-id $id "wezterm cli set-tab-title nu; clear\n"
   }
 }
 
@@ -835,13 +836,12 @@ def "update-mirrors" [] {
 
 def tx [] {
   $env.SIMPLE_PROMPT = true
-  tmux new-session -d -c ~/dev/dotfiles -s • -n "v"
+  tmux new-session -d -c ~/dev/dotfiles -s • -n "nv"
   tmux send-keys -t •:0 "v ." C-m
-  tmux new-window -d -c ~/dev/dotfiles -t •:1 -n "🐚"
-  tmux new-window -d -c ~/dev/dotfiles -t •:2 -n "📒"
+  tmux new-window -d -c ~/dev/dotfiles -t •:1 -n "nu"
 
-  tmux new-session -d -c ~ -s 🏠 -n "🏠"
-  tmux new-window -d -c ~/dev -t 🏠:1 -n "💻"
+  tmux new-session -d -c ~ -s 🏠 -n "~"
+  tmux new-window -d -c ~/dev -t 🏠:1 -n "dev"
 
   tmux attach -t 🏠
 }

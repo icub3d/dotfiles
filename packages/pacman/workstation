@@ -1,5 +1,3 @@
-aircrack-ng
-asciinema
 baobab
 blender
 ccid
@@ -16,11 +14,8 @@ gst-plugin-pipewire
 gst-plugins-good
 handbrake
 highlight-pointer-git
-hydra
 imagemagick
 inkscape
-john
-libfido2
 libvterm
 obs-studio
 obs-vkcapture
@@ -30,13 +25,10 @@ octave
 opensc
 openshot
 opentabletdriver
-dotnet-runtime
-dotnet-runtime-6.0
-dotnet-sdk
 edk2-ovmf
 pdftk
 texlive-binextra
 texlive-latexrecommended
 tk
 visual-studio-code-bin
-wireshark-qt
+wezterm

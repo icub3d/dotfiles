@@ -3,6 +3,7 @@ bandwhich
 base
 base-devel
 bat
+bind
 bpytop
 btrfs-progs
 ca-certificates
@@ -10,7 +11,6 @@ curl
 dhcpcd
 dialog
 dnsmasq
-bind
 dool
 dust
 efibootmgr
@@ -45,7 +45,7 @@ pipewire
 pkgfile
 prettyping
 procs
-pueue
+pup
 ripgrep
 sbctl
 sd
@@ -57,6 +57,7 @@ texinfo
 tmux
 traceroute
 unzip
+w3m
 wget
 wireguard-tools
 wpa_supplicant

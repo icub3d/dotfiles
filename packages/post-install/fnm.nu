@@ -3,5 +3,8 @@ do -i {
     echo "prefix=/home/jmarsh/.npm-packages\n" | save --append ~/.npmrc
   }
 
-  npm install --global yarn typescript neovim browser-sync json-server 
+  fnm install v24
+  fnm use v24
+
+  npm install --global typescript neovim
 }
