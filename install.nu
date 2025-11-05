@@ -4,8 +4,7 @@ ln -s ~/dev/dotfiles/nushell $nu.default-config-dir
 cd ~/dev
 git clone https://aur.archlinux.org/fnm.git
 cd fnm
-makepkg -sric
-fnm install
-cd ~/dev/dotfiles
+makepkg -sic
+fnm install v24
 
-#nu -c "source $nu.env-path; source $nu.config-path; update-system"
+nu -c "source $nu.env-path; source $nu.config-path; update-system"
