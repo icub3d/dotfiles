@@ -436,7 +436,7 @@ wezterm.on('gui-startup', function(_)
 
   -- dotfiles
   spawn_workspace("dot",
-    wezterm.home_dir .. '/dev/icub3d/dotfiles',
+    wezterm.home_dir .. '/dev/dotfiles',
     "nv",
     { NU, "-e", "v ." },
     { { title = NU, } })

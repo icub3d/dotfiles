@@ -4,7 +4,10 @@ if ($secrets_path | path exists) {
   source $secrets_path
 }
 
-$env.config.shell_integration."osc133" = false
+# Windows doesn't seem to like this.
+if ($nu.os-info.name == "windows") {
+  $env.config.shell_integration."osc133" = false
+}
 
 # A list of all of our custom paths.
 let paths = [
@@ -29,41 +32,13 @@ let paths = [
   ($nu.home-path | path join ".local/share/fnm"),
 ];
 
-# Git status tracking
-def "git-status-tracker-save" [pwd] {
-  # Get the path of the git repo we are currently in.
-  let path_cmd = git -C $"($pwd)" rev-parse --show-toplevel | complete
-  if ($path_cmd.exit_code != 0) {
-    return
-  }
-  let path = $path_cmd.stdout | str trim
-
-  # Get the branch we are currently in.
-  let head = git -C $"($pwd)" rev-parse --abbrev-ref HEAD | complete
-  if ($head.exit_code != 0 or ($head.stderr | str contains "fatal:")) {
-    return
-  }
-  let branch = $head.stdout | str trim
-
-  # If we got both of those, we can get the current status and update our status tracker.
-  let status = do -i { git -C $"($pwd)" status --porcelain } | lines | str substring 0..1 | str replace ' ' '_' | sort | uniq -c | format pattern '{count} {value}' | str join '|'
-  if ((which git-status-tracker | length) > 0) {
-    git-status-tracker put -b $"($branch)" -g $"($status)" -p $"($path)"
-  }
-}
-
 # Prompt
 $env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_INSERT = $"(ansi green)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi blue)λ (ansi reset)"
 $env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)|   (ansi reset)"
 $env.PROMPT_COMMAND_RIGHT = {||}
-$env.PROMPT_COMMAND = {|| 
-  # echo
-  # let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
-  # ansi --osc $file_info
-  # git-status-tracker-save $"($env.PWD)"
-}
+$env.PROMPT_COMMAND = {||}
 
 # Load the environment from the system profiles.
 if ($nu.os-info.name == "linux") {
@@ -99,7 +74,6 @@ $env.config = {
         print " " 
         let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
         ansi --osc $file_info
-        git-status-tracker-save $"($env.PWD)"
       }
     ]
   },
@@ -301,19 +275,19 @@ def "parse ini" [path?: path] {
 }
 
 def "lla" [path = "."] {
-  ls -la $path | grid -c
+  ls -la $path
 }
 
 def "la" [path = "."] {
-  ls -a $path | grid -c
+  ls -a $path
 }
 
 def "ll" [path = "."] {
-  ls -l $path | grid -c
+  ls -l $path 
 }
 
 def "l" [path = "."] {
-  ls $path | grid -c
+  ls $path
 }
 
 def missing-packages [] {
@@ -503,13 +477,13 @@ def strongbox [] {
 }
 
 def smoke-test-ligatures [] {
-  echo "normal"
-  echo $"(ansi attr_bold)bold(ansi reset)"
-  echo $"(ansi attr_italic)italic(ansi reset)"
-  echo $"(ansi attr_bold)(ansi attr_italic)bold italic(ansi reset)"
-  echo $"(ansi attr_underline)underline(ansi reset)"
-  echo "== === !== >= <= =>"
-  echo "契          勒 鈴 "
+  print "normal"
+  print $"(ansi attr_bold)bold(ansi reset)"
+  print $"(ansi attr_italic)italic(ansi reset)"
+  print $"(ansi attr_bold)(ansi attr_italic)bold italic(ansi reset)"
+  print $"(ansi attr_underline)underline(ansi reset)"
+  print "== === !== >= <= =>"
+  print "契         勒 鈴 "
 }
 
 def scan-help [path] {
@@ -656,18 +630,17 @@ def github-latest [owner, repo] {
 
 def download-arch-iso [] {
   let base = "https://mirrors.xtom.com/archlinux/iso/latest/"
-  let sig_base = "https://www.archlinux.org/iso/"
+  let sig = $"($base)archlinux-x86_64.iso.sig"
+  let iso = $"($base)archlinux-x86_64.iso"
 
   # dowlnoad the iso
-  let iso_uri = (http get $base | rg -o 'archlinux-[.0-9]+-x86_64.iso' | lines | uniq | first)
-  http get $"($base)($iso_uri)" | save -f archlinux-latest-x86_64.iso
+  http get $iso | save -f archlinux-x86_64.iso
 
   # download the signature
-  let version = ($iso_uri | rg -o '[.0-9]{10}')
-  http get $"($sig_base)($version)/archlinux-($version)-x86_64.iso.sig" | save -f archlinux-latest-x86_64.iso.sig
+  http get $sig | save -f archlinux-x86_64.iso.sig
 
   # verify the signature
-  let sig_check = do { gpg -q --keyserver-options auto-key-retrieve --verify archlinux-latest-x86_64.iso.sig archlinux-latest-x86_64.iso } | complete
+  let sig_check = do { gpg -q --keyserver-options auto-key-retrieve --verify archlinux-x86_64.iso.sig archlinux-x86_64.iso } | complete
   if ($sig_check.exit_code != 0) {
 	echo "signature verification failed"
   }
