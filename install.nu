@@ -6,11 +6,23 @@ print "🚀 Starting dotfiles installation..."
 print "JT Symlinking nushell config..."
 let dotfiles_dir = ($env.HOME | path join 'dev/dotfiles')
 let nushell_dir = ($dotfiles_dir | path join 'nushell')
+
 if ($nu.default-config-dir | path exists) {
-    rm -rf $nu.default-config-dir
+    let canonical_config_dir = ($nu.default-config-dir | path expand)
+    let canonical_nushell_dir = ($nushell_dir | path expand)
+
+    if ($canonical_config_dir == $canonical_nushell_dir) {
+        print "✅ Nushell config already correctly linked."
+    } else {
+        print "Removing existing Nushell config or incorrect symlink..."
+        rm -rf $nu.default-config-dir
+        ln -s $nushell_dir $nu.default-config-dir
+        print "✅ Nushell config linked."
+    }
+} else {
+    ln -s $nushell_dir $nu.default-config-dir
+    print "✅ Nushell config linked."
 }
-ln -s $nushell_dir $nu.default-config-dir
-print "✅ Nushell config linked."
 
 # --- Create .env.nu if it doesn't exist ---
 let env_file = ($nu.default-config-dir | path join '.env.nu')
