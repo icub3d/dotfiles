@@ -681,7 +681,7 @@ def get-marshian-images [] {
   ];
   for image in $images {
 	http get $"($base)($image)" | save -f ($nu.home-path | path join "Pictures" | path join ($image | path split | last))
-  http get "https://img.marsh.gg/avatar.png" | save -f $(nu.home-path | path join "Pictures/avatar.png")
+  http get "https://img.marsh.gg/avatar.png" | save -f (nu.home-path | path join "Pictures/avatar.png")
   }
 }
 

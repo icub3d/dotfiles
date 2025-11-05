@@ -1,6 +1,10 @@
 rm -rf $nu.default-config-dir
 ln -s ~/dev/dotfiles/nushell $nu.default-config-dir
 
+sudo pacman -S rustup
+
+rustup toolchain add stable
+
 cd ~/dev
 git clone https://aur.archlinux.org/fnm.git
 cd fnm
