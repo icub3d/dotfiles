@@ -7,4 +7,7 @@ cd fnm
 makepkg -sic
 fnm install v24
 
+cd ~/dev/dotfiles
+touch nushell/.env.nu
+
 nu -c "source $nu.env-path; source $nu.config-path; update-system"
