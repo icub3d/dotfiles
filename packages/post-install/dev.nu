@@ -1,8 +1,7 @@
 do -i {
   mkdir ~/bin
 
-  # update-cli-tools
-
+  # rust
   rustup toolchain add nightly
   rustup default stable
   rustup component add rust-analysis rust-src rust-analyzer
