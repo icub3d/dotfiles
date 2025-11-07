@@ -634,7 +634,7 @@ def download-arch-iso [] {
   let sig = $"($base)archlinux-x86_64.iso.sig"
   let iso = $"($base)archlinux-x86_64.iso"
 
-  # dowlnoad the iso
+  # download the ISO
   http get $iso | save -f archlinux-x86_64.iso
 
   # download the signature
@@ -647,16 +647,40 @@ def download-arch-iso [] {
   }
 }
 
+def get-catppucin-wallpapers [] {
+ let images = [
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/misc/rainbow.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/misc/virus.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/misc/cat-sound.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/os/arch-black-4k.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/waves/cat-waves.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/landscapes/forrest.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/landscapes/shaded_landscape.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/mandelbrot/mandelbrot_full_green.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/mandelbrot/mandelbrot_full_sky.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/mandelbrot/mandelbrot_side_green.png",
+  "https://github.com/zhichaoh/catppuccin-wallpapers/blob/1023077979591cdeca76aae94e0359da1707a60e/mandelbrot/mandelbrot_side_sky.png",
+
+ ];
+  for image in $images {
+	http get $"($image)" | save -f ($nu.home-path | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
+  }
+}
+
 def get-marshian-images [] {
   let base = "https://logo.marsh.gg/dist/"
   let images = [
-	"marshians-text-green/marshians-text-green-background-3k.png",
-	"marshians-green/marshians-green-background-3k.png",
+    "marshians-green/marshians-green-background-3k.png",
+    "marshians-green/marshians-pink-background-3k.png",
+    "marshians-green/marshians-orange-background-3k.png",
+    "marshians-green/marshians-yellow-background-3k.png",
+    "marshians-green/marshians-blue-background-3k.png",
+    "marshians-green/marshians-violet-background-3k.png",
   ];
   for image in $images {
-	http get $"($base)($image)" | save -f ($nu.home-path | path join "Pictures" | path join ($image | path split | last))
-  http get "https://img.marsh.gg/avatar.png" | save -f ($nu.home-path | path join "Pictures/avatar.png")
+    http get $"($base)($image)" | save -f ($nu.home-path | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
   }
+  http get "https://img.marsh.gg/avatar.png" | save -f ($nu.home-path | path join "Pictures/avatar.png")
 }
 
 def ykf [] {

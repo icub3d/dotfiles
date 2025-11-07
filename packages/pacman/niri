@@ -12,9 +12,7 @@ vlc
 blender
 discord
 ffmpeg
-grdive
 gimp
-gnuplot
 google-chrome
 obs-studio
 octave
@@ -22,10 +20,12 @@ visual-studio-code-bin
 openshot
 inkscape
 imagemagick
+cliphist
+cava
+lemurs
 wireplumber
 mako
 qt5-wayland
 qt6-wayland
-xdg-desktop-portal
 xdg-desktop-portal-gnome
 xwayland-satellite
