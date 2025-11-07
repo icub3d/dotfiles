@@ -9,6 +9,7 @@ gdb
 go
 gopls
 helm
+inetutils
 kubectl
 lldb
 llvm

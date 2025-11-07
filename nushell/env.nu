@@ -1,5 +1,5 @@
 # standard variables
-$env.DISTRO = if ($nu.os-info.name == "linux") { (lsb_release -is) } else { $nu.os-info.name }
+$env.DISTRO = if ($nu.os-info.name == "linux") { (open /etc/os-release | find -r "^ID=" | str replace 'ID=' '') } else { $nu.os-info.name }
 $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"

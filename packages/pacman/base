@@ -16,6 +16,7 @@ dust
 efibootmgr
 efitools
 efivar
+fastfetch
 fd
 fnm
 fzf
@@ -24,13 +25,11 @@ git-delta
 gnupg
 hex
 hyperfine
-inetutils
 iptables-nft
 jq
 linux
 linux-firmware
 linux-headers
-lsb-release
 make
 man-db
 man-pages
@@ -47,15 +46,12 @@ prettyping
 procs
 pup
 ripgrep
-sbctl
 sd
 smbclient
 sudo
 systemd-boot-pacman-hook
-tcpdump
 texinfo
 tmux
-traceroute
 unzip
 w3m
 wget
