@@ -168,6 +168,7 @@ alias diff = delta
 alias g = git
 alias gg = lazygit
 alias grep = rg
+alias h = hyprctl
 alias hexdump = hx
 alias iftop = bandwhich
 alias img = wezterm imgcat
