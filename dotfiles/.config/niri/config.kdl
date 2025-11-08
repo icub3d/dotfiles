@@ -74,6 +74,21 @@ input {
     // focus-follows-mouse max-scroll-amount="0%"
 }
 
+output "DP-1" {
+  mode "2560x1440@119.998"
+  position x=2560 y=0
+}
+
+output "DP-2" {
+  mode "2560x1440@143.973"
+  position x=0 y=0
+}
+
+output "DP-3" {
+  mode "2560x1440@143.973"
+  position x=5120 y=0
+}
+
 output "Virtual-1" {
   mode "2048x1152"
 }

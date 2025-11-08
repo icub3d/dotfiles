@@ -15,7 +15,7 @@
         "cavaFrameRate": 60,
         "mprisBlacklist": [
         ],
-        "preferredPlayer": "",
+        "preferredPlayer": "vlc",
         "visualizerType": "linear",
         "volumeOverdrive": false,
         "volumeStep": 5
@@ -59,15 +59,6 @@
                     "usePrimaryColor": true
                 },
                 {
-                    "colorizeIcons": false,
-                    "hideMode": "hidden",
-                    "id": "ActiveWindow",
-                    "maxWidth": 145,
-                    "scrollingMode": "hover",
-                    "showIcon": true,
-                    "useFixedWidth": false
-                },
-                {
                     "hideMode": "hidden",
                     "hideWhenIdle": false,
                     "id": "MediaMini",
@@ -77,9 +68,6 @@
                     "showVisualizer": false,
                     "useFixedWidth": false,
                     "visualizerType": "linear"
-                },
-                {
-                    "id": "WallpaperSelector"
                 }
             ],
             "right": [
@@ -276,7 +264,7 @@
         "videoCodec": "h264",
         "videoSource": "portal"
     },
-    "settingsVersion": 19,
+    "settingsVersion": 20,
     "setupCompleted": true,
     "templates": {
         "alacritty": false,
@@ -303,10 +291,11 @@
     },
     "ui": {
         "fontDefault": "JetBrainsMono NF",
-        "fontDefaultScale": 1.2,
+        "fontDefaultScale": 1.12,
         "fontFixed": "JetBrainsMono NF",
-        "fontFixedScale": 1.2,
+        "fontFixedScale": 1,
         "panelsAttachedToBar": true,
+        "settingsPanelAttachToBar": false,
         "tooltipsEnabled": true
     },
     "wallpaper": {
@@ -321,6 +310,21 @@
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "Virtual-1",
                 "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_sky.png"
+            },
+            {
+                "directory": "/home/jmarsh/Pictures/Wallpapers",
+                "name": "DP-3",
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
+            },
+            {
+                "directory": "/home/jmarsh/Pictures/Wallpapers",
+                "name": "DP-2",
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
+            },
+            {
+                "directory": "/home/jmarsh/Pictures/Wallpapers",
+                "name": "DP-1",
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
             }
         ],
         "overviewEnabled": false,
