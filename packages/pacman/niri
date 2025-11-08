@@ -9,7 +9,6 @@ gimp
 google-chrome
 imagemagick
 inkscape
-lemurs
 mako
 nerd-fonts
 niri
@@ -28,3 +27,5 @@ wireplumber
 wl-clipboard
 xdg-desktop-portal-gnome
 xwayland-satellite
+gnome-keyring
+gdm

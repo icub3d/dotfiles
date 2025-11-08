@@ -13,7 +13,7 @@ sed -i 's/#ParallelDownloads 5/ParallelDownloads 5/g' /etc/pacman.conf
 Do a basic install make sure you include:
 
 ``` 
-base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|intel-ucode] pipewire lsb-release neovim efivar efibootmgr networkmanager inetutils
+base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|intel-ucode] pipewire neovim efivar efibootmgr networkmanager 
 ```
 
 # Dotfiles Installation
@@ -33,7 +33,7 @@ Add this to ~/.gitconfig.local
 [user]
 	name = Joshua Marsh (icub3d)
 	email = joshua.marshian@gmail.com
-	signingkey = [KEY}]
+	signingkey = [KEY]
 ```
 
 If you are using `gh` then:
