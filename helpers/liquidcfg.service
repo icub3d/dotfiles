@@ -15,13 +15,12 @@ ExecStart=liquidctl --serial 1305006473291217 set fan1 speed 20 800 30 900 40 10
 ExecStart=liquidctl --serial 1305006473291217 set fan6 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 2
 ExecStart=liquidctl --serial 1305006473291217 set led1 color fixed a9dc76
 ExecStart=liquidctl --serial 1305006473291217 set led2 color fixed a9dc76
-
-ExecStart=liquidctl --serial 1805006373291A10 set fan1 speed 20 800 40 1200 50 1400 60 1500 70 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1805006373291A10 set fan2 speed 20 800 40 1200 50 1400 60 1500 70 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1805006373291A10 set fan3 speed 20 800 40 1200 50 1400 60 1500 70 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1805006373291A10 set fan4 speed 20 800 40 1200 50 1400 60 1500 70 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1805006373291A10 set fan5 speed 20 800 40 1200 50 1400 60 1500 70 2000 --temperature-sensor 1
-ExecStart=liquidctl --serial 1805006373291A10 set fan6 speed 20 800 30 1000 40 2000  50 3000 55 4000 60 4800 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan1 speed 20 20 500 30 800 35 1000 38 1200 40 1500 41 2000 52 4000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan2 speed 20 750 40 750 50 750 60 750 70 750 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan3 speed 20 20 500 30 800 35 1000 38 1200 40 1500 41 2000 52 4000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan4 speed 20 20 500 30 800 35 1000 38 1200 40 1500 41 2000 52 4000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan5 speed 20 20 500 30 800 35 1000 38 1200 40 1500 41 2000 52 4000 --temperature-sensor 1
+ExecStart=liquidctl --serial 1805006373291A10 set fan6 speed 20 2000 30 2500 40 3000 50 3500 55 4000 60 4800 --temperature-sensor 1
 ExecStart=liquidctl --serial 1805006373291A10 set led1 color fixed a9dc76
 ExecStart=liquidctl --serial 1805006373291A10 set led2 color fixed a9dc76
 
