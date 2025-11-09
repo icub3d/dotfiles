@@ -52,10 +52,10 @@
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
                     "showCpuUsage": true,
-                    "showDiskUsage": false,
+                    "showDiskUsage": true,
                     "showMemoryAsPercent": false,
                     "showMemoryUsage": true,
-                    "showNetworkStats": false,
+                    "showNetworkStats": true,
                     "usePrimaryColor": true
                 },
                 {
@@ -291,7 +291,7 @@
     },
     "ui": {
         "fontDefault": "JetBrainsMono NF",
-        "fontDefaultScale": 1.12,
+        "fontDefaultScale": 1,
         "fontFixed": "JetBrainsMono NF",
         "fontFixedScale": 1,
         "panelsAttachedToBar": true,
@@ -314,17 +314,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
             }
         ],
         "overviewEnabled": false,
