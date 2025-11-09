@@ -334,6 +334,13 @@ window-rule {
 }
 
 window-rule {
+  match app-id=r#"multi-stage-speedrun-timer"#
+  default-column-width {
+    proportion 0.25
+  }
+}
+
+window-rule {
   match app-id=r#"^org\.wezfurlong\.wezterm$"#
   default-column-width {}
 }
@@ -383,6 +390,7 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Terminal" { spawn "kitty"; }
+    Mod+B hotkey-overlay-title="Browser" { spawn "firefox-developer-edition"; }
     Mod+Space hotkey-overlay-title="Launcher" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
     Mod+S hotkey-overlay-title="Control Center" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
     Mod+Slash hotkey-overlay-title="Setting" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }

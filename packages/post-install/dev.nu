@@ -8,4 +8,6 @@ do -i {
   rustup target add wasm32-unknown-unknown
   rustup component add --toolchain nightly rust-analysis rust-src rust-analyzer
   rustup target add --toolchain nightly wasm32-unknown-unknown
+
+  cargo install tree-sitter-cli
 }
