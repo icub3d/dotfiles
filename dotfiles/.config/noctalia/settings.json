@@ -314,17 +314,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/shaded_landscape.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/mandelbrot_side_green.png"
             }
         ],
         "overviewEnabled": false,
