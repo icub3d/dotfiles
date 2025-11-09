@@ -75,7 +75,7 @@
                     "blacklist": [
                     ],
                     "colorizeIcons": false,
-                    "drawerEnabled": true,
+                    "drawerEnabled": false,
                     "favorites": [
                     ],
                     "id": "Tray"
@@ -314,17 +314,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-waves.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-waves.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/virus.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-waves.png"
             }
         ],
         "overviewEnabled": false,
