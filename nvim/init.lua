@@ -6,3 +6,5 @@ require("config.lsp")
 require("config.lsp.lua")
 require("config.lsp.rust")
 require("config.lsp.nu")
+
+require("config.autocmds")
