@@ -162,6 +162,16 @@ $env.config = {
         send: ExecuteHostCommand,
         cmd: "nvim ."
       }
+    },
+    {
+      name: "nvim_current_dir",
+      modifier: control,
+      keycode: char_f,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "yazi ."
+      }
     }
   ]
 }
