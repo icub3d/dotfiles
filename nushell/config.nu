@@ -152,6 +152,16 @@ $env.config = {
             commandline edit --replace $converted
         "
     }
+    },
+    {
+      name: "nvim_current_dir",
+      modifier: control,
+      keycode: char_n,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "nvim ."
+      }
     }
   ]
 }
