@@ -242,6 +242,8 @@
         "location": "top_right",
         "lowUrgencyDuration": 3,
         "monitors": [
+            "DP-3",
+            "DP-2"
         ],
         "normalUrgencyDuration": 8,
         "overlayLayer": true,
@@ -316,17 +318,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-sound.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-sound.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/cat-sound.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             }
         ],
         "overviewEnabled": false,
