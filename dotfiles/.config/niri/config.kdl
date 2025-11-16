@@ -10,6 +10,9 @@ prefer-no-csd
 // Find the full list of options on the wiki:
 // https://yalter.github.io/niri/Configuration:-Input
 input {
+  tablet { 
+    map-to-output "DP-1"
+  }
     keyboard {
         repeat-delay 200
         repeat-rate 35
@@ -392,6 +395,7 @@ binds {
     Mod+T hotkey-overlay-title="Terminal" { spawn "kitty"; }
     Mod+E hotkey-overlay-title="Files" { spawn "nautilus"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "firefox-developer-edition"; }
+    Mod+Shift+B hotkey-overlay-title="Private Browser" { spawn "firefox-developer-edition" "--private-window"; }
     Mod+Space hotkey-overlay-title="Launcher" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
     Mod+S hotkey-overlay-title="Control Center" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
     Mod+Slash hotkey-overlay-title="Setting" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }

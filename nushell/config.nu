@@ -562,19 +562,18 @@ def "mctl images put" [...images] {
 }
 
 def liquid [] {
-	liquidctl initialize all
-	liquidctl --serial 1805006373291a10 set fan1 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 3
-	liquidctl --serial 1805006373291a10 set fan2 speed 20 800 30 900 40 1000 50 1500 60 2000 --temperature-sensor 3
-	liquidctl --serial 1805006373291a10 set led1 color fixed 00ff00
-	liquidctl --serial 1805006373291a10 set led2 color fixed 00ff00
-	liquidctl --serial 1305006473291217 set fan1 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set fan2 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set fan3 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set fan4 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set fan5 speed 20 800 40 900 50 1000 60 1500 70 2000 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set fan6 speed 20 800 30 1500 40 2000 50 2500 55 3500 60 4800 --temperature-sensor 1
-	liquidctl --serial 1305006473291217 set led1 color fixed 00ff00
-	liquidctl --serial 1305006473291217 set led2 color fixed 00ff00
+  sudo liquidctl initialize all
+  sudo liquidctl set --serial 1305006473291217 fan1 speed 20 600 30 600 40 1000 50 1000 60 1000 --temperature-sensor 2
+  sudo liquidctl set --serial 1305006473291217 led1 color fixed a9dc76
+  sudo liquidctl set --serial 1305006473291217 led2 color fixed a9dc76
+  sudo liquidctl set --serial 1805006373291A10 fan1 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 fan2 speed 20 400 40 400 50 400 60 400 70 400 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 fan3 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 fan4 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 fan5 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 fan6 speed 20 1500 30 2000 40 2500 50 3000 55 3500 60 4800 --temperature-sensor 1
+  sudo liquidctl set --serial 1805006373291A10 led1 color fixed a9dc76
+  sudo liquidctl set --serial 1805006373291A10 led2 color fixed a9dc76
 }
 
 def decode-jwt-section [] {
@@ -851,4 +850,103 @@ def tx [] {
   tmux new-window -d -c ~/dev -t 🏠:1 -n "dev"
 
   tmux attach -t 🏠
+}
+
+# Parse a stage file that came from multi-stage-timer.
+def parse-stage-file [file: string] {
+    let file = ($file | path expand)
+
+    # Validate file exists
+    if not ($file | path exists) {
+        print-error $"JSON file not found: '($file)'"
+        return
+    }
+
+    # Parse JSON
+    let data = (open --raw $file | from json)
+
+    # Get stage times (fall back to empty if missing)
+    let stages = ($data | get stageTimes | default [])
+
+    # Sort stages by startMs to ensure order
+    let stages = ($stages | sort-by startMs)
+
+    if ($stages | is-empty) {
+        print-info "No 'stageTimes' found in JSON."
+        return
+    }
+
+    # Print timestamp lines, converting startMs (milliseconds) to either 'M:SS' or 'H:MM:SS'.
+    for $st in $stages {
+        let start_ms = ($st | get startMs | default 0)
+        let total_secs = ($start_ms / 1000 | into int)
+        let hours = (($total_secs / 3600) | into int)
+        let mins = ((($total_secs mod 3600) / 60) | into int)
+        let secs = (($total_secs mod 60) | into int)
+
+        let time_str = (
+            if $hours > 0 {
+                # H:MM:SS — zero-pad minutes and seconds to 2 digits
+                if $mins < 10 {
+                    if $secs < 10 { $"($hours):0($mins):0($secs)" } else { $"($hours):0($mins):($secs)" }
+                } else {
+                    if $secs < 10 { $"($hours):($mins):0($secs)" } else { $"($hours):($mins):($secs)" }
+                }
+            } else {
+                # M:SS — seconds zero-padded
+                if $secs < 10 { $"($mins):0($secs)" } else { $"($mins):($secs)" }
+            }
+        )
+
+        let name = ($st | get stageName | default "Unnamed Stage")
+        print $"($time_str) ($name)"
+    }
+}
+
+# Upload a file to a GitHub Gist using the gh CLI and returns the gist id.
+def "upload-gist" [
+  description: string, # The description to use for the gist.
+  ...files: string # paths to file
+] {
+
+  let files = ($files | each {|f| ($f | path expand)});
+
+  for file in $files {
+    if not ($file | path exists) {
+        print-error ("file not found: " ++ $file)
+        return
+    }
+  }
+
+  let cmd = (["gh" "gist" "create" "--public" "--desc" $description] | append $files);
+  let result = do -i { ^$cmd }
+  if ($result | describe) == 'string' {
+      print-info "Gist uploaded successfully!"
+      $result
+  } else if ($result.exit_code? | default 1) == 0 {
+      print-info "Gist uploaded successfully!"
+      $result.stdout? | default ""
+  } else {
+      print-error "Failed to upload Gist."
+      $result.stderr? | default $result
+  }
+}
+
+# Generate a YouTube description that will have a stage timer and gist.
+def youtube-description [
+  problem_url: string, # The URL of the problem being solved.
+  stage_file: string, # The path to the stage file.
+  description: string, # The description to use for the gist.
+  ...files: string # paths to files for gist.
+] {
+  let solution_url = (upload-gist $description ...$files);
+  
+  # Print header for description
+  print "[TODO]"
+  print ""
+  print $"Problem: ($problem_url)"
+  print $"Solution: ($solution_url)"
+  print ""
+
+  parse-stage-file $stage_file
 }

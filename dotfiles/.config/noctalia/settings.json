@@ -179,7 +179,7 @@
         "backgroundOpacity": 1,
         "colorizeIcons": false,
         "displayMode": "auto_hide",
-        "enabled": true,
+        "enabled": false,
         "floatingRatio": 1,
         "monitors": [
         ],
@@ -318,17 +318,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
             }
         ],
         "overviewEnabled": false,
