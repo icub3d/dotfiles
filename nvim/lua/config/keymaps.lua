@@ -4,6 +4,19 @@ vim.keymap.set("n", "<leader>fv", vim.cmd.Ex)
 -- Go back
 vim.keymap.set("n", "gb", "<C-o>")
 
+-- copy/paste
+vim.api.nvim_set_keymap('n', '<leader>cc', '"+yy',
+  { noremap = true, silent = true, desc = 'Copy current line to system clipboard' })
+vim.api.nvim_set_keymap('v', '<leader>cc', '"+y',
+  { noremap = true, silent = true, desc = 'Copy selection to system clipboard' })
+vim.api.nvim_set_keymap('n', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
+vim.api.nvim_set_keymap('v', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
+
+-- : commands.
+vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { noremap = true, silent = true, desc = "Update Source" })
+vim.keymap.set("n", "<leader>w", ":write<CR>", { noremap = true, desc = "Save current file" })
+vim.keymap.set("n", "<leader>q", ":quit<CR>", { noremap = true, desc = "Quit Neovim" })
+
 -- base64 encode/decode
 vim.keymap.set("v", '<leader>bud', "c<c-r>=trim(system('nu --stdin -c \"decode base64 --url | decode\"', @\"))<cr><esc>")
 vim.keymap.set("v", '<leader>bue', "c<c-r>=trim(system('nu --stdin -c \"encode base64 --url\"', @\"))<cr><esc>")

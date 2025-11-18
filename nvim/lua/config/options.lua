@@ -26,7 +26,6 @@ vim.opt.spelloptions = "camel"
 vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.signcolumn = 'number'
-vim.opt.clipboard = 'unnamedplus'
 
 -- use nushell
 vim.opt.sh = "nu"

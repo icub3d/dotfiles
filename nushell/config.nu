@@ -172,11 +172,32 @@ $env.config = {
         send: ExecuteHostCommand,
         cmd: "yazi ."
       }
+    },
+    {
+      name: "job_unfreeze",
+      modifier: control,
+      keycode: char_z,
+      mode: [vi_insert, vi_normal, emacs],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "job unfreeze"
+      }
+    },
+    {
+      name: "run_gemini",
+      modifier: control,
+      keycode: char_g,
+      mode: [vi_insert, vi_normal, emacs],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "gemini"
+      }
     }
   ]
 }
 
 # aliases
+alias fg = job unfreeze
 alias bench = hyperfine
 alias cat = bat
 alias d = docker
@@ -392,21 +413,25 @@ def update-system [] {
   let packages = $selected_packages | each {|p|
     let package_path = $"packages/pacman/($p)"
     open $package_path | lines
-  } | flatten
+  } | flatten | where $it != ""
+  print $"packages: ($packages)"
   let needed = $packages | where { |p| not ($p in $installed) }
 
-  echo $"missing packages: ($needed)"
+  print $"missing packages: ($needed)"
 
   # install packages
   do -i {
+    print $"yes | paru -Syu --needed --noconfirm ...($needed)"
     yes | paru -Syu --needed --noconfirm ...$needed
   }
   
+  print "Starting package installers"
   # run the post install scripts
   for package in $packages {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       do -i {
+        print $"post install ($package)"
         nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
       }
     }
@@ -416,6 +441,7 @@ def update-system [] {
     let script_path = $"packages/post-install/($package).nu"
     if ($script_path | path exists) {
       do -i {
+        print $"post install ($package)"
         nu -c $"source $nu.env-path; source $nu.config-path; source ($script_path)"
       }
     }
