@@ -4,13 +4,26 @@ vim.keymap.set("n", "<leader>fv", vim.cmd.Ex)
 -- Go back
 vim.keymap.set("n", "gb", "<C-o>")
 
+-- remove line numbers
+vim.keymap.set('n', '<leader>n', function()
+    if vim.o.relativenumber then
+      vim.o.relativenumber = false
+      vim.o.number = false
+      vim.o.statuscolumn = ''
+    else
+      vim.o.relativenumber = true
+      vim.o.number = true
+      vim.o.statuscolumn = '%{v:lnum} %{v:relnum}'
+    end
+  end,
+  { noremap = true, silent = true, desc = "Toggle line numbers" })
+
 -- copy/paste
-vim.api.nvim_set_keymap('n', '<leader>cc', '"+yy',
+vim.keymap.set('n', '<leader>cc', '"+yy',
   { noremap = true, silent = true, desc = 'Copy current line to system clipboard' })
-vim.api.nvim_set_keymap('v', '<leader>cc', '"+y',
-  { noremap = true, silent = true, desc = 'Copy selection to system clipboard' })
-vim.api.nvim_set_keymap('n', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
-vim.api.nvim_set_keymap('v', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
+vim.keymap.set('v', '<leader>cc', '"+y', { noremap = true, silent = true, desc = 'Copy selection to system clipboard' })
+vim.keymap.set('n', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
+vim.keymap.set('v', '<leader>cp', '"+p', { noremap = true, silent = true, desc = 'Paste from system clipboard' })
 
 -- : commands.
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { noremap = true, silent = true, desc = "Update Source" })
