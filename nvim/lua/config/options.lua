@@ -17,7 +17,8 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.wildmode = 'longest,list'
 vim.opt.mouse = 'a'
-vim.opt.completeopt = 'menu,menuone,noselect'
+vim.opt.completeopt = 'menu,menuone,noselect,popup'
+vim.opt.shortmess:append("c")
 vim.opt.ttyfast = true
 vim.opt.spell = true
 vim.opt.spelllang = "en"
@@ -26,6 +27,7 @@ vim.opt.spelloptions = "camel"
 vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.signcolumn = 'number'
+vim.opt.winborder = 'rounded'
 
 -- use nushell
 vim.opt.sh = "nu"

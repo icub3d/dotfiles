@@ -976,3 +976,572 @@ def youtube-description [
 
   parse-stage-file $stage_file
 }
+
+
+# Shorten an mkv file to 1 minute and save it to path-1m.mkv.
+export def shorten-to-one-minute [
+    file: path # The path to the input MKV file.
+] {
+    # --- Configuration ---
+    let target_duration = 60.0
+    
+    # 1. Check if the file exists
+    let file_path = ($file | path expand)
+    if not ($file_path | path exists) {
+        print $"🚨 Error: File not found: ($file_path)"
+        return
+    }
+
+    # 2. Get original duration using ffprobe
+    # We use a subexpression to execute ffprobe and capture its output
+    let duration_output = (
+        ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $file_path | lines | get 0
+    )
+
+    # Check if ffprobe returned a valid duration string
+    if ($duration_output | is-empty) {
+        print $"🚨 Error: Could not determine duration for ($file_path). Is ffprobe installed and is the file valid?"
+        return
+    }
+    
+    # Convert the duration output (string) to a number.
+    # FIX: Changed 'str to-float' to 'into float' to resolve parser error.
+    let original_duration = ($duration_output | into float)
+
+    # 3. Determine output filename (e.g., video.mkv -> video-1m.mkv)
+    # FIX: Using 'path parse' to safely extract stem and extension in one go.
+    # This avoids potential parser issues with individual 'path' subcommands.
+    let path_parts = ($file_path | path parse)
+    let output_path = ($path_parts.parent | path join $"($path_parts.stem)-1m.($path_parts.extension)")
+
+    print $"\n🎬 Processing File: ($file_path)"
+    # We round the duration for display purposes here
+    print $"⏳ Original Duration: ($original_duration | math round --precision 3) seconds"
+    print $"💾 Target Output: ($output_path)"
+
+    # 4. Conditional Logic: Copy or Process
+    if ($original_duration) < $target_duration {
+        # If less than 60 seconds, just copy the file
+        print "Duration is less than 60s. Simply copying the file to the new name."
+        cp $file_path $output_path
+        print "✅ File copied successfully."
+    } else {
+        # 60 seconds or longer: calculate factor and shorten
+        let speed_factor = ($original_duration / $target_duration)
+
+        # Handle the audio speed factor. The 'atempo' filter has a maximum value of 100.
+        # If the required speedup is > 100, we must chain multiple atempo filters.
+        let atempo_filter = if $speed_factor > 100.0 {
+            # Example: If F=150, chain: atempo=100.0,atempo=1.5
+            let first_factor = 100.0
+            let remainder_factor = ($speed_factor / $first_factor)
+            $"atempo=($first_factor),atempo=($remainder_factor)"
+        } else {
+            $"atempo=($speed_factor)"
+        }
+
+        let pts_factor = (1.0 / $speed_factor)
+        
+        print $"🚀 Required Speed Factor: ($speed_factor | math round --precision 3)"
+        print $"⚙️ FFmpeg Command: Applying setpts=\(($pts_factor) * PTS\) and ($atempo_filter)"
+
+        # Construct and execute the ffmpeg command
+        ffmpeg -hide_banner -loglevel error -i $file_path -filter_complex $"[0:v]setpts=($pts_factor)*PTS[v];[0:a]($atempo_filter)[a]" -map "[v]" -map "[a]" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k $output_path -y
+        
+        print "✅ FFmpeg processing complete. New 1-minute file generated."
+    }
+}
+
+# A helper function that will put an image in front of a video and add a random
+# audio from the given path.
+def make-kattis-short [
+    image_path: path, # image path
+    video_path: path, # video path
+    audio_folder: path,  # folder from which to randomly pick audio
+    output_name: path, # where to save the file
+] {
+    print "🔍 Analyzing resources..."
+
+    # 1. PICK RANDOM AUDIO
+    # valid extensions: mp3, wav, flac, m4a, aac, ogg
+    let audio_candidates = (
+        ls $audio_folder 
+        | where name =~ '(?i)\.(mp3|wav|flac|m4a|aac|ogg)$'
+    )
+
+    if ($audio_candidates | is-empty) {
+        error make {msg: $"❌ No audio files found in ($audio_folder)!"}
+    }
+
+    # Shuffle the list and take the first one
+    let selected_audio = ($audio_candidates | shuffle | first).name
+    print $"🎵 Selected Track: ($selected_audio)"
+
+    # 2. PROBE THE VIDEO
+    let metadata = (
+        ffprobe -v error 
+        -select_streams v:0 
+        -show_entries stream=width,height,r_frame_rate 
+        -show_entries format=duration 
+        -of json 
+        $video_path 
+        | from json
+    )
+
+    let width = $metadata.streams.0.width
+    let height = $metadata.streams.0.height
+    let fps_string = $metadata.streams.0.r_frame_rate
+    let video_duration = ($metadata.format.duration | into float)
+    
+    # Calculate FPS
+    let raw_fps = ($fps_string | split row "/" | into int | reduce { |it, acc| $it / $acc })
+    let fps = if $raw_fps < 1.0 { 30 } else { $raw_fps }
+
+    print $"🎥 Detected: ($width)x($height) @ ($fps | math round --precision 2) fps"
+    print $"⏱️ Duration: ($video_duration | math round --precision 2)s"
+    print "🚀 Starting render..."
+
+    # 3. CONFIGURATION
+    let img_len = 2.0
+    let vid_fade_len = 0.5
+    let vid_offset = ($img_len - $vid_fade_len)
+    let total_len = ($video_duration + $img_len - $vid_fade_len)
+    let aud_fade_len = 2.0
+    let aud_fade_start = ($total_len - $aud_fade_len)
+
+    # 4. FILTER CONSTRUCTION
+    let pad_math = '(ow-iw)/2:(oh-ih)/2'
+
+    # Note: fps=($fps) and settb=1/($fps) are CRITICAL for stability
+    let filter = $"[0:v]scale=($width):($height):force_original_aspect_ratio=decrease,pad=($width):($height):($pad_math),setsar=1,format=yuv420p,fps=($fps),settb=1/($fps)[img];[1:v]format=yuv420p,setsar=1,fps=($fps),settb=1/($fps)[vid];[img][vid]xfade=transition=fade:duration=($vid_fade_len):offset=($vid_offset)[v];[2:a]afade=t=out:st=($aud_fade_start):d=($aud_fade_len)[a]"
+
+    # 5. RUN FFMPEG
+    # We use $selected_audio as the 3rd input (-i)
+    ffmpeg -y -hide_banner -loglevel error -stats -loop 1 -t $img_len -r $fps -i $image_path -i $video_path -i $selected_audio -filter_complex $filter -map "[v]" -map "[a]" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -shortest $output_name
+
+    print $"\n✅ Done! Saved to: ($output_name)"
+}
+
+# Competitive Programming Helper Functions
+
+# Find a Rust file based on search patterns
+def "cph find-file" [...patterns: string] {
+    if ($patterns | is-empty) {
+        let files = (fd --type f --extension rs | lines)
+        if ($files | is-empty) {
+            print-error "No Rust files found"
+            return null
+        }
+        let file = ($files | first)
+        print-info $"Found: ($file)"
+        return $file
+    }
+    
+    # Get all .rs files and filter by patterns
+    let all_files = (fd --type f --extension rs | lines)
+    
+    # Filter files that contain all patterns (case-insensitive)
+    let matching_files = ($all_files | where {|file|
+        let matches_all = ($patterns | all {|pattern|
+            $file | str contains -i $pattern
+        })
+        $matches_all
+    })
+    
+    if ($matching_files | is-empty) {
+        print-error $"No Rust files found matching: ($patterns)"
+        return null
+    }
+    
+    let file = ($matching_files | first)
+    print-info $"Found: ($file)"
+    $file
+}
+
+# Get cargo package name from a file path
+def "cph get-package" [file: string] {
+    let file_path = ($file | path expand)
+    let dir = ($file_path | path dirname)
+    
+    mut current = $dir
+    mut found_cargo = ""
+    
+    # First, find the closest Cargo.toml (package)
+    loop {
+        let cargo_toml = ($current | path join "Cargo.toml")
+        if ($cargo_toml | path exists) {
+            $found_cargo = $cargo_toml
+            break
+        }
+        
+        let parent = ($current | path dirname)
+        if $parent == $current {
+            break
+        }
+        $current = $parent
+    }
+    
+    if ($found_cargo | is-empty) {
+        return {package: null, needs_flag: false}
+    }
+    
+    # Now check if there's a workspace Cargo.toml anywhere above
+    let pkg_dir = ($found_cargo | path dirname)
+    mut search_dir = ($pkg_dir | path dirname)
+    
+    loop {
+        let potential_workspace = ($search_dir | path join "Cargo.toml")
+        if ($potential_workspace | path exists) and ($potential_workspace != $found_cargo) {
+            let workspace_content = (open $potential_workspace)
+            if ($workspace_content | get -o workspace | is-not-empty) {
+                let package_name = (open $found_cargo | get package.name)
+                return {package: $package_name, needs_flag: true}
+            }
+        }
+        
+        let parent = ($search_dir | path dirname)
+        if $parent == $search_dir {
+            break
+        }
+        $search_dir = $parent
+    }
+    
+    return {package: null, needs_flag: false}
+}
+
+# Get binary name from file path
+def "cph get-bin" [file: string] {
+    $file | path parse | get stem
+}
+
+# Build cargo command for a file
+def "cph build-cmd" [file: string, cmd: string, ...extra_args: string] {
+    let pkg_info = (cph get-package $file)
+    let bin_name = (cph get-bin $file)
+    
+    mut cargo_cmd = ["cargo" $cmd]
+    
+    if $pkg_info.needs_flag {
+        $cargo_cmd = ($cargo_cmd | append ["-p" $pkg_info.package])
+    }
+    
+    $cargo_cmd = ($cargo_cmd | append ["--bin" $bin_name])
+    $cargo_cmd = ($cargo_cmd | append $extra_args)
+    
+    $cargo_cmd
+}
+
+# Run a competitive programming solution with summary
+def "cph run-with-summary" [file: string] {
+    let bin_name = (cph get-bin $file)
+    
+    # Get workspace info if in a workspace
+    let pkg_info = (cph get-package $file)
+    let workspace_name = if $pkg_info.needs_flag { $pkg_info.package } else { "" }
+    
+    # Run tests
+    let test_cmd = (cph build-cmd $file "test" "--no-fail-fast")
+    let test_run = (do -i { ^$test_cmd } | complete)
+    let test_lines = ($test_run.stdout | default "" | lines | where {|it| ($it | str trim | str starts-with "test ") })
+    
+    # Run the solution
+    let run_cmd = (cph build-cmd $file "run" "--release" "-q")
+    let run_output = (do -i { ^$run_cmd } | complete)
+    
+    # Parse output lines that match [partno] [timing] [answer]
+    let part_outputs = (
+        $run_output.stdout 
+        | default "" 
+        | lines 
+        | where {|l| not ($l | is-empty)} 
+        | each {|line|
+            # Try to parse as three space-separated fields
+            let parts = ($line | split row -r '\s+')
+            if ($parts | length) >= 3 {
+                {
+                    part: ($parts | get 0),
+                    time: ($parts | get 1),
+                    solution: ($parts | get 2),
+                }
+            } else {
+                null
+            }
+        }
+        | compact
+    )
+    
+    if ($part_outputs | is-empty) {
+        # No valid output, just print what we got
+        print $run_output.stdout
+        return
+    }
+    
+    # Check if helper.nu exists for getting targets
+    let has_helper = ("helper.nu" | path exists)
+    
+    # Build results table
+    mut results = []
+    for part_output in $part_outputs {
+        let part_no = $part_output.part
+        
+        # Find matching tests (test_[partno].*)
+        let test_pattern = $"test_($part_no)"
+        let part_test_lines = ($test_lines | where {|it| $it | str contains $test_pattern })
+        let failed_tests = ($part_test_lines | where {|it| not ($it | str contains "ok") })
+        
+        let test_status = if ($part_test_lines | is-empty) {
+            "❓" # No test for this part
+        } else if ($failed_tests | is-empty) {
+            "✅" # All tests passed
+        } else {
+            "❌" # Some tests failed
+        }
+        
+        # Get target answer from helper if available
+        mut target = ""
+        mut answer_status = "🔄"
+        
+        if $has_helper {
+            let helper_args = if ($workspace_name | is-empty) {
+                [$bin_name $part_no]
+            } else {
+                [$workspace_name $bin_name $part_no]
+            }
+            
+            let target_result = (do -i { 
+                nu helper.nu get-target ...$helper_args 
+            } | complete)
+            
+            if $target_result.exit_code == 0 {
+                $target = ($target_result.stdout | str trim)
+                
+                if ($target | is-empty) {
+                    $answer_status = "🔄"
+                } else if $part_output.solution == $target {
+                    $answer_status = "✅"
+                } else {
+                    $answer_status = "❌"
+                }
+            }
+        }
+        
+        $results = ($results | append {
+            part: $part_no,
+            test_status: $test_status,
+            answer_status: $answer_status,
+            time: $part_output.time,
+            solution: $part_output.solution,
+            target: $target,
+        })
+    }
+    
+    if not ($results | is-empty) {
+        $results | rename "🧩" "🧪" "🚦" "⏰" "💡" "🎯" | table -i false | print
+        print ""
+    }
+}
+
+# Run a competitive programming solution
+export def "cph run" [...patterns: string] {
+    let file = (cph find-file ...$patterns)
+    if $file == null { return }
+    
+    let cmd = (cph build-cmd $file "run" "--release" "-q")
+    print-info $"Running: ($cmd | str join ' ')"
+    ^$cmd
+}
+
+export alias "cph r" = cph run
+
+# Test a competitive programming solution
+export def "cph test" [...patterns: string] {
+    let file = (cph find-file ...$patterns)
+    if $file == null { return }
+    
+    let cmd = (cph build-cmd $file "test" "--no-fail-fast")
+    print-info $"Testing: ($cmd | str join ' ')"
+    ^$cmd
+}
+
+export alias "cph t" = cph test
+
+# Watch and run a competitive programming solution
+export def "cph watch" [
+    ...patterns: string,
+    --test, # Run tests instead of the solution
+] {
+    let file = (cph find-file ...$patterns)
+    if $file == null { return }
+    
+    reset-terminal
+    if $test {
+        cph test ...$patterns
+    } else {
+        try {
+            cph run-with-summary $file
+        } catch { |err|
+            print-error $"Compilation failed: ($err.msg)"
+            print "🔄 Watching for changes..."
+        }
+    }
+    
+    try {
+        watch --quiet . --glob=**/*.rs {||
+            reset-terminal
+            if $test {
+                cph test ...$patterns
+            } else {
+                try {
+                    cph run-with-summary $file
+                } catch { |err|
+                    print-error $"Compilation failed: ($err.msg)"
+                    print "🔄 Watching for changes..."
+                }
+            }
+        }
+    } catch {}
+}
+
+export alias "cph w" = cph watch
+
+# Debug a competitive programming solution (tests with output + run)
+export def "cph debug" [...patterns: string] {
+    let file = (cph find-file ...$patterns)
+    if $file == null { return }
+    
+    reset-terminal
+    
+    print "🧪 Tests 🧪"
+    let test_cmd = (cph build-cmd $file "test" "--release" "-q" "--no-fail-fast" "--" "--nocapture")
+    try { ^$test_cmd } catch {}
+    
+    print "\n🚀 Solution 🚀"
+    let run_cmd = (cph build-cmd $file "run" "--release" "-q")
+    try { ^$run_cmd } catch {}
+}
+
+export alias "cph d" = cph debug
+
+# Watch and debug a competitive programming solution
+export def "cph watch-debug" [...patterns: string] {
+    let file = (cph find-file ...$patterns)
+    if $file == null { return }
+    
+    cph debug ...$patterns
+    
+    try {
+        watch --quiet . --glob=**/*.rs {||
+            cph debug ...$patterns
+        }
+    } catch {}
+}
+
+export alias "cph wd" = cph watch-debug
+
+# Call a helper script with arguments
+export def "cph helper" [...args: string] {
+    let helper_script = "helper.nu"
+    
+    if not ($helper_script | path exists) {
+        print-error "No helper.nu script found in current directory"
+        return
+    }
+    
+    print-info $"Running helper script: ($args | str join ' ')"
+    try {
+        nu $helper_script ...$args
+    } catch { |err|
+        print-error $"Helper script failed: ($err.msg)"
+    }
+}
+
+export alias "cph h" = cph helper
+
+# Create a new competitive programming solution from template
+export def "cph new" [...args: string] {
+    # Find template.rs
+    let template_files = (fd --type f --glob "**/template.rs" | lines)
+    
+    if ($template_files | is-empty) {
+        print-error "No template.rs file found in current directory tree"
+        return
+    }
+    
+    let template = ($template_files | first)
+    print-info $"Using template: ($template)"
+    
+    if ($args | length) == 0 {
+        print-error "Usage: cph new <name> or cph new <workspace> <name>"
+        return
+    } else if ($args | length) == 1 {
+        # Single argument: create in src/bin
+        let name = ($args | get 0)
+        let target_dir = "src/bin"
+        
+        if not ($target_dir | path exists) {
+            print-error $"Directory ($target_dir) not found"
+            return
+        }
+        
+        let target_file = ($target_dir | path join $"($name).rs")
+        
+        if ($target_file | path exists) {
+            print-error $"File ($target_file) already exists"
+            return
+        }
+        
+        # Read template, replace placeholders, and save
+        let content = (open $template | str replace -a "[NAME]" $name | str replace -a "[WORKSPACE]" "")
+        $content | save $target_file
+        print-info $"Created: ($target_file)"
+        
+        # Run helper get-input if helper.nu exists
+        if ("helper.nu" | path exists) {
+            cph helper get-input $name
+        }
+        
+    } else if ($args | length) == 2 {
+        # Two arguments: find workspace and create in its src/bin
+        let workspace_pattern = ($args | get 0)
+        let name = ($args | get 1)
+        
+        # Find directories matching the workspace pattern
+        let workspace_dirs = (fd --type d --glob $"**/*($workspace_pattern)*" | lines | where {|d| 
+            ($d | path join "src" | path join "bin" | path exists)
+        })
+        
+        if ($workspace_dirs | is-empty) {
+            print-error $"No workspace found matching '($workspace_pattern)' with src/bin directory"
+            return
+        }
+        
+        let workspace = ($workspace_dirs | first)
+        let workspace_name = ($workspace | path basename)
+        print-info $"Using workspace: ($workspace)"
+        
+        let target_dir = ($workspace | path join "src" | path join "bin")
+        let target_file = ($target_dir | path join $"($name).rs")
+        
+        if ($target_file | path exists) {
+            print-error $"File ($target_file) already exists"
+            return
+        }
+        
+        # Read template, replace placeholders, and save
+        let content = (open $template | str replace -a "[NAME]" $name | str replace -a "[WORKSPACE]" $workspace_name)
+        $content | save $target_file
+        print-info $"Created: ($target_file)"
+        
+        # Run helper get-input if helper.nu exists
+        if ("helper.nu" | path exists) {
+            cph helper get-input $workspace_name $name
+        }
+    } else {
+        print-error "Usage: cph new <name> or cph new <workspace> <name>"
+        return
+    }
+}
+
+export alias "cph n" = cph new
+
+
