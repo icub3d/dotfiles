@@ -3,8 +3,8 @@ require("config.keymaps")
 require("config.lazy")
 
 require("config.lsp")
-require("config.lsp.lua")
-require("config.lsp.rust")
-require("config.lsp.nu")
+require("config.lsp.lua_ls")
+require("config.lsp.rust_analyzer")
+require("config.lsp.nushell")
 
 require("config.autocmds")

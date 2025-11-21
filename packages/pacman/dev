@@ -13,6 +13,7 @@ inetutils
 kubectl
 lldb
 llvm
+lua-language-server
 python
 python-pip
 stern-bin
