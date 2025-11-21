@@ -9,6 +9,7 @@ gimp
 google-chrome
 imagemagick
 inkscape
+mpv
 nerd-fonts
 niri
 noctalia-shell
@@ -21,7 +22,6 @@ shotcut
 qt5-wayland
 qt6-wayland
 visual-studio-code-bin
-vlc
 wireplumber
 wl-clipboard
 xdg-desktop-portal-gnome

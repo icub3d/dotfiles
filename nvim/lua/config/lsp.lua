@@ -1,5 +1,13 @@
 local builtin = require('telescope.builtin')
 
+vim.lsp.enable("lua_ls");
+vim.lsp.enable("nushell");
+vim.lsp.enable("rust_analyzer");
+vim.lsp.enable("pylsp");
+vim.lsp.enable("bashls");
+vim.lsp.enable("clangd");
+vim.lsp.enable("gopls");
+
 vim.keymap.set("n", "<leader>ld", vim.lsp.buf.definition, { desc = "LSP: [D]efinition" })
 vim.keymap.set("n", '<leader>lD', vim.lsp.buf.declaration, { desc = "LSP: [D]eclaration" })
 vim.keymap.set("n", '<leader>lh', vim.lsp.buf.hover, { desc = "LSP: [H]over" })
