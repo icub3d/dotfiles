@@ -1133,7 +1133,6 @@ def "cph find-file" [...patterns: string] {
             return null
         }
         let file = ($files | first)
-        print-info $"Found: ($file)"
         return $file
     }
     
@@ -1154,7 +1153,6 @@ def "cph find-file" [...patterns: string] {
     }
     
     let file = ($matching_files | first)
-    print-info $"Found: ($file)"
     $file
 }
 
@@ -1347,7 +1345,6 @@ export def "cph run" [...patterns: string] {
     if $file == null { return }
     
     let cmd = (cph build-cmd $file "run" "--release" "-q")
-    print-info $"Running: ($cmd | str join ' ')"
     ^$cmd
 }
 
@@ -1359,7 +1356,6 @@ export def "cph test" [...patterns: string] {
     if $file == null { return }
     
     let cmd = (cph build-cmd $file "test" "--no-fail-fast")
-    print-info $"Testing: ($cmd | str join ' ')"
     ^$cmd
 }
 
@@ -1399,7 +1395,7 @@ export def "cph watch" [
                 }
             }
         }
-    } catch {}
+    } catch { null }
 }
 
 export alias "cph w" = cph watch
@@ -1413,11 +1409,11 @@ export def "cph debug" [...patterns: string] {
     
     print "🧪 Tests 🧪"
     let test_cmd = (cph build-cmd $file "test" "--release" "-q" "--no-fail-fast" "--" "--nocapture")
-    try { ^$test_cmd } catch {}
+    try { ^$test_cmd } catch { null }
     
     print "\n🚀 Solution 🚀"
     let run_cmd = (cph build-cmd $file "run" "--release" "-q")
-    try { ^$run_cmd } catch {}
+    try { ^$run_cmd } catch { null }
 }
 
 export alias "cph d" = cph debug
@@ -1433,7 +1429,7 @@ export def "cph watch-debug" [...patterns: string] {
         watch --quiet . --glob=**/*.rs {||
             cph debug ...$patterns
         }
-    } catch {}
+    } catch { null }
 }
 
 export alias "cph wd" = cph watch-debug
@@ -1447,11 +1443,10 @@ export def "cph helper" [...args: string] {
         return
     }
     
-    print-info $"Running helper script: ($args | str join ' ')"
     try {
         nu $helper_script ...$args
-    } catch { |err|
-        print-error $"Helper script failed: ($err.msg)"
+    } catch {
+      null
     }
 }
 
