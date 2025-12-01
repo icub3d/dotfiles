@@ -156,7 +156,7 @@ $env.config = {
     {
       name: "nvim_current_dir",
       modifier: control,
-      keycode: char_n,
+      keycode: char_w,
       mode: [vi_insert, vi_normal],
       event: {
         send: ExecuteHostCommand,
@@ -164,8 +164,8 @@ $env.config = {
       }
     },
     {
-      name: "nvim_current_dir",
-      modifier: control,
+      name: "yazi_current_dir",
+      modifier: alt,
       keycode: char_f,
       mode: [vi_insert, vi_normal],
       event: {
@@ -185,7 +185,7 @@ $env.config = {
     },
     {
       name: "run_gemini",
-      modifier: control,
+      modifier: alt,
       keycode: char_g,
       mode: [vi_insert, vi_normal, emacs],
       event: {
@@ -280,8 +280,8 @@ def "parse-duration" [value: string] {
     | math sum
 }
 
-# Parse an ini file
-def "parse ini" [path?: path] {
+# Parse INI configuration files
+def "parse ini" [ path?: path ] {
   let content = if ($path | is-empty) {
     let data = $in
     if ($data | describe | str contains "list<string>") {
@@ -292,7 +292,7 @@ def "parse ini" [path?: path] {
       $data | into string | lines
     }
   } else {
-    open --raw $path | lines
+    cat $path | lines
   }
 
   $content
@@ -313,7 +313,7 @@ def "parse ini" [path?: path] {
           $acc
       }
   }
-  | reject current_section
+  | reject -o current_section
 }
 
 def "lla" [path = "."] {
@@ -380,10 +380,6 @@ def update-system [] {
     git clone https://aur.archlinux.org/paru.git
     cd paru
     makepkg -si --noconfirm
-  } else {
-    cd ~/dev/paru
-    git pull
-    makepkg -si --noconfirm
   }
 
 
@@ -391,12 +387,12 @@ def update-system [] {
   cd ~/dev/dotfiles
   if (not (".selected_packages" | path exists)) {
     let full_list = (ls packages/pacman/ | each {|f| $f.name | str replace packages/pacman/ "" } | sort | uniq)
-    echo $"($full_list)"
+    print $"($full_list)"
     let selected = input $"packages to install> "
     if ($selected != "") {
       $selected | save -f .selected_packages
     } else {
-      echo "no packages selected"
+      print "no packages selected"
       return
     }
   }
@@ -977,13 +973,14 @@ def youtube-description [
   parse-stage-file $stage_file
 }
 
-
-# Shorten an mkv file to 1 minute and save it to path-1m.mkv.
-export def shorten-to-one-minute [
+# Shorten an mkv file to 25 seconds and save it to path-short.mkv.
+export def shorten-video [
     file: path # The path to the input MKV file.
 ] {
     # --- Configuration ---
-    let target_duration = 60.0
+    let target_duration = 25.0
+    let normal_speed_duration = 10.0
+    let sped_up_duration = 15.0
     
     # 1. Check if the file exists
     let file_path = ($file | path expand)
@@ -1012,7 +1009,7 @@ export def shorten-to-one-minute [
     # FIX: Using 'path parse' to safely extract stem and extension in one go.
     # This avoids potential parser issues with individual 'path' subcommands.
     let path_parts = ($file_path | path parse)
-    let output_path = ($path_parts.parent | path join $"($path_parts.stem)-1m.($path_parts.extension)")
+    let output_path = ($path_parts.parent | path join $"($path_parts.stem)-short.($path_parts.extension)")
 
     print $"\n🎬 Processing File: ($file_path)"
     # We round the duration for display purposes here
@@ -1020,14 +1017,20 @@ export def shorten-to-one-minute [
     print $"💾 Target Output: ($output_path)"
 
     # 4. Conditional Logic: Copy or Process
-    if ($original_duration) < $target_duration {
-        # If less than 60 seconds, just copy the file
-        print "Duration is less than 60s. Simply copying the file to the new name."
+    if ($original_duration) <= $target_duration {
+        # If already short enough, just copy the file
+        print $"Duration is less than or equal to ($target_duration)s. Simply copying the file to the new name."
         cp $file_path $output_path
         print "✅ File copied successfully."
     } else {
-        # 60 seconds or longer: calculate factor and shorten
-        let speed_factor = ($original_duration / $target_duration)
+        # Calculate the duration of the first part (everything except last 10 seconds)
+        let first_part_original_duration = ($original_duration - $normal_speed_duration)
+        
+        # Calculate speed factor for the first part to fit into 15 seconds
+        let speed_factor = ($first_part_original_duration / $sped_up_duration)
+        
+        # Calculate the start time for the second part (normal speed)
+        let second_part_start = $first_part_original_duration
 
         # Handle the audio speed factor. The 'atempo' filter has a maximum value of 100.
         # If the required speedup is > 100, we must chain multiple atempo filters.
@@ -1042,13 +1045,21 @@ export def shorten-to-one-minute [
 
         let pts_factor = (1.0 / $speed_factor)
         
-        print $"🚀 Required Speed Factor: ($speed_factor | math round --precision 3)"
-        print $"⚙️ FFmpeg Command: Applying setpts=\(($pts_factor) * PTS\) and ($atempo_filter)"
+        print $"🚀 First Part: ($first_part_original_duration | math round --precision 3)s → ($sped_up_duration)s \(speed factor: ($speed_factor | math round --precision 3))"
+        print $"🎯 Second Part: Last ($normal_speed_duration)s at normal speed"
+        print $"⚙️ Total Output Duration: ($target_duration)s"
+
+        # Construct the complex filter:
+        # 1. Split video into two parts: [0 to second_part_start] and [second_part_start to end]
+        # 2. Speed up the first part
+        # 3. Keep the second part at normal speed
+        # 4. Concatenate both parts
+        let filter_complex = $"[0:v]trim=end=($second_part_start),setpts=($pts_factor)*PTS[v1];[0:a]atrim=end=($second_part_start),($atempo_filter),asetpts=PTS-STARTPTS[a1];[0:v]trim=start=($second_part_start),setpts=PTS-STARTPTS[v2];[0:a]atrim=start=($second_part_start),asetpts=PTS-STARTPTS[a2];[v1][a1][v2][a2]concat=n=2:v=1:a=1[outv][outa]"
 
         # Construct and execute the ffmpeg command
-        ffmpeg -hide_banner -loglevel error -i $file_path -filter_complex $"[0:v]setpts=($pts_factor)*PTS[v];[0:a]($atempo_filter)[a]" -map "[v]" -map "[a]" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k $output_path -y
+        ffmpeg -hide_banner -loglevel error -i $file_path -filter_complex $filter_complex -map "[outv]" -map "[outa]" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k $output_path -y
         
-        print "✅ FFmpeg processing complete. New 1-minute file generated."
+        print "✅ FFmpeg processing complete. New 25-second file generated (15s sped up + 10s normal)."
     }
 }
 
@@ -1118,6 +1129,55 @@ def make-kattis-short [
     # 5. RUN FFMPEG
     # We use $selected_audio as the 3rd input (-i)
     ffmpeg -y -hide_banner -loglevel error -stats -loop 1 -t $img_len -r $fps -i $image_path -i $video_path -i $selected_audio -filter_complex $filter -map "[v]" -map "[a]" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -shortest $output_name
+
+    print $"\n✅ Done! Saved to: ($output_name)"
+}
+
+# A helper function that will put an image in front of a video, but with no audio.
+def make-kattis-short-no-sound [
+    image_path: path, # image path
+    video_path: path, # video path
+    output_name: path, # where to save the file
+] {
+    print "🔍 Analyzing resources..."
+
+    # 1. PROBE THE VIDEO
+    let metadata = (
+        ffprobe -v error 
+        -select_streams v:0 
+        -show_entries stream=width,height,r_frame_rate 
+        -show_entries format=duration 
+        -of json 
+        $video_path 
+        | from json
+    )
+
+    let width = $metadata.streams.0.width
+    let height = $metadata.streams.0.height
+    let fps_string = $metadata.streams.0.r_frame_rate
+    let video_duration = ($metadata.format.duration | into float)
+    
+    # Calculate FPS
+    let raw_fps = ($fps_string | split row "/" | into int | reduce { |it, acc| $it / $acc })
+    let fps = if $raw_fps < 1.0 { 30 } else { $raw_fps }
+
+    print $"🎥 Detected: ($width)x($height) @ ($fps | math round --precision 2) fps"
+    print $"⏱️ Duration: ($video_duration | math round --precision 2)s"
+    print "🚀 Starting render..."
+
+    # 2. CONFIGURATION
+    let img_len = 2.0
+    let vid_fade_len = 0.5
+    let vid_offset = ($img_len - $vid_fade_len)
+
+    # 3. FILTER CONSTRUCTION
+    let pad_math = '(ow-iw)/2:(oh-ih)/2'
+
+    # Note: fps=($fps) and settb=1/($fps) are CRITICAL for stability
+    let filter = $"[0:v]scale=($width):($height):force_original_aspect_ratio=decrease,pad=($width):($height):($pad_math),setsar=1,format=yuv420p,fps=($fps),settb=1/($fps)[img];[1:v]format=yuv420p,setsar=1,fps=($fps),settb=1/($fps)[vid];[img][vid]xfade=transition=fade:duration=($vid_fade_len):offset=($vid_offset)[v]"
+
+    # 4. RUN FFMPEG
+    ffmpeg -y -hide_banner -loglevel error -stats -loop 1 -t $img_len -r $fps -i $image_path -i $video_path -filter_complex $filter -map "[v]" -an -c:v libx264 -preset fast -crf 23 $output_name
 
     print $"\n✅ Done! Saved to: ($output_name)"
 }
@@ -1238,7 +1298,7 @@ def "cph run-with-summary" [file: string] {
     let workspace_name = if $pkg_info.needs_flag { $pkg_info.package } else { "" }
     
     # Run tests
-    let test_cmd = (cph build-cmd $file "test" "--no-fail-fast")
+    let test_cmd = (cph build-cmd $file "test" "--release" "--no-fail-fast")
     let test_run = (do -i { ^$test_cmd } | complete)
     let test_lines = ($test_run.stdout | default "" | lines | where {|it| ($it | str trim | str starts-with "test ") })
     
@@ -1252,6 +1312,7 @@ def "cph run-with-summary" [file: string] {
         | default "" 
         | lines 
         | where {|l| not ($l | is-empty)} 
+        | where {|l| ($l | str starts-with "p")} 
         | each {|line|
             # Try to parse as three space-separated fields
             let parts = ($line | split row -r '\s+')
@@ -1355,7 +1416,7 @@ export def "cph test" [...patterns: string] {
     let file = (cph find-file ...$patterns)
     if $file == null { return }
     
-    let cmd = (cph build-cmd $file "test" "--no-fail-fast")
+    let cmd = (cph build-cmd $file "test" "--release" "--no-fail-fast" "--" "--no-caputre")
     ^$cmd
 }
 
@@ -1408,8 +1469,8 @@ export def "cph debug" [...patterns: string] {
     reset-terminal
     
     print "🧪 Tests 🧪"
-    let test_cmd = (cph build-cmd $file "test" "--release" "-q" "--no-fail-fast" "--" "--nocapture")
-    try { ^$test_cmd } catch { null }
+    let test_cmd = (cph build-cmd $file "test" "--release" "--no-fail-fast" "--" "--nocapture")
+    try { ^$test_cmd out+err>| sed -E -e '/^\s*(Running|Finished|Running)/d' } catch { null }
     
     print "\n🚀 Solution 🚀"
     let run_cmd = (cph build-cmd $file "run" "--release" "-q")

@@ -2,19 +2,22 @@
     "appLauncher": {
         "customLaunchPrefix": "",
         "customLaunchPrefixEnabled": false,
+        "enableClipPreview": true,
         "enableClipboardHistory": false,
         "pinnedExecs": [
         ],
         "position": "center",
         "sortByMostUsed": true,
         "terminalCommand": "alacrity -e",
-        "useApp2Unit": false
+        "useApp2Unit": false,
+        "viewMode": "list"
     },
     "audio": {
         "cavaFrameRate": 60,
+        "externalMixer": "pwvucontrol || pavucontrol",
         "mprisBlacklist": [
         ],
-        "preferredPlayer": "vlc",
+        "preferredPlayer": "mpv",
         "visualizerQuality": "high",
         "visualizerType": "linear",
         "volumeOverdrive": false,
@@ -22,6 +25,7 @@
     },
     "bar": {
         "backgroundOpacity": 0.33,
+        "capsuleOpacity": 1,
         "density": "default",
         "exclusive": true,
         "floating": false,
@@ -38,6 +42,7 @@
             "center": [
                 {
                     "characterCount": 2,
+                    "followFocusedScreen": false,
                     "hideUnoccupied": false,
                     "id": "Workspace",
                     "labelMode": "index"
@@ -52,6 +57,7 @@
                     "useDistroLogo": false
                 },
                 {
+                    "diskPath": "/",
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
                     "showCpuUsage": true,
@@ -68,6 +74,8 @@
                     "maxWidth": 145,
                     "scrollingMode": "hover",
                     "showAlbumArt": false,
+                    "showArtistFirst": true,
+                    "showProgressRing": true,
                     "showVisualizer": false,
                     "useFixedWidth": false,
                     "visualizerType": "linear"
@@ -103,13 +111,33 @@
             ]
         }
     },
-    "battery": {
-        "chargingMode": 0
-    },
     "brightness": {
         "brightnessStep": 5,
         "enableDdcSupport": false,
         "enforceMinimum": true
+    },
+    "calendar": {
+        "cards": [
+            {
+                "enabled": true,
+                "id": "banner-card"
+            },
+            {
+                "enabled": true,
+                "id": "calendar-card"
+            },
+            {
+                "enabled": true,
+                "id": "timer-card"
+            },
+            {
+                "enabled": true,
+                "id": "weather-card"
+            }
+        ]
+    },
+    "changelog": {
+        "lastSeenVersion": ""
     },
     "colorSchemes": {
         "darkMode": true,
@@ -187,9 +215,11 @@
         "onlySameOutput": true,
         "pinnedApps": [
         ],
+        "radiusRatio": 0.1,
         "size": 1
     },
     "general": {
+        "allowPanelsOnScreenWithoutBar": true,
         "animationDisabled": false,
         "animationSpeed": 1,
         "avatarImage": "/home/jmarsh/Pictures/avatar.png",
@@ -205,6 +235,7 @@
         "shadowDirection": "bottom_right",
         "shadowOffsetX": 2,
         "shadowOffsetY": 3,
+        "showHibernateOnLockScreen": false,
         "showScreenCorners": false
     },
     "hooks": {
@@ -221,7 +252,8 @@
         "showWeekNumberInCalendar": false,
         "use12hourFormat": false,
         "useFahrenheit": false,
-        "weatherEnabled": true
+        "weatherEnabled": true,
+        "weatherShowEffects": true
     },
     "network": {
         "wifiEnabled": true
@@ -254,6 +286,8 @@
         "autoHideMs": 2000,
         "backgroundOpacity": 1,
         "enabled": true,
+        "enabledTypes": [
+        ],
         "location": "top_right",
         "monitors": [
         ],
@@ -302,8 +336,7 @@
         ],
         "showHeader": true
     },
-    "settingsVersion": 23,
-    "setupCompleted": true,
+    "settingsVersion": 25,
     "systemMonitor": {
         "cpuCriticalThreshold": 90,
         "cpuWarningThreshold": 80,
@@ -319,6 +352,7 @@
     },
     "templates": {
         "alacritty": false,
+        "cava": false,
         "code": false,
         "discord": false,
         "enableUserTemplates": false,
@@ -331,6 +365,7 @@
         "pywalfox": false,
         "qt": false,
         "spicetify": false,
+        "telegram": false,
         "vicinae": false,
         "walker": false,
         "wezterm": false
@@ -362,17 +397,17 @@
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-3",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-2",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
             },
             {
                 "directory": "/home/jmarsh/Pictures/Wallpapers",
                 "name": "DP-1",
-                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+                "wallpaper": "/home/jmarsh/Pictures/Wallpapers/forrest.png"
             }
         ],
         "overviewEnabled": false,

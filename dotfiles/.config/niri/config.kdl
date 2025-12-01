@@ -122,16 +122,16 @@ window-rule {
   open-on-output "DP-2"
 }
 
-// Ruels for streaming (vertical)
+// Rules for streaming (vertical)
 window-rule {
   match title="recording-vertical-main-editor" app-id="kitty"
-  default-column-width { fixed 794; }
+  default-column-width { fixed 730; }
   open-on-output "DP-1"
 }
 window-rule {
   match title="recording-vertical-status-bar" app-id="kitty"
-  default-column-width { fixed 794; }
-  default-window-height { fixed 334; }
+  default-column-width { fixed 730; }
+  default-window-height { fixed 286; }
   open-on-output "DP-1"
 }
 

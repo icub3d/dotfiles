@@ -28,6 +28,7 @@ vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.signcolumn = 'number'
 vim.opt.winborder = 'rounded'
+vim.opt.autoread = true
 
 -- use nushell
 vim.opt.sh = "nu"
