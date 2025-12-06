@@ -10,7 +10,7 @@ niri msg action spawn -- kitty -d $"($nu.home-path)/dev/icub3d/advent-of-code" -
 niri msg action spawn -- kitty -d $"($nu.home-path)/dev/icub3d/advent-of-code" --title "recording-status-bar" -o font_size=18
 
 # Our timer
-niri msg action spawn -- kitty -d $"($nu.home-path)/dev/icub3d/multi-stage-timer" --title "multi-stage-speedrun-timer"
+niri msg action spawn -- kitty -d $"($nu.home-path)/dev/icub3d/mst" --title "multi-stage-speedrun-timer"
 
 # OBS
 niri msg action spawn -- obs --profile Standard --scene "Advent of Code"

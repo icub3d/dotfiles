@@ -29,6 +29,7 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = 'number'
 vim.opt.winborder = 'rounded'
 vim.opt.autoread = true
+vim.opt.fillchars = vim.opt.fillchars + 'diff:╱'
 
 -- use nushell
 vim.opt.sh = "nu"

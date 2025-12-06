@@ -1,0 +1,19 @@
+The network issue you were experiencing appears to be a hardware-level problem with your wired network card, specifically a "PCIe link lost" error. This indicates that the network card is disconnecting from the motherboard.
+
+We have taken the following steps to try to resolve the issue:
+
+1.  **Investigated the system logs:** We found the "PCIe link lost" error in the journalctl logs, which pointed us to the root cause of the problem.
+2.  **Updated the system:** We used `pacman` to update all packages on your system, including the kernel and the `igc` driver for your network card. This may have included a bug fix that resolves the issue.
+
+If the issue persists after rebooting, please run the following command and send me the output:
+
+```
+journalctl -b -1 | grep "PCIe link lost"
+```
+
+This will help us to determine if the "PCIe link lost" error is still occurring.
+
+If the error is still occurring, the next steps would be to:
+
+1.  **Disable ASPM:** We can try to disable PCIe Active State Power Management (ASPM) by adding the `pcie_aspm=off` kernel parameter to your bootloader configuration.
+2.  **Hardware replacement:** If disabling ASPM does not work, it is possible that your network card is faulty and needs to be replaced.

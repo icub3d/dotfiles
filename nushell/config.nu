@@ -200,6 +200,7 @@ $env.config = {
 alias fg = job unfreeze
 alias bench = hyperfine
 alias cat = bat
+alias c = cargo
 alias d = docker
 alias dc = docker compose
 alias du = dust
@@ -222,6 +223,10 @@ alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
 alias rg = rg --hidden --glob '!.git'
 alias v = nvim
 alias w = viddy
+
+def "time" [...args] {
+  timeit { nu -c ($args | str join ' ') }
+}
 
 #########################################################
 # functions
@@ -302,9 +307,9 @@ def "parse ini" [ path?: path ] {
           let section = ($line | str replace -a -r '\[|\]' '')
           $acc | upsert $section {} | upsert current_section $section
       } else if $line =~ ':' {
-          let parts = ($line | split column -n 2 -r '[:=]' | each {|x| $x | str trim})
-          let key = ($parts | get 0.column1)
-          let val = ($parts | get 0.column2)
+          let parts = ($line | split column -n 2 -r '[:=]')
+          let key = ($parts | get 0.column0 | str trim)
+          let val = ($parts | get 0.column1 | str trim)
           let section = ($acc.current_section | into string)
           mut out = ($acc | reject current_section)
           let current = (if ($out | get $section | is-empty) { {} } else { $out | get $section })
@@ -656,6 +661,7 @@ def bw-get-token [name] {
 def allowance [] {
   let mongo_uri = bw-get-token "mongo-bank-cloud-uri"
   bankctl -u $mongo_uri -d bank add 808 james.marshian@gmail.com allowance
+  bankctl -u $mongo_uri -d bank add 1000 anna.l.marshian@gmail.com allowance
   bankctl -u $mongo_uri -d bank add 1500 william.marshian@gmail.com allowance
   bankctl -u $mongo_uri -d bank add 1308 samuel.marshian@gmail.com allowance
 }
@@ -1133,53 +1139,29 @@ def make-kattis-short [
     print $"\n✅ Done! Saved to: ($output_name)"
 }
 
-# A helper function that will put an image in front of a video, but with no audio.
+# Remove audio from a video file and save with -no-sound.mkv suffix
 def make-kattis-short-no-sound [
-    image_path: path, # image path
-    video_path: path, # video path
-    output_name: path, # where to save the file
+    file: path, # video file to remove audio from
 ] {
-    print "🔍 Analyzing resources..."
-
-    # 1. PROBE THE VIDEO
-    let metadata = (
-        ffprobe -v error 
-        -select_streams v:0 
-        -show_entries stream=width,height,r_frame_rate 
-        -show_entries format=duration 
-        -of json 
-        $video_path 
-        | from json
-    )
-
-    let width = $metadata.streams.0.width
-    let height = $metadata.streams.0.height
-    let fps_string = $metadata.streams.0.r_frame_rate
-    let video_duration = ($metadata.format.duration | into float)
+    let file_path = ($file | path expand)
     
-    # Calculate FPS
-    let raw_fps = ($fps_string | split row "/" | into int | reduce { |it, acc| $it / $acc })
-    let fps = if $raw_fps < 1.0 { 30 } else { $raw_fps }
-
-    print $"🎥 Detected: ($width)x($height) @ ($fps | math round --precision 2) fps"
-    print $"⏱️ Duration: ($video_duration | math round --precision 2)s"
-    print "🚀 Starting render..."
-
-    # 2. CONFIGURATION
-    let img_len = 2.0
-    let vid_fade_len = 0.5
-    let vid_offset = ($img_len - $vid_fade_len)
-
-    # 3. FILTER CONSTRUCTION
-    let pad_math = '(ow-iw)/2:(oh-ih)/2'
-
-    # Note: fps=($fps) and settb=1/($fps) are CRITICAL for stability
-    let filter = $"[0:v]scale=($width):($height):force_original_aspect_ratio=decrease,pad=($width):($height):($pad_math),setsar=1,format=yuv420p,fps=($fps),settb=1/($fps)[img];[1:v]format=yuv420p,setsar=1,fps=($fps),settb=1/($fps)[vid];[img][vid]xfade=transition=fade:duration=($vid_fade_len):offset=($vid_offset)[v]"
-
-    # 4. RUN FFMPEG
-    ffmpeg -y -hide_banner -loglevel error -stats -loop 1 -t $img_len -r $fps -i $image_path -i $video_path -filter_complex $filter -map "[v]" -an -c:v libx264 -preset fast -crf 23 $output_name
-
-    print $"\n✅ Done! Saved to: ($output_name)"
+    # Check if the file exists
+    if not ($file_path | path exists) {
+        print $"🚨 Error: File not found: ($file_path)"
+        return
+    }
+    
+    # Generate output filename: file.mkv -> file-no-sound.mkv
+    let path_parts = ($file_path | path parse)
+    let output_path = ($path_parts.parent | path join $"($path_parts.stem)-no-sound.($path_parts.extension)")
+    
+    print $"🔇 Removing audio from: ($file_path)"
+    print $"💾 Saving to: ($output_path)"
+    
+    # Run ffmpeg to copy video without audio
+    ffmpeg -y -hide_banner -loglevel error -stats -i $file_path -c:v copy -an $output_path
+    
+    print $"\n✅ Done! Audio removed and saved to: ($output_path)"
 }
 
 # Competitive Programming Helper Functions

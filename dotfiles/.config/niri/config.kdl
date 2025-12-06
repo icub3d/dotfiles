@@ -146,10 +146,10 @@ window-rule {
 
 binds {
     // Start up recording layouts.
-    Mod+Backslash hotkey-overlay-title="EC Recording" {
-      spawn-sh "nu /home/jmarsh/dev/dotfiles/helpers/setup-ec-recording.nu";
+    Mod+Backslash hotkey-overlay-title="Normal Recording" {
+      spawn-sh "nu /home/jmarsh/dev/dotfiles/helpers/setup-aoc-recording.nu";
     }
-    Mod+Shift+Backslash hotkey-overlay-title="EC Recording" {
+    Mod+Shift+Backslash hotkey-overlay-title="Vertical Recording" {
       spawn-sh "nu /home/jmarsh/dev/dotfiles/helpers/setup-vertical-recording.nu";
     }
 
