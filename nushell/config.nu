@@ -1452,9 +1452,9 @@ export def "cph debug" [...patterns: string] {
     
     print "🧪 Tests 🧪"
     let test_cmd = (cph build-cmd $file "test" "--release" "--no-fail-fast" "--" "--nocapture")
-    try { ^$test_cmd out+err>| sed -E -e '/^\s*(Running|Finished|Running)/d' } catch { null }
+    try { ^$test_cmd out+err>| sed -E -e '/^\s*(Compiling|running|Blocking|Running|Finished|Running|test result:)/d' } catch { null }
     
-    print "\n🚀 Solution 🚀"
+    print "🚀 Solution 🚀"
     let run_cmd = (cph build-cmd $file "run" "--release" "-q")
     try { ^$run_cmd } catch { null }
 }
