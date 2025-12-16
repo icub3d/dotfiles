@@ -89,6 +89,16 @@ $env.config = {
       }
     },
     {
+      name: "fzf_dir_cd_home",
+      modifier: control,
+      keycode: char_h,
+      mode: [vi_insert, vi_normal],
+      event: {
+        send: ExecuteHostCommand,
+        cmd: "let folder = (select-folder $nu.home-path 3); if ($folder | is-empty) { } else { cd $folder }"
+      }
+    },
+    {
       name: "fzf_dir_cd_dev_depth3",
       modifier: control,
       keycode: char_d,
