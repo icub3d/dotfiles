@@ -4,6 +4,7 @@
         "customLaunchPrefixEnabled": false,
         "enableClipPreview": true,
         "enableClipboardHistory": false,
+        "iconMode": "tabler",
         "pinnedExecs": [
         ],
         "position": "center",
@@ -19,13 +20,12 @@
         "mprisBlacklist": [
         ],
         "preferredPlayer": "mpv",
-        "visualizerQuality": "high",
         "visualizerType": "linear",
         "volumeOverdrive": false,
         "volumeStep": 5
     },
     "bar": {
-        "backgroundOpacity": 0.33,
+        "backgroundOpacity": 0.93,
         "capsuleOpacity": 1,
         "density": "default",
         "exclusive": true,
@@ -39,14 +39,22 @@
         "outerCorners": false,
         "position": "top",
         "showCapsule": true,
+        "showOutline": false,
+        "useSeparateOpacity": false,
         "widgets": {
             "center": [
                 {
                     "characterCount": 2,
+                    "colorizeIcons": false,
+                    "enableScrollWheel": true,
                     "followFocusedScreen": false,
+                    "groupedBorderOpacity": 1,
                     "hideUnoccupied": false,
                     "id": "Workspace",
-                    "labelMode": "index"
+                    "labelMode": "index",
+                    "showApplications": false,
+                    "showLabelsOnlyWhenOccupied": true,
+                    "unfocusedIconsOpacity": 1
                 }
             ],
             "left": [
@@ -60,14 +68,17 @@
                     "useDistroLogo": false
                 },
                 {
+                    "compactMode": true,
                     "diskPath": "/",
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
                     "showCpuUsage": true,
                     "showDiskUsage": true,
+                    "showGpuTemp": false,
                     "showMemoryAsPercent": false,
                     "showMemoryUsage": true,
                     "showNetworkStats": true,
+                    "useMonospaceFont": true,
                     "usePrimaryColor": true
                 },
                 {
@@ -90,6 +101,7 @@
                     ],
                     "colorizeIcons": false,
                     "drawerEnabled": false,
+                    "hidePassive": false,
                     "id": "Tray",
                     "pinned": [
                     ]
@@ -108,6 +120,7 @@
                     "formatHorizontal": "HH:mm ddd, MMM dd",
                     "formatVertical": "HH mm - dd MM",
                     "id": "Clock",
+                    "tooltipFormat": "HH:mm ddd, MMM dd",
                     "useCustomFont": false,
                     "usePrimaryColor": true
                 }
@@ -204,7 +217,14 @@
             ]
         }
     },
+    "desktopWidgets": {
+        "enabled": false,
+        "gridSnap": false,
+        "monitorWidgets": [
+        ]
+    },
     "dock": {
+        "animationSpeed": 1,
         "backgroundOpacity": 1,
         "colorizeIcons": false,
         "deadOpacity": 0.6,
@@ -246,6 +266,10 @@
     "hooks": {
         "darkModeChange": "",
         "enabled": false,
+        "performanceModeDisabled": "",
+        "performanceModeEnabled": "",
+        "screenLock": "",
+        "screenUnlock": "",
         "wallpaperChange": ""
     },
     "location": {
@@ -286,6 +310,11 @@
         "normalUrgencyDuration": 8,
         "overlayLayer": true,
         "respectExpireTimeout": false,
+        "saveToHistory": {
+            "critical": true,
+            "low": true,
+            "normal": true
+        },
         "sounds": {
             "criticalSoundFile": "",
             "enabled": false,
@@ -311,6 +340,7 @@
         "audioCodec": "opus",
         "audioSource": "default_output",
         "colorRange": "limited",
+        "copyToClipboard": false,
         "directory": "/home/jmarsh/Videos",
         "frameRate": 60,
         "quality": "very_high",
@@ -321,6 +351,7 @@
     "sessionMenu": {
         "countdownDuration": 10000,
         "enableCountdown": true,
+        "largeButtonsStyle": false,
         "position": "center",
         "powerOptions": [
             {
@@ -348,17 +379,23 @@
                 "enabled": true
             }
         ],
-        "showHeader": true
+        "showHeader": true,
+        "showNumberLabels": true
     },
-    "settingsVersion": 26,
+    "settingsVersion": 35,
     "systemMonitor": {
         "cpuCriticalThreshold": 90,
         "cpuPollingInterval": 3000,
         "cpuWarningThreshold": 80,
         "criticalColor": "",
         "diskCriticalThreshold": 90,
+        "diskPath": "/",
         "diskPollingInterval": 3000,
         "diskWarningThreshold": 80,
+        "enableDgpuMonitoring": false,
+        "gpuCriticalThreshold": 90,
+        "gpuPollingInterval": 3000,
+        "gpuWarningThreshold": 80,
         "memCriticalThreshold": 90,
         "memPollingInterval": 3000,
         "memWarningThreshold": 80,
@@ -380,8 +417,11 @@
         "fuzzel": false,
         "ghostty": false,
         "gtk": false,
+        "helix": false,
+        "hyprland": false,
         "kcolorscheme": false,
         "kitty": false,
+        "mango": false,
         "niri": false,
         "pywalfox": false,
         "qt": false,
@@ -389,17 +429,22 @@
         "telegram": false,
         "vicinae": false,
         "walker": false,
-        "wezterm": false
+        "wezterm": false,
+        "yazi": false,
+        "zed": false
     },
     "ui": {
+        "bluetoothDetailsViewMode": "grid",
+        "bluetoothHideUnnamedDevices": false,
         "fontDefault": "JetBrainsMono NF",
         "fontDefaultScale": 1,
         "fontFixed": "JetBrainsMono NF",
         "fontFixedScale": 1,
-        "panelBackgroundOpacity": 1,
+        "panelBackgroundOpacity": 0.4,
         "panelsAttachedToBar": true,
-        "settingsPanelAttachToBar": false,
-        "tooltipsEnabled": true
+        "settingsPanelMode": "centered",
+        "tooltipsEnabled": true,
+        "wifiDetailsViewMode": "grid"
     },
     "wallpaper": {
         "directory": "/home/jmarsh/Pictures/Wallpapers",
@@ -420,13 +465,16 @@
         "transitionEdgeSmoothness": 0.05,
         "transitionType": "random",
         "useWallhaven": false,
+        "wallhavenApiKey": "",
         "wallhavenCategories": "111",
         "wallhavenOrder": "desc",
         "wallhavenPurity": "100",
         "wallhavenQuery": "",
+        "wallhavenRatios": "",
         "wallhavenResolutionHeight": "",
         "wallhavenResolutionMode": "atleast",
         "wallhavenResolutionWidth": "",
-        "wallhavenSorting": "date_added"
+        "wallhavenSorting": "date_added",
+        "wallpaperChangeMode": "random"
     }
 }
