@@ -9,6 +9,10 @@ if ($nu.os-info.name == "windows") {
   $env.config.shell_integration."osc133" = false
 }
 
+$env.config.shell_integration.osc133 = true
+$env.config.shell_integration.osc2 = true
+$env.config.shell_integration.osc7 = true
+
 # A list of all of our custom paths.
 let paths = [
   # bin paths

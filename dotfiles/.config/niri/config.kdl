@@ -73,6 +73,8 @@ hotkey-overlay {
   skip-at-startup
 }
 
+spawn-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+
 screenshot-path "~/Pictures/Screenshots/Screenshot-%Y-%m-%d-%H-%M-%S.png"
 
 // Applies to all windows
@@ -159,7 +161,7 @@ binds {
     Mod+Q repeat=false { close-window; }
 
     // Launching
-    Mod+T hotkey-overlay-title="Terminal" { spawn "ghostty"; }
+    Mod+T hotkey-overlay-title="Terminal" { spawn "ghostty" "+new-window"; }
     Mod+E hotkey-overlay-title="Files" { spawn "nautilus"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "firefox-developer-edition"; }
     Mod+Shift+B hotkey-overlay-title="Private Browser" { spawn "firefox-developer-edition" "--private-window"; }

@@ -2,3 +2,5 @@ theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 font-size = 12
 font-family = JetBrains Mono NF
 background-opacity = 0.95
+shell-integration = detect
+command = /usr/bin/nu
