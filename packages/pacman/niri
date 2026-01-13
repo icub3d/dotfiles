@@ -30,6 +30,6 @@ xdg-desktop-portal-gnome
 xwayland-satellite
 gnome-keyring
 gdm
-kitty
 yazi
-
+ghostty
+viu

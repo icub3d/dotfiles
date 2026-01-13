@@ -96,23 +96,23 @@ window-rule {
 
 // Rules for streaming (normal).
 window-rule {
-  match title="recording-main-editor" app-id="kitty"
+  match title="recording-main-editor" app-id="ghostty"
   default-column-width { proportion 1.0; }
   open-on-output "DP-1"
 }
 window-rule {
-  match title="recording-debug-bar" app-id="kitty"
+  match title="recording-debug-bar" app-id="ghostty"
   default-column-width { fixed 448; }
   open-on-output "DP-3"
 }
 window-rule {
-  match title="recording-status-bar" app-id="kitty"
+  match title="recording-status-bar" app-id="ghostty"
   default-column-width { proportion 0.50; }
   default-window-height { fixed 336; }
   open-on-output "DP-3"
 }
 window-rule {
-  match title="multi-stage-speedrun-timer" app-id="kitty"
+  match title="multi-stage-speedrun-timer" app-id="ghostty"
   default-column-width { proportion 0.25; }
   open-on-output "DP-3"
 }
@@ -124,12 +124,12 @@ window-rule {
 
 // Rules for streaming (vertical)
 window-rule {
-  match title="recording-vertical-main-editor" app-id="kitty"
+  match title="recording-vertical-main-editor" app-id="ghostty"
   default-column-width { fixed 730; }
   open-on-output "DP-1"
 }
 window-rule {
-  match title="recording-vertical-status-bar" app-id="kitty"
+  match title="recording-vertical-status-bar" app-id="ghostty"
   default-column-width { fixed 730; }
   default-window-height { fixed 286; }
   open-on-output "DP-1"
@@ -159,7 +159,7 @@ binds {
     Mod+Q repeat=false { close-window; }
 
     // Launching
-    Mod+T hotkey-overlay-title="Terminal" { spawn "kitty"; }
+    Mod+T hotkey-overlay-title="Terminal" { spawn "ghostty"; }
     Mod+E hotkey-overlay-title="Files" { spawn "nautilus"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "firefox-developer-edition"; }
     Mod+Shift+B hotkey-overlay-title="Private Browser" { spawn "firefox-developer-edition" "--private-window"; }
