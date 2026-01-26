@@ -70,7 +70,7 @@
 [delta]
   navigate = true
   pager = bat --decorations=never --paging=always
-  features = dark side-by-side line-numbers decorations my-styles
+  features = dark line-numbers decorations my-styles
 
 [delta "my-styles"]
   minus-style="#CC2E55"

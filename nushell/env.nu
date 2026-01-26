@@ -3,7 +3,7 @@ $env.DISTRO = if ($nu.os-info.name == "linux") { (open /etc/os-release | find -r
 $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"
-$env.ATWORK = if (($nu.home-path | path join ".atwork") | path exists) { "true" } else { "false" }
+$env.ATWORK = if (($nu.home-dir | path join ".atwork") | path exists) { "true" } else { "false" }
 $env.DOCKER_COMMAND = "podman"
 $env.PODMAN_COMPOSE_WARNING_LOGS = "false"
 
@@ -12,10 +12,10 @@ $env.BAT_THEME = "ansi"
 $env.PAGER = "bat -p"
 
 # delta
-$env.DELTA_FEATURES = "dark side-by-side line-numbers decorations my-styles"
+$env.DELTA_FEATURES = "dark line-numbers decorations my-styles"
 
 # NPM
-$env.NPM_PACKAGES = ($nu.home-path | path join ".npm-packages")
+$env.NPM_PACKAGES = ($nu.home-dir | path join ".npm-packages")
 mkdir ($env.NPM_PACKAGES | path join "bin")
 
 # Python

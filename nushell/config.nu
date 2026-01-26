@@ -17,23 +17,23 @@ $env.config.shell_integration.osc7 = true
 let paths = [
   # bin paths
   "/usr/local/bin",
-  ($nu.home-path | path join "bin"),
-  ($nu.home-path | path join ".local/bin"),
+  ($nu.home-dir | path join "bin"),
+  ($nu.home-dir | path join ".local/bin"),
   
   # rust
   "/usr/local/cargo/bin",
-  ($nu.home-path | path join ".cargo/bin"),
+  ($nu.home-dir | path join ".cargo/bin"),
   
   # npm
-  ($nu.home-path | path join ".npm-packages/bin"),
+  ($nu.home-dir | path join ".npm-packages/bin"),
   
   # go
-  ($nu.home-path | path join "go/bin"),
+  ($nu.home-dir | path join "go/bin"),
   "/usr/local/go/bin",
   "/usr/lib/go/bin",
 
   # fnm
-  ($nu.home-path | path join ".local/share/fnm"),
+  ($nu.home-dir | path join ".local/share/fnm"),
 ];
 
 # Prompt
@@ -99,7 +99,7 @@ $env.config = {
       mode: [vi_insert, vi_normal],
       event: {
         send: ExecuteHostCommand,
-        cmd: "let folder = (select-folder $nu.home-path 3); if ($folder | is-empty) { } else { cd $folder }"
+        cmd: "let folder = (select-folder $nu.home-dir 3); if ($folder | is-empty) { } else { cd $folder }"
       }
     },
     {
@@ -109,7 +109,7 @@ $env.config = {
       mode: [vi_insert, vi_normal],
       event: {
         send: ExecuteHostCommand,
-        cmd: "let folder = (select-folder ($nu.home-path | path join dev) 3); if ($folder | is-empty) { } else { cd $folder }"
+        cmd: "let folder = (select-folder ($nu.home-dir | path join dev) 3); if ($folder | is-empty) { } else { cd $folder }"
       }
     },
     {
@@ -129,7 +129,7 @@ $env.config = {
       mode: [vi_insert, vi_normal],
       event: {
         send: ExecuteHostCommand,
-        cmd: "let folder = (select-folder ($nu.home-path | path join dev) 3); if ($folder | is-empty) { } else { commandline edit -i $folder }"
+        cmd: "let folder = (select-folder ($nu.home-dir | path join dev) 3); if ($folder | is-empty) { } else { commandline edit -i $folder }"
       }
     },
     {
@@ -490,8 +490,8 @@ def dotfiles [] {
   # make sure we have all the diretories we need
   ls -a ~/dev/dotfiles/dotfiles/** |
      get name |
-     each {|f| str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") "" } |
-     each {|f| ($nu.home-path | path join $f) } |
+     each {|f| str replace ($nu.home-dir | path join "dev/dotfiles/dotfiles/") "" } |
+     each {|f| ($nu.home-dir | path join $f) } |
      each {|f| mkdir $f}
   mkdir ~/.ssh
   chmod 700 ~/.ssh
@@ -501,10 +501,10 @@ def dotfiles [] {
   let paths = ls -a ~/dev/dotfiles/dotfiles/**/* | 
     where {|p| $p.type == "file"} | 
     get name | 
-    each {|n| $n | str replace ($nu.home-path | path join "dev/dotfiles/dotfiles/") ""} |
+    each {|n| $n | str replace ($nu.home-dir | path join "dev/dotfiles/dotfiles/") ""} |
     each {|n|
-      let $new_path = ($nu.home-path | path join $n)
-      let $org_path = ($nu.home-path | path join "dev/dotfiles/dotfiles" | path join $n)
+      let $new_path = ($nu.home-dir | path join $n)
+      let $org_path = ($nu.home-dir | path join "dev/dotfiles/dotfiles" | path join $n)
       if (not ($new_path | path exists)) {
         ln -s $org_path $new_path
       }
@@ -513,12 +513,12 @@ def dotfiles [] {
 }
 
 def update-cli-tools [] {
-  mkdir ($nu.home-path | path join "bin")
-  mkdir ($nu.home-path | path join ".config/cli-tools")
+  mkdir ($nu.home-dir | path join "bin")
+  mkdir ($nu.home-dir | path join ".config/cli-tools")
 
   # check to see if we have a different sha512
   let sha512 = (http get $"https://files.marsh.gg/cli-tools.($env.ARCH).zip.sha512")
-  let existing_path = ($nu.home-path | path join ".config/cli-tools/sha512")
+  let existing_path = ($nu.home-dir | path join ".config/cli-tools/sha512")
   if ($existing_path | path exists) {
     let existing = (cat $existing_path)
     if ($existing == $sha512) {
@@ -529,7 +529,7 @@ def update-cli-tools [] {
 
   $sha512 | save -f $existing_path
   http get $"https://files.marsh.gg/cli-tools.($env.ARCH).zip" | save -f cli-tools.zip
-  unzip -o cli-tools.zip -d ($nu.home-path | path join "bin") out> /dev/null
+  unzip -o cli-tools.zip -d ($nu.home-dir | path join "bin") out> /dev/null
   rm cli-tools.zip
 }
 
@@ -725,7 +725,7 @@ def get-catppucin-wallpapers [] {
 
   ];
   for image in $images {
-    http get $"($image)?raw=true" | save -f ($nu.home-path | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
+    http get $"($image)?raw=true" | save -f ($nu.home-dir | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
   }
 }
 
@@ -741,9 +741,9 @@ def get-marshian-images [] {
     "marshians-violet/marshians-violet-background-3k.png",
   ];
   for image in $images {
-    http get $"($base)($image)" | save -f ($nu.home-path | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
+    http get $"($base)($image)" | save -f ($nu.home-dir | path join "Pictures" | path join "Wallpapers" | path join ($image | path split | last))
   }
-  http get "https://img.marsh.gg/avatar.png" | save -f ($nu.home-path | path join "Pictures/avatar.png")
+  http get "https://img.marsh.gg/avatar.png" | save -f ($nu.home-dir | path join "Pictures/avatar.png")
 }
 
 def ykf [] {
@@ -772,11 +772,11 @@ def select-folder [path, depth = 0] {
   $folder
 }
 
-alias goto = cd (select-folder ($nu.home-path | path join dev))
+alias goto = cd (select-folder ($nu.home-dir | path join dev))
 alias gotol = cd (select-folder $env.PWD)
 
 def nw [name = "", folder = ""] {
-  let dev = $nu.home-path | path join "dev"
+  let dev = $nu.home-dir | path join "dev"
   let folder = if ($folder == "") {
     ($dev | path join (fd --type d --strip-cwd-prefix --path-separator="/" --base-directory $dev --max-depth 3 | fzf --reverse --border=rounded --prompt "path> "))
   } else {
