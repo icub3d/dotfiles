@@ -29,7 +29,8 @@ wl-clipboard
 xdg-desktop-portal-gnome
 xwayland-satellite
 gnome-keyring
-gdm
+greetd
+greetd-tuigreet
 yazi
 ghostty
 viu

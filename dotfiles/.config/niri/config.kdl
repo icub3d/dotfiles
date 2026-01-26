@@ -73,7 +73,9 @@ hotkey-overlay {
   skip-at-startup
 }
 
-spawn-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+spawn-at-startup "dbus-update-activation-environment" "--all"
+spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "QT_QPA_PLATFORM"
+spawn-at-startup "systemctl" "--user" "start" "graphical-session.target"
 
 screenshot-path "~/Pictures/Screenshots/Screenshot-%Y-%m-%d-%H-%M-%S.png"
 
