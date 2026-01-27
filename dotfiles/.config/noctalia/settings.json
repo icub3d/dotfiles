@@ -32,13 +32,10 @@
     },
     "bar": {
         "backgroundOpacity": 0.93,
-        "barType": "simple",
         "capsuleOpacity": 1,
         "density": "default",
         "exclusive": true,
         "floating": false,
-        "frameRadius": 12,
-        "frameThickness": 8,
         "hideOnOverview": false,
         "marginHorizontal": 5,
         "marginVertical": 5,
@@ -411,7 +408,7 @@
         "showHeader": true,
         "showNumberLabels": true
     },
-    "settingsVersion": 45,
+    "settingsVersion": 44,
     "systemMonitor": {
         "cpuCriticalThreshold": 90,
         "cpuPollingInterval": 3000,
