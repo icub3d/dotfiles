@@ -122,12 +122,12 @@ window-rule {
 }
 window-rule {
   match app-id="com.obsproject.Studio"
-  default-column-width { proportion 1.0; }
   open-on-output "DP-2"
 }
 window-rule {
   match app-id="rig-defender"
   default-column-width { proportion 1.0; }
+  open-on-output "DP-3"
 }
 
 // Rules for streaming (vertical)

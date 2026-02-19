@@ -1,0 +1,52 @@
+// VSCodeVim settings to add to your settings.json
+// These handle the vim-specific keybindings that VSCodeVim manages
+{
+  "vim.leader": "<space>",
+  "vim.useSystemClipboard": true,
+  "vim.hlsearch": true,
+  
+  // Normal mode keybindings
+  "vim.normalModeKeyBindings": [
+    // Copy line to clipboard - <leader>cc
+    {
+      "before": ["<leader>", "c", "c"],
+      "after": ["\"", "+", "y", "y"]
+    },
+    // Paste from clipboard - <leader>cp
+    {
+      "before": ["<leader>", "c", "p"],
+      "after": ["\"", "+", "p"]
+    }
+  ],
+  
+  // Visual mode keybindings
+  "vim.visualModeKeyBindings": [
+    // Stay in visual mode after indent
+    {
+      "before": ["<"],
+      "commands": ["editor.action.outdentLines"]
+    },
+    {
+      "before": [">"],
+      "commands": ["editor.action.indentLines"]
+    },
+    // Copy selection to clipboard - <leader>cc
+    {
+      "before": ["<leader>", "c", "c"],
+      "after": ["\"", "+", "y"]
+    },
+    // Paste from clipboard - <leader>cp
+    {
+      "before": ["<leader>", "c", "p"],
+      "after": ["\"", "+", "p"]
+    }
+  ],
+  
+  // Handle Ctrl+h/j/k/l in insert mode if needed
+  "vim.handleKeys": {
+    "<C-h>": true,
+    "<C-j>": true,
+    "<C-k>": true,
+    "<C-l>": true
+  }
+}

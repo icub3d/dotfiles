@@ -1,0 +1,106 @@
+// VS Code keybindings to mimic your Neovim config
+// Place this in your VS Code keybindings.json (Ctrl+K Ctrl+S or Cmd+K Cmd+S)
+[
+  // File explorer toggle - mimics <leader>e
+  {
+    "key": "space e",
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Go back - mimics gb
+  {
+    "key": "g b",
+    "command": "workbench.action.navigateBack",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Save file - mimics <leader>w
+  {
+    "key": "space w",
+    "command": "workbench.action.files.save",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Close editor - mimics <leader>q
+  {
+    "key": "space q",
+    "command": "workbench.action.closeActiveEditor",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Find files - mimics <leader>f (Telescope find_files)
+  {
+    "key": "space f",
+    "command": "workbench.action.quickOpen",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Find in files - mimics <leader>g (Telescope live_grep)
+  {
+    "key": "space g",
+    "command": "workbench.action.findInFiles",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Switch buffers - mimics <leader>b (Telescope buffers)
+  {
+    "key": "space b",
+    "command": "workbench.action.showAllEditors",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Command palette - mimics <leader>h (help_tags)
+  {
+    "key": "space h",
+    "command": "workbench.action.showCommands",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Toggle line numbers - mimics <leader>n
+  {
+    "key": "space n",
+    "command": "editor.action.toggleRenderWhitespace",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Git diff view - mimics <leader>d
+  {
+    "key": "space d",
+    "command": "workbench.view.scm",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Window navigation - Ctrl+h/j/k/l
+  {
+    "key": "ctrl+h",
+    "command": "workbench.action.navigateLeft",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.navigateDown",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.navigateUp",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.navigateRight",
+    "when": "vim.mode == 'Normal'"
+  },
+  // Editor group resizing - Ctrl+Alt+h/j/k/l
+  {
+    "key": "ctrl+alt+h",
+    "command": "workbench.action.decreaseViewWidth",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.increaseViewWidth",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+alt+k",
+    "command": "workbench.action.decreaseViewHeight",
+    "when": "vim.mode == 'Normal'"
+  },
+  {
+    "key": "ctrl+alt+j",
+    "command": "workbench.action.increaseViewHeight",
+    "when": "vim.mode == 'Normal'"
+  }
+]
