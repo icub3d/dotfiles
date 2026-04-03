@@ -171,9 +171,9 @@ binds {
     Mod+E hotkey-overlay-title="Files" { spawn "nautilus"; }
     Mod+B hotkey-overlay-title="Browser" { spawn "firefox-developer-edition"; }
     Mod+Shift+B hotkey-overlay-title="Private Browser" { spawn "firefox-developer-edition" "--private-window"; }
-    Mod+Space hotkey-overlay-title="Launcher" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+S hotkey-overlay-title="Control Center" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-    Mod+Slash hotkey-overlay-title="Setting" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+    Mod+Space hotkey-overlay-title="Launcher" { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "launcher" "toggle"; }
+    Mod+S hotkey-overlay-title="Control Center" { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "controlCenter" "toggle"; }
+    Mod+Slash hotkey-overlay-title="Setting" { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "settings" "toggle"; }
 
     // Screen reader
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
@@ -185,6 +185,7 @@ binds {
     XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
     XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+    F12 allow-when-locked=true { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "media" "playPause"; }
 
     // Focus
     Mod+Left  { focus-column-left; }

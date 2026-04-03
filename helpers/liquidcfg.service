@@ -19,7 +19,7 @@ ExecStart=liquidctl set --serial 1805006373291A10 fan2 speed 20 400 40 400 50 40
 ExecStart=liquidctl set --serial 1805006373291A10 fan3 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
 ExecStart=liquidctl set --serial 1805006373291A10 fan4 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
 ExecStart=liquidctl set --serial 1805006373291A10 fan5 speed 20 500 30 800 35 1000 38 1200 40 1500 --temperature-sensor 1
-ExecStart=liquidctl set --serial 1805006373291A10 fan6 speed 20 1500 30 2000 40 2500 50 3000 55 3500 60 4800 --temperature-sensor 1
+ExecStart=liquidctl set --serial 1805006373291A10 fan6 speed 20 2500 30 3000 40 4000 50 4800 --temperature-sensor 1
 ExecStart=liquidctl set --serial 1805006373291A10 led1 color fixed a9dc76
 ExecStart=liquidctl set --serial 1805006373291A10 led2 color fixed a9dc76
 

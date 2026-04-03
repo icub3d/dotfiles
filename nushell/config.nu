@@ -1596,4 +1596,17 @@ export def "cph new" [...args: string] {
 
 export alias "cph n" = cph new
 
+# Gemini Sandbox Management
+def --env "sandbox enable" [] {
+    load-env {
+        GEMINI_SANDBOX: "podman"
+        SANDBOX_FLAGS: "--userns=keep-id"
+    }
+    print "Gemini sandbox enabled (using podman with UID mapping)."
+}
 
+def --env "sandbox disable" [] {
+    hide-env GEMINI_SANDBOX
+    hide-env SANDBOX_FLAGS
+    print "Gemini sandbox disabled (running natively)."
+}

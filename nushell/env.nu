@@ -28,5 +28,7 @@ if ($nu.os-info.name == "linux") {
   gpg-connect-agent updatestartuptty /bye out+err> /dev/null
 }
 
-# source os specific files
+# source os specific files and local stuff
 source ($nu.default-config-dir | path join $"($nu.os-info.name).nu")
+source ($nu.default-config-dir | path join "local.nu")
+
