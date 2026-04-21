@@ -371,6 +371,49 @@ def git-config-setup [] {
   }
 }
 
+# Create and switch to a new git worktree in a separate directory to allow multiple agents to work in parallel.
+def --env "gw" [
+    name?: string,     # The name of the worktree (and branch)
+    --base: string = "main" # The base branch to branch off from
+] {
+    let repo_root = (do -i { git rev-parse --show-toplevel } | complete | get stdout | str trim)
+    if ($repo_root | is-empty) {
+        print-error "Not in a git repository"
+        return
+    }
+
+    let name = if ($name | is-empty) {
+        input "Worktree name (branch)> "
+    } else {
+        $name
+    }
+
+    if ($name | is-empty) {
+        print-error "Worktree name is required"
+        return
+    }
+
+    let repo_name = ($repo_root | path basename)
+    let target_path = ($repo_root | path dirname | path join $"($repo_name)-worktrees" | path join $name)
+
+    if ($target_path | path exists) {
+        print-error $"Worktree path already exists: ($target_path)"
+        return
+    }
+
+    if not ($target_path | path dirname | path exists) {
+        mkdir ($target_path | path dirname)
+    }
+
+    print-info $"Creating worktree for branch '($name)' from '($base)' at ($target_path)..."
+    
+    # Create the worktree and the branch in one go
+    git worktree add -b $name $target_path $base
+
+    cd $target_path
+    print-info $"Switched to worktree: ($target_path)"
+}
+
 def update-system [] {
   dotfiles
   cd ~/dev/dotfiles

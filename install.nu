@@ -24,6 +24,31 @@ if ($nu.default-config-dir | path exists) {
     print "✅ Nushell config linked."
 }
 
+# --- Gemini Skills Symlink ---
+print "JT Symlinking Gemini skills..."
+let gemini_dir = ($env.HOME | path join '.gemini')
+let gemini_skills_source = ($dotfiles_dir | path join 'gemini/skills')
+let gemini_skills_target = ($gemini_dir | path join 'skills')
+
+if not ($gemini_dir | path exists) {
+    mkdir $gemini_dir
+    print "✅ Created .gemini directory."
+}
+
+if ($gemini_skills_target | path exists) {
+    if not ($gemini_skills_target | path is-symlink) {
+        print "Removing existing .gemini/skills directory..."
+        rm -rf $gemini_skills_target
+        ln -s $gemini_skills_source $gemini_skills_target
+        print "✅ Gemini skills linked."
+    } else {
+        print "✅ Gemini skills already linked."
+    }
+} else {
+    ln -s $gemini_skills_source $gemini_skills_target
+    print "✅ Gemini skills linked."
+}
+
 # --- Create .env.nu if it doesn't exist ---
 let env_file = ($nu.default-config-dir | path join '.env.nu')
 if not ($env_file | path exists) {
