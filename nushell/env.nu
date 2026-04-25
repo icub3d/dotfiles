@@ -1,9 +1,28 @@
+# Path conversions
+$env.ENV_CONVERSIONS = {
+  "PATH": {
+    from_string: { |s| $s | split row (char esep) | meditations }
+    to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+  }
+  "Path": {
+    from_string: { |s| $s | split row (char esep) | meditations }
+    to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+  }
+}
+
+def meditations [] { 
+  $in | where { |p| ($p | is-not-empty) and ($p | path exists) } | uniq 
+}
+
 # standard variables
-$env.DISTRO = if ($nu.os-info.name == "linux") { (open /etc/os-release | find -r "^ID=" | str replace 'ID=' '') } else { $nu.os-info.name }
+$env.DISTRO = if ($nu.os-info.name == "linux") { 
+    open /etc/os-release | from csv --separator '=' --noheaders | where column0 == "ID" | get column1.0 
+} else { $nu.os-info.name }
+
 $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"
-$env.ATWORK = if (($nu.home-dir | path join ".atwork") | path exists) { "true" } else { "false" }
+$env.ATWORK = (($nu.home-dir | path join ".atwork") | path exists)
 $env.DOCKER_COMMAND = "podman"
 $env.PODMAN_COMPOSE_WARNING_LOGS = "false"
 
@@ -25,23 +44,41 @@ $env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
 $env.GPG_TTY = if ($nu.os-info.name == "linux") { (tty) } else { "" }
 $env.SSH_AUTH_SOCK = if ($nu.os-info.name == "linux" ) { $"/run/user/(id -u)/gnupg/S.gpg-agent.ssh" } else { "" }
 if ($nu.os-info.name == "linux") {
-  gpg-connect-agent updatestartuptty /bye out+err> /dev/null
+  do -i { gpg-connect-agent updatestartuptty /bye out+err> /dev/null }
 }
 
 # Generate fj completions
 let fj_cache = ($nu.default-config-dir | path join "fj-completions.nu")
 if (which fj | is-not-empty) {
-    fj completion nushell 
-    | str replace --all '[OWNER]/NAME' 'owner_name' 
-    | save --force $fj_cache
+    if not ($fj_cache | path exists) or ((ls $fj_cache | get 0.modified) < (ls (which fj | get 0.path) | get 0.modified)) {
+        fj completion nushell 
+        | str replace --all '[OWNER]/NAME' 'owner_name' 
+        | save --force $fj_cache
+    }
 } else {
-    # Ensure the file exists so config.nu can source it without error
     if not ($fj_cache | path exists) {
-        "module completions {}" | save $fj_cache
+        "export module completions {}" | save $fj_cache
     }
 }
+
+# Path setup
+let custom_paths = [
+  ($nu.home-dir | path join "bin"),
+  ($nu.home-dir | path join ".local/bin"),
+  ($nu.home-dir | path join ".cargo/bin"),
+  ($nu.home-dir | path join ".npm-packages/bin"),
+  ($nu.home-dir | path join "go/bin"),
+  ($nu.home-dir | path join ".local/share/fnm"),
+  "/usr/local/bin",
+  "/usr/local/cargo/bin",
+  "/usr/local/go/bin",
+  "/usr/lib/go/bin",
+]
+
+# Initialize PATH as a list and add custom paths
+let current_path = if ($env.PATH? | describe) =~ "list" { $env.PATH } else { ($env.PATH? | default "" | split row (char esep)) }
+$env.PATH = ($current_path | prepend $custom_paths | meditations)
 
 # source os specific files and local stuff
 source ($nu.default-config-dir | path join $"($nu.os-info.name).nu")
 source ($nu.default-config-dir | path join "local.nu")
-

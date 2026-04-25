@@ -63,6 +63,28 @@ systemctl enable --now --user syncthing
 I kept cycling the power (unplug from monitor) until it finally was
 recognized?!?!?
 
+# Firefox / Bitwarden Lag (Multi-GPU)
+
+If you experience "bursty" typing lag in Firefox or Bitwarden popups on a multi-GPU setup (e.g., AMD + NVIDIA), it is likely due to the compositor trying to sync frames across GPUs.
+
+**The Fix:**
+Prioritize the AMD card (connected to monitors) for the Wayland compositor in `~/.config/environment.d/wayland.conf`:
+
+```conf
+WLR_DRM_DEVICES=/dev/dri/card1:/dev/dri/card0
+```
+
+*   `card1`: Primary AMD GPU (7900 XTX)
+*   `card0`: Integrated AMD GPU
+*   Excluded `card2`: NVIDIA GPU (reserved for AI/CUDA)
+
+**GPU Helper Script:**
+Use `nu helpers/gpu.nu` to check clocks and performance levels. If UI stuttering persists during video playback, you can force the AMD GPU into high-performance mode:
+
+```bash
+nu -c 'use helpers/gpu.nu; gpu set-perf high'
+```
+
 # Mirror List
 
 ```sh
