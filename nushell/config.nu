@@ -52,6 +52,10 @@ if ($nu.os-info.name == "linux") {
 # Add our custom paths to the PATH variable and clean it up
 $env.PATH = ($env.PATH | split row (char esep) | prepend $paths | uniq);
 
+# fj completions
+source fj-completions.nu
+use completions *
+
 # fnm setup
 if ((which fnm | length) > 0) {
   # Load fnm environment variables

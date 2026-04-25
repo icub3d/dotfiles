@@ -1,3 +1,4 @@
 history*
 .env.nu
 local.nu
+fj-completions.nu
