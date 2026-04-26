@@ -69,7 +69,48 @@ $env.config = {
             print "" # Newline before command
             let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
             ansi --osc $file_info
-        }]
+        }],
+        env_change: {
+            PWD: [
+                { |before, after|
+                    let env_file = ($after | path join ".env.nu")
+                    if ($env_file | path exists) {
+                        print $"(ansi cyan)✨ Loading environment from ($env_file)(ansi reset)"
+                        try {
+                            # This works if .env.nu returns a record, e.g., { FOO: "BAR" }
+                            load-env (open $env_file)
+                        } catch {
+                            print $"(ansi red)❌ Error: .env.nu must return a record (e.g., { FOO: 'BAR' })(ansi reset)"
+                        }
+                    }
+                }
+            ]
+        },
+        pre_execution: [
+            { $env.CMD_START_TIME = (date now) }
+        ],
+        display_output: {
+            let it = $in
+            if ($env.CMD_START_TIME? | is-not-empty) {
+                let duration = (date now) - $env.CMD_START_TIME
+                if $duration > 10sec {
+                    let cmd = (history | last 1 | get 0.command)
+                    try {
+                        notify-send -i utilities-terminal "Command Finished" $"($cmd)\nDuration: ($duration)"
+                    } catch {
+                        print $"(ansi yellow)🔔 Command finished in ($duration)(ansi reset)"
+                    }
+                }
+            }
+            
+            # Display the output
+            let meta = (metadata $it)
+            if ($meta | is-empty) {
+                $it
+            } else {
+                $it | table
+            }
+        }
     },
     keybindings: [
         {
@@ -129,7 +170,10 @@ $env.config = {
 
 # --- Aliases ---
 alias v = nvim
+alias vd = vd
 alias g = git
+alias gd = git diff
+alias gds = git diff | delta --side-by-side
 alias cat = bat
 alias p = podman
 alias pc = podman compose

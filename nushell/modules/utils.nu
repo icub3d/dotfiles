@@ -69,3 +69,47 @@ export def "select-folder" [path: path, depth = 0] {
   let selected = (do { ^$cmd --base-directory $path } | fzf --reverse --border=rounded --prompt "path> " | str trim)
   if ($selected | is-empty) { "" } else { $path | path join $selected }
 }
+
+# Find and open a project in Neovim
+export def fp [] {
+    let dev_dir = ($nu.home-dir | path join "dev")
+    let project = (
+        fd --type d --hidden --exclude .git --max-depth 4 . $dev_dir
+        | fzf --prompt="🚀 Project> " --border=rounded
+        | str trim
+    )
+    if ($project | is-not-empty) {
+        cd $project
+        nvim .
+    }
+}
+
+# Browse git diffs interactively (VS Code style)
+export def vd [] {
+    # Check if we are in a git repo
+    if (do { ^git rev-parse --is-inside-work-tree } | complete | get exit_code) != 0 {
+        print-error "Not in a git repository"
+        return
+    }
+
+    let selected = (
+        do { ^git status --porcelain } 
+        | fzf --prompt="🔍 Nav> " 
+              --header " [/] Search  [Esc] Nav  [Enter] Edit"
+              --preview "git diff --color=always -- (echo {} | cut -c4-) | delta --side-by-side --width ($env.COLUMNS? | default 120)"
+              --preview-window "right:70%"
+              --bind "j:down,k:up,l:preview-down,h:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up,{:preview-page-up,}:preview-page-down"
+              --bind "/:unbind(j,k,h,l,{,})+change-prompt(🔍 Search> )"
+              --bind "ctrl-s:unbind(j,k,h,l,{,})+change-prompt(🔍 Search> )"
+              --bind "esc:rebind(j,k,h,l,{,})+change-prompt(🔍 Nav> )"
+              --bind "ctrl-n:rebind(j,k,h,l,{,})+change-prompt(🔍 Nav> )"
+              --border=rounded
+        | str trim
+    )
+    
+    if ($selected | is-not-empty) {
+        # Extract filename (from character 4 onwards to skip the status code)
+        let filename = ($selected | str substring 3..)
+        nvim $filename
+    }
+}
