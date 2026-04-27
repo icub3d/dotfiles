@@ -1,4 +1,5 @@
-tic -x -o ($nu.home-dir | path join ".terminfo") xterm-24bit.terminfo
+let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+tic -x -o ($nu.home-dir | path join ".terminfo") ($dotfiles_root | path join "xterm-24bit.terminfo")
 
 let perf_conf = "/etc/sysctl.d/100-perf.conf"
 let inotify_conf = "/etc/sysctl.d/99-inotify.conf"

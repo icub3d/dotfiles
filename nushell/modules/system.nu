@@ -55,9 +55,7 @@ export def dotfiles [] {
 
   # make symlinks for all the files
   let src_root = ($dotfiles_root | path join "dotfiles")
-  ls -a ($src_root | path join "**/*")
-    | where type == "file"
-    | get name
+  glob $"($src_root)/**/*" --no-dir --exclude [".git"]
     | each { |n|
       let rel = ($n | str replace $"($src_root)/" "")
       let target = ($nu.home-dir | path join $rel)
@@ -68,6 +66,8 @@ export def dotfiles [] {
 
 # Update the entire system (Arch Linux)
 export def update-system [] {
+  let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+
   dotfiles
 
   # Configure Pacman (only run sed if the toggles are still commented out)
@@ -84,11 +84,10 @@ export def update-system [] {
     git clone https://aur.archlinux.org/paru.git /tmp/paru
     cd /tmp/paru
     makepkg -si --noconfirm
-    cd ($nu.home-dir | path join "dev/dotfiles")
   }
 
   let selected_packages = (
-    open .selected_packages
+    open ($dotfiles_root | path join ".selected_packages")
     | str trim
     | split row -r '\s+'
     | where { |p| $p | is-not-empty }
@@ -96,7 +95,7 @@ export def update-system [] {
   let installed = (pacman -Q | lines | parse "{package} {version}" | get package)
   let packages = (
     $selected_packages
-    | each { |p| open $"packages/pacman/($p)" | lines }
+    | each { |p| open ($dotfiles_root | path join "packages/pacman" $p) | lines }
     | flatten
     | where { |p| $p | is-not-empty }
   )
@@ -112,15 +111,15 @@ export def update-system [] {
   # Run post-install scripts only for packages that have one. Each script runs
   # in a subshell with the helpers from this module pre-loaded so it can call
   # add-service/add-group/etc.
+  let helpers = ($nu.default-config-dir | path join "modules/system.nu")
   let post_install_scripts = (
     $packages
-    | each { |p| $"packages/post-install/($p).nu" }
+    | each { |p| $dotfiles_root | path join "packages/post-install" $"($p).nu" }
     | where { |s| $s | path exists }
   )
-  let helpers = ($nu.default-config-dir | path join "modules/system.nu")
   print $"🔧 Running ($post_install_scripts | length) post-install scripts..."
   for script in $post_install_scripts {
     print $"  ↳ ($script)"
-    nu -c $"use ($helpers) *; source ($script | path expand)"
+    nu -c $"use ($helpers) *; source ($script)"
   }
 }
