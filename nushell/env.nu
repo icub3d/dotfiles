@@ -1,17 +1,17 @@
+def clean-paths [] {
+  $in | where { |p| ($p | is-not-empty) and ($p | path exists) } | uniq
+}
+
 # Path conversions
 $env.ENV_CONVERSIONS = {
   "PATH": {
-    from_string: { |s| $s | split row (char esep) | meditations }
+    from_string: { |s| $s | split row (char esep) | clean-paths }
     to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
   }
   "Path": {
-    from_string: { |s| $s | split row (char esep) | meditations }
+    from_string: { |s| $s | split row (char esep) | clean-paths }
     to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
   }
-}
-
-def meditations [] { 
-  $in | where { |p| ($p | is-not-empty) and ($p | path exists) } | uniq 
 }
 
 # standard variables
@@ -35,7 +35,8 @@ $env.DELTA_FEATURES = "dark line-numbers decorations my-styles"
 
 # NPM
 $env.NPM_PACKAGES = ($nu.home-dir | path join ".npm-packages")
-mkdir ($env.NPM_PACKAGES | path join "bin")
+let npm_bin = ($env.NPM_PACKAGES | path join "bin")
+if not ($npm_bin | path exists) { mkdir $npm_bin }
 
 # Python
 $env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
@@ -75,9 +76,7 @@ let custom_paths = [
   "/usr/lib/go/bin",
 ]
 
-# Initialize PATH as a list and add custom paths
-let current_path = if ($env.PATH? | describe) =~ "list" { $env.PATH } else { ($env.PATH? | default "" | split row (char esep)) }
-$env.PATH = ($current_path | prepend $custom_paths | meditations)
+$env.PATH = ($env.PATH | prepend $custom_paths | clean-paths)
 
 # source os specific files and local stuff
 source ($nu.default-config-dir | path join $"($nu.os-info.name).nu")

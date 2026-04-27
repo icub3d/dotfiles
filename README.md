@@ -4,16 +4,19 @@ My dotfiles
 
 # Arch Linux
 
-You may want to use parallel downloads:
+For faster pacman downloads during the initial bootstrap, uncomment the
+`ParallelDownloads` line in `/etc/pacman.conf` (with `=`):
 
 ```
-sed -i 's/#ParallelDownloads 5/ParallelDownloads 5/g' /etc/pacman.conf
+sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
 ```
 
-Do a basic install make sure you include:
+(`update-system` does this automatically afterwards.)
 
-``` 
-base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|intel-ucode] pipewire neovim efivar efibootmgr networkmanager 
+Do a basic install — make sure you include:
+
+```
+base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|intel-ucode] pipewire neovim efivar efibootmgr networkmanager
 ```
 
 # Dotfiles Installation
@@ -21,13 +24,17 @@ base base-devel linux linux-firmware nushell git iptables-nft sudo [amd-ucode|in
 ```bash
 mkdir -p ~/dev
 git clone https://github.com/icub3d/dotfiles ~/dev/dotfiles
-pushd ~/dev/dotfiles
+cd ~/dev/dotfiles
 nu install.nu
 ```
 
+`install.nu` symlinks the nushell config and then calls `update-system`, which
+installs `paru`, the packages listed in `.selected_packages`, and runs the
+matching `packages/post-install/*.nu` scripts.
+
 ## Setup Git
 
-Add this to ~/.gitconfig.local
+Add this to `~/.gitconfig.local`:
 
 ```conf
 [user]
@@ -36,9 +43,10 @@ Add this to ~/.gitconfig.local
 	signingkey = [KEY]
 ```
 
-If you are using `gh` then:
+If you want GitHub auth (gh is installed via the package manifests):
 
 ```bash
+gh auth login
 gh auth setup-git
 ```
 
@@ -83,12 +91,6 @@ Use `nu helpers/gpu.nu` to check clocks and performance levels. If UI stuttering
 
 ```bash
 nu -c 'use helpers/gpu.nu; gpu set-perf high'
-```
-
-# Mirror List
-
-```sh
-nu mirrors
 ```
 
 # Docker Slow Stopping

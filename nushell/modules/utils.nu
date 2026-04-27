@@ -64,9 +64,13 @@ export def "dt unix" [
 }
 
 # FZF Folder Selector
-export def "select-folder" [path: path, depth = 0] {
-  let cmd = if $depth == 0 { ["fd" "--type" "d" "--strip-cwd-prefix"] } else { ["fd" "--type" "d" "--strip-cwd-prefix" "--max-depth" $"($depth)"] }
-  let selected = (do { ^$cmd --base-directory $path } | fzf --reverse --border=rounded --prompt "path> " | str trim)
+export def "select-folder" [path: path, depth: int = 0] {
+  let depth_args = if $depth == 0 { [] } else { ["--max-depth" ($depth | into string)] }
+  let selected = (
+    fd --type d --strip-cwd-prefix --base-directory $path ...$depth_args
+    | fzf --reverse --border=rounded --prompt "path> "
+    | str trim
+  )
   if ($selected | is-empty) { "" } else { $path | path join $selected }
 }
 
@@ -86,15 +90,14 @@ export def fp [] {
 
 # Browse git diffs interactively (VS Code style)
 export def vd [] {
-    # Check if we are in a git repo
-    if (do { ^git rev-parse --is-inside-work-tree } | complete | get exit_code) != 0 {
+    try { git rev-parse --is-inside-work-tree | ignore } catch {
         print-error "Not in a git repository"
         return
     }
 
     let selected = (
-        do { ^git status --porcelain } 
-        | fzf --prompt="🔍 Nav> " 
+        git status --porcelain
+        | fzf --prompt="🔍 Nav> "
               --header " [/] Search  [Esc] Nav  [Enter] Edit"
               --preview "git diff --color=always -- (echo {} | cut -c4-) | delta --side-by-side --width ($env.COLUMNS? | default 120)"
               --preview-window "right:70%"
@@ -106,10 +109,9 @@ export def vd [] {
               --border=rounded
         | str trim
     )
-    
+
     if ($selected | is-not-empty) {
-        # Extract filename (from character 4 onwards to skip the status code)
-        let filename = ($selected | str substring 3..)
-        nvim $filename
+        # Skip the 3-char porcelain status prefix.
+        nvim ($selected | str substring 3..)
     }
 }

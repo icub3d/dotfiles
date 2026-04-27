@@ -1,3 +1,1 @@
-do -i {
-  add-service bluetooth
-}
+add-service bluetooth

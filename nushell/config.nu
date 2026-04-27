@@ -3,20 +3,18 @@ use modules/utils.nu *
 use modules/system.nu *
 use modules/kubernetes.nu *
 use modules/media.nu *
-use modules/cph.nu *
+# cph is namespaced (cph run, cph test, ...) to avoid clashing with the
+# top-level `d`, `n`, `w` aliases below.
+use modules/cph.nu
 
 # --- Secrets & Integration ---
 const secrets_path = ($nu.default-config-dir | path join ".env.nu")
 if ($secrets_path | path exists) { source $secrets_path }
 
-# Windows Specifics
-if ($nu.os-info.name == "windows") {
-  $env.config.shell_integration.osc133 = false
-}
-
-$env.config.shell_integration.osc133 = true
+$env.config.shell_integration.osc133 = ($nu.os-info.name != "windows")
 $env.config.shell_integration.osc2 = true
 $env.config.shell_integration.osc7 = true
+
 
 # Load environment from system profiles (Linux only)
 if ($nu.os-info.name == "linux") {
@@ -37,9 +35,12 @@ if ($nu.os-info.name == "linux") {
 
 # fnm setup
 if (which fnm | is-not-empty) {
-    let fnm_env = (fnm env --shell bash | lines | str replace 'export ' '' | str replace -a '"' '' 
-        | split column "=" name value | where name not-in ["FNM_ARCH", "PATH"] 
-        | reduce -f {} { |it, acc| $acc | upsert $it.name $it.value })
+    let fnm_env = (fnm env --shell bash
+        | lines
+        | str replace 'export ' '' | str replace -a '"' ''
+        | parse "{n}={v}"
+        | where n not-in ["FNM_ARCH", "PATH"]
+        | transpose --header-row | into record)
     load-env $fnm_env
     if ($env.FNM_MULTISHELL_PATH? | is-not-empty) {
         $env.PATH = ($env.PATH | prepend [($env.FNM_MULTISHELL_PATH | path join "bin"), $env.FNM_MULTISHELL_PATH])
@@ -66,9 +67,19 @@ $env.config = {
     }
     hooks: {
         pre_prompt: [{
-            print "" # Newline before command
-            let file_info = $"7;file://($env.HOSTNAME)($env.PWD)"
-            ansi --osc $file_info
+            # Notify when the previous command took longer than 10s.
+            if ($env.CMD_START_TIME? | is-not-empty) {
+                let duration = (date now) - $env.CMD_START_TIME
+                if $duration > 10sec {
+                    let cmd = ($env.CMD_LAST? | default "")
+                    try {
+                        notify-send -i utilities-terminal "Command Finished" $"($cmd)\nDuration: ($duration)"
+                    } catch {
+                        print $"(ansi yellow)🔔 Command finished in ($duration)(ansi reset)"
+                    }
+                }
+            }
+            print "" # Newline before prompt
         }],
         env_change: {
             PWD: [
@@ -86,31 +97,10 @@ $env.config = {
                 }
             ]
         },
-        pre_execution: [
-            { $env.CMD_START_TIME = (date now) }
-        ],
-        display_output: {
-            let it = $in
-            if ($env.CMD_START_TIME? | is-not-empty) {
-                let duration = (date now) - $env.CMD_START_TIME
-                if $duration > 10sec {
-                    let cmd = (history | last 1 | get 0.command)
-                    try {
-                        notify-send -i utilities-terminal "Command Finished" $"($cmd)\nDuration: ($duration)"
-                    } catch {
-                        print $"(ansi yellow)🔔 Command finished in ($duration)(ansi reset)"
-                    }
-                }
-            }
-            
-            # Display the output
-            let meta = (metadata $it)
-            if ($meta | is-empty) {
-                $it
-            } else {
-                $it | table
-            }
-        }
+        pre_execution: [{
+            $env.CMD_START_TIME = (date now)
+            $env.CMD_LAST = $in
+        }]
     },
     keybindings: [
         {
@@ -169,37 +159,25 @@ $env.config = {
 }
 
 # --- Aliases ---
+alias o = ollama
 alias v = nvim
-alias vd = vd
 alias g = git
 alias gd = git diff
 alias gds = git diff | delta --side-by-side
-alias cat = bat
 alias p = podman
 alias pc = podman compose
 alias d = docker
 alias dc = docker compose
-alias du = dust
 alias rg = rg --hidden --glob '!.git'
 alias gg = lazygit
-alias l = ls
-alias ll = ls -l
-alias la = ls -a
-alias lla = ls -la
 alias fg = job unfreeze
-alias bench = hyperfine
 alias c = cargo
 alias diff = delta
-alias grep = rg
 alias n = niri
-alias hexdump = hx
-alias iftop = bandwhich
 alias img = viu
-alias less = bat
 alias m = make
 alias mk = minikube
 alias objdump = bingrep
-alias ping = prettyping
 alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
 alias w = viddy
 
@@ -207,8 +185,10 @@ alias w = viddy
 
 # Create and switch to a new git worktree
 def --env "gw" [name?: string, --base: string = "main"] {
-    let repo_root = (do -i { git rev-parse --show-toplevel } | complete | get stdout | str trim)
-    if ($repo_root | is-empty) { print-error "Not in a git repository"; return }
+    let repo_root = try { git rev-parse --show-toplevel | str trim } catch {
+        print-error "Not in a git repository"
+        return
+    }
     let name = if ($name | is-empty) { input "Worktree name (branch)> " } else { $name }
     if ($name | is-empty) { return }
     let target = ($repo_root | path dirname | path join $"(($repo_root | path basename))-worktrees" | path join $name)
@@ -219,12 +199,14 @@ def --env "gw" [name?: string, --base: string = "main"] {
 
 # Sandbox toggles
 def --env "sandbox enable" [] {
-    load-env { GEMINI_SANDBOX: "podman", SANDBOX_FLAGS: "--userns=keep-id" }
+    $env.GEMINI_SANDBOX = "podman"
+    $env.SANDBOX_FLAGS = "--userns=keep-id"
     print "Gemini sandbox enabled."
 }
 
 def --env "sandbox disable" [] {
-    hide-env GEMINI_SANDBOX; hide-env SANDBOX_FLAGS
+    hide-env GEMINI_SANDBOX
+    hide-env SANDBOX_FLAGS
     print "Gemini sandbox disabled."
 }
 

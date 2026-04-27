@@ -1,3 +1,1 @@
-do -i {
-  add-service cups
-}
+add-service cups

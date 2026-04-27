@@ -9,17 +9,18 @@ export def "k ns" [namespace] { kubectl config set-context --current $"--namespa
 export def "k uc" [context] { kubectl config use-context $context }
 export def "k ga" [...args] { kubectl get all ...$args }
 
-export def "k bash" [pod] {
-    let pod = kubectl get po -o name | lines | find $pod | first
-    kubectl exec -it $pod -- bash
+def resolve-pod [pattern: string] {
+    kubectl get po -o name | lines | where { |p| $p | str contains $pattern } | first
 }
 
-export def "k sh" [pod] {
-    let pod = kubectl get po -o name | lines | find $pod | first
-    kubectl exec -it $pod -- sh
+export def "k bash" [pod: string] {
+    kubectl exec -it (resolve-pod $pod) -- bash
 }
 
-export def "k run" [pod, ...args] {
-    let pod = kubectl get po -o name | lines | find $pod | first
-    kubectl exec -it $pod -- ...$args
+export def "k sh" [pod: string] {
+    kubectl exec -it (resolve-pod $pod) -- sh
+}
+
+export def "k run" [pod: string, ...args] {
+    kubectl exec -it (resolve-pod $pod) -- ...$args
 }

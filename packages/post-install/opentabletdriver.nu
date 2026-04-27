@@ -1,15 +1,15 @@
-do -i {
-  let blacklist = "/etc/modprobe.d/blacklist.conf"
-  if (not ($blacklist | path exists)) or (not (open $blacklist | str contains 'blacklist hid_uclogic')) {
-    echo 'blacklist hid_uclogic' | sudo tee -a $blacklist out> /dev/null
-  }
+let blacklist = "/etc/modprobe.d/blacklist.conf"
+let existing = if ($blacklist | path exists) { open $blacklist } else { "" }
 
-  if (not ($blacklist | path exists)) or (not (open $blacklist | str contains 'blacklist wacom')) {
-    echo 'blacklist wacom' | sudo tee -a $blacklist out> /dev/null
-  }
-
-  sudo rmmod hid_uclogic err> /dev/null
-  sudo rmmod wacom err> /dev/null
-
-  systemctl --user enable --now opentabletdriver
+if not ($existing | str contains 'blacklist hid_uclogic') {
+  'blacklist hid_uclogic' | sudo tee -a $blacklist out> /dev/null
 }
+if not ($existing | str contains 'blacklist wacom') {
+  'blacklist wacom' | sudo tee -a $blacklist out> /dev/null
+}
+
+# Modules may already be unloaded; ignore failure.
+try { sudo rmmod hid_uclogic }
+try { sudo rmmod wacom }
+
+add-user-service opentabletdriver

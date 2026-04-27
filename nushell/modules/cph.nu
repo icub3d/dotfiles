@@ -1,70 +1,41 @@
 # Competitive Programming Helper Module
 
-# Find a Rust file based on search patterns
+# Find a Rust file matching all patterns (case-insensitive substring), or any if none given.
 def "find-file" [...patterns: string] {
-    if ($patterns | is-empty) {
-        let files = (fd --type f --extension rs | lines)
-        if ($files | is-empty) {
-            return null
-        }
-        return ($files | first)
+    fd --type f --extension rs
+    | lines
+    | where { |file| $patterns | all { |pat| $file | str contains -i $pat } }
+    | first
+}
+
+# Walk up from $start looking for $filename. Returns the path or null.
+def find-up [filename: string, start: path] {
+    mut dir = ($start | path expand)
+    loop {
+        let candidate = ($dir | path join $filename)
+        if ($candidate | path exists) { return $candidate }
+        let parent = ($dir | path dirname)
+        if $parent == $dir { return null }
+        $dir = $parent
     }
-    
-    let all_files = (fd --type f --extension rs | lines)
-    let matching_files = ($all_files | where {|file|
-        $patterns | all {|pattern| $file | str contains -i $pattern }
-    })
-    
-    if ($matching_files | is-empty) {
-        return null
-    }
-    
-    $matching_files | first
 }
 
 # Get cargo package name from a file path
 def "get-package" [file: string] {
-    let file_path = ($file | path expand)
-    let dir = ($file_path | path dirname)
-    
-    mut current = $dir
-    mut found_cargo = ""
-    
-    loop {
-        let cargo_toml = ($current | path join "Cargo.toml")
-        if ($cargo_toml | path exists) {
-            $found_cargo = $cargo_toml
-            break
-        }
-        
-        let parent = ($current | path dirname)
-        if $parent == $current { break }
-        $current = $parent
-    }
-    
-    if ($found_cargo | is-empty) {
+    let cargo_toml = (find-up "Cargo.toml" ($file | path expand | path dirname))
+    if $cargo_toml == null { return {package: null, needs_flag: false} }
+
+    let pkg_dir = ($cargo_toml | path dirname)
+    let workspace_toml = (find-up "Cargo.toml" ($pkg_dir | path dirname))
+    if $workspace_toml == null or $workspace_toml == $cargo_toml {
         return {package: null, needs_flag: false}
     }
-    
-    let pkg_dir = ($found_cargo | path dirname)
-    mut search_dir = ($pkg_dir | path dirname)
-    
-    loop {
-        let potential_workspace = ($search_dir | path join "Cargo.toml")
-        if ($potential_workspace | path exists) and ($potential_workspace != $found_cargo) {
-            let workspace_content = (open $potential_workspace)
-            if ($workspace_content | get -o workspace | is-not-empty) {
-                let package_name = (open $found_cargo | get package.name)
-                return {package: $package_name, needs_flag: true}
-            }
-        }
-        
-        let parent = ($search_dir | path dirname)
-        if $parent == $search_dir { break }
-        $search_dir = $parent
+
+    if (open $workspace_toml | get -o workspace | is-not-empty) {
+        return {package: (open $cargo_toml | get package.name), needs_flag: true}
     }
-    
-    return {package: null, needs_flag: false}
+
+    {package: null, needs_flag: false}
 }
 
 # Build cargo command for a file
@@ -87,11 +58,11 @@ def "run-with-summary" [file: string] {
     let workspace_name = if $pkg_info.needs_flag { $pkg_info.package } else { "" }
     
     let test_cmd = (build-cmd $file "test" "--release" "--no-fail-fast")
-    let test_run = (do -i { ^$test_cmd } | complete)
+    let test_run = (^$test_cmd | complete)
     let test_lines = ($test_run.stdout | default "" | lines | where {|it| $it | str starts-with "test " })
-    
+
     let run_cmd = (build-cmd $file "run" "--release" "-q")
-    let run_output = (do -i { ^$run_cmd } | complete)
+    let run_output = (^$run_cmd | complete)
     
     let part_outputs = (
         $run_output.stdout 
@@ -128,7 +99,7 @@ def "run-with-summary" [file: string] {
         
         if $has_helper {
             let helper_args = if ($workspace_name | is-empty) { [$bin_name $part_no] } else { [$workspace_name $bin_name $part_no] }
-            let target_result = (do -i { nu helper.nu get-target ...$helper_args } | complete)
+            let target_result = (nu helper.nu get-target ...$helper_args | complete)
             if $target_result.exit_code == 0 {
                 $target = ($target_result.stdout | str trim)
                 $answer_status = if ($target | is-empty) { "🔄" } else if $part_output.solution == $target { "✅" } else { "❌" }

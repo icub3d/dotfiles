@@ -1,3 +1,1 @@
-do -i {
-  add-group wireshark
-}
+add-group wireshark

@@ -1,10 +1,10 @@
-do -i {
-  if (not ("~/.npmrc" | path exists)) {
-    echo "prefix=/home/jmarsh/.npm-packages\n" | save --append ~/.npmrc
-  }
-
-  fnm install v24
-  fnm use v24
-
-  npm install --global typescript neovim
+let npmrc = ($nu.home-dir | path join ".npmrc")
+let npm_prefix = ($nu.home-dir | path join ".npm-packages")
+if not ($npmrc | path exists) {
+  $"prefix=($npm_prefix)\n" | save $npmrc
 }
+
+fnm install v24
+fnm use v24
+
+npm install --global typescript neovim
