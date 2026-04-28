@@ -8,11 +8,11 @@ let inotify_desired = "fs.inotify.max_user_watches=524288\n"
 
 mut reload = false
 if (not ($perf_conf | path exists)) or ((open $perf_conf) != $perf_desired) {
-  $perf_desired | sudo tee $perf_conf out> /dev/null
-  $reload = true
+    $perf_desired | sudo tee $perf_conf out> /dev/null
+    $reload = true
 }
 if (not ($inotify_conf | path exists)) or ((open $inotify_conf) != $inotify_desired) {
-  $inotify_desired | sudo tee $inotify_conf out> /dev/null
-  $reload = true
+    $inotify_desired | sudo tee $inotify_conf out> /dev/null
+    $reload = true
 }
 if $reload { sudo sysctl --system }

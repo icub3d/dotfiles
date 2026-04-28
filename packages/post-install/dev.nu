@@ -9,5 +9,5 @@ rustup component add --toolchain nightly rust-analysis rust-src rust-analyzer
 rustup target add --toolchain nightly wasm32-unknown-unknown
 
 if (which tree-sitter | is-empty) {
-  cargo install tree-sitter-cli
+    cargo install tree-sitter-cli
 }

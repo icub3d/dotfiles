@@ -1,17 +1,17 @@
 def clean-paths [] {
-  $in | where { |p| ($p | is-not-empty) and ($p | path exists) } | uniq
+    $in | where { |p| ($p | is-not-empty) and ($p | path exists) } | uniq
 }
 
 # Path conversions
 $env.ENV_CONVERSIONS = {
-  "PATH": {
-    from_string: { |s| $s | split row (char esep) | clean-paths }
-    to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
-  }
-  "Path": {
-    from_string: { |s| $s | split row (char esep) | clean-paths }
-    to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
-  }
+    "PATH": {
+        from_string: { |s| $s | split row (char esep) | clean-paths }
+        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+    }
+    "Path": {
+        from_string: { |s| $s | split row (char esep) | clean-paths }
+        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+    }
 }
 
 # standard variables
@@ -45,7 +45,7 @@ $env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "1"
 $env.GPG_TTY = if ($nu.os-info.name == "linux") { (tty) } else { "" }
 $env.SSH_AUTH_SOCK = if ($nu.os-info.name == "linux" ) { $"/run/user/(id -u)/gnupg/S.gpg-agent.ssh" } else { "" }
 if ($nu.os-info.name == "linux") {
-  do -i { gpg-connect-agent updatestartuptty /bye out+err> /dev/null }
+    do -i { gpg-connect-agent updatestartuptty /bye out+err> /dev/null }
 }
 
 # Generate fj completions
@@ -64,16 +64,16 @@ if (which fj | is-not-empty) {
 
 # Path setup
 let custom_paths = [
-  ($nu.home-dir | path join "bin"),
-  ($nu.home-dir | path join ".local/bin"),
-  ($nu.home-dir | path join ".cargo/bin"),
-  ($nu.home-dir | path join ".npm-packages/bin"),
-  ($nu.home-dir | path join "go/bin"),
-  ($nu.home-dir | path join ".local/share/fnm"),
-  "/usr/local/bin",
-  "/usr/local/cargo/bin",
-  "/usr/local/go/bin",
-  "/usr/lib/go/bin",
+    ($nu.home-dir | path join "bin"),
+    ($nu.home-dir | path join ".local/bin"),
+    ($nu.home-dir | path join ".cargo/bin"),
+    ($nu.home-dir | path join ".npm-packages/bin"),
+    ($nu.home-dir | path join "go/bin"),
+    ($nu.home-dir | path join ".local/share/fnm"),
+    "/usr/local/bin",
+    "/usr/local/cargo/bin",
+    "/usr/local/go/bin",
+    "/usr/lib/go/bin",
 ]
 
 $env.PATH = ($env.PATH | prepend $custom_paths | clean-paths)
