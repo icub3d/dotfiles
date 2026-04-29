@@ -1,5 +1,32 @@
 # Media and Video Processing Module
 
+# Upload a file to img.marsh.gg and trigger an index rescan.
+export def "img-push" [
+    file: path  # Image, video, or other file to upload.
+] {
+    let src = ($file | path expand)
+    if not ($src | path exists) {
+        error make { msg: $"File not found: ($src)" }
+    }
+
+    let token = (
+        ^kubectl get secret images -n marshians -o json
+        | from json
+        | get data.rescan-token
+        | decode base64
+        | decode utf-8
+        | str trim
+    )
+
+    let filename = ($src | path basename)
+    print $"Uploading ($filename)..."
+    ^scp $src $"192.168.86.69:/data/exports/k8s/images/($filename)"
+
+    print "Triggering rescan..."
+    let result = http post --headers [Authorization $"Bearer ($token)"] https://img.marsh.gg/api/rescan ""
+    print $"✓ ($filename) uploaded — ($result.files) files indexed"
+}
+
 # Shorten an mkv file to 25 seconds and save it to path-short.mkv.
 export def "shorten-video" [
     file: path # The path to the input MKV file.
