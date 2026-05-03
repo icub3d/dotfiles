@@ -179,7 +179,7 @@ alias m = make
 alias mk = minikube
 alias objdump = bingrep
 alias pointer = highlight-pointer -c '#ff6188' -p '#a9dc76' -r 10
-alias w = viddy
+alias w = hwatch
 
 # --- Custom Commands ---
 
