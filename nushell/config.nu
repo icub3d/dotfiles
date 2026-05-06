@@ -30,7 +30,7 @@ if ($nu.os-info.name == "linux") {
     }
     
     # Load everything else from the record (excluding PATH which we handled)
-    load-env (if ($profile_env | columns | any { $it == "PATH" }) { $profile_env | reject PATH } else { $profile_env })
+    load-env (if ($profile_env | columns | any {|c| $c == "PATH" }) { $profile_env | reject PATH } else { $profile_env })
 }
 
 # fnm setup
