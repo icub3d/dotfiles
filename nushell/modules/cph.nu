@@ -31,7 +31,7 @@ def "get-package" [file: string] {
         return {package: null, needs_flag: false}
     }
 
-    if (open $workspace_toml | get -o workspace | is-not-empty) {
+    if (try { open $workspace_toml | get workspace } catch { null } | is-not-empty) {
         return {package: (open $cargo_toml | get package.name), needs_flag: true}
     }
 

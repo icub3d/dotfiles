@@ -111,12 +111,12 @@ $env.config = {
         {
             name: "fzf_dir_cd_home",
             modifier: control, keycode: char_h, mode: [vi_insert, vi_normal],
-            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder $nu.home-dir 3); if ($f | is-not-empty) { cd $f }" }
+            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder $env.HOME 3); if ($f | is-not-empty) { cd $f }" }
         },
         {
             name: "fzf_dir_cd_dev",
             modifier: control, keycode: char_d, mode: [vi_insert, vi_normal],
-            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder ($nu.home-dir | path join dev) 3); if ($f | is-not-empty) { cd $f }" }
+            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder ($env.HOME | path join dev) 3); if ($f | is-not-empty) { cd $f }" }
         },
         {
             name: "nvim_current_dir",

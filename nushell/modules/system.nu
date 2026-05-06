@@ -34,11 +34,11 @@ export def "ensure-link" [src: path, target: path] {
 
 # 📁 Sync dotfiles into place (appendix of dotfiles installation logic)
 export def dotfiles [] {
-    let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+    let dotfiles_root = ($env.HOME | path join "dev/dotfiles")
     let saved_dir = $env.PWD
     cd $dotfiles_root
 
-    let config_dir = ($nu.home-dir | path join ".config")
+    let config_dir = ($env.HOME | path join ".config")
     mkdir $config_dir
     let nvim_link = ($config_dir | path join "nvim")
     if not ($nvim_link | path exists) {
@@ -47,7 +47,7 @@ export def dotfiles [] {
     }
 
     # 🔐 gnupg
-    let gnupg_dir = ($nu.home-dir | path join ".gnupg")
+    let gnupg_dir = ($env.HOME | path join ".gnupg")
     mkdir $gnupg_dir
     for f in ["gpg.conf", "gpg-agent.conf"] {
         let dest = ($gnupg_dir | path join $f)
@@ -64,7 +64,7 @@ export def dotfiles [] {
         glob $"($src_root)/**/*" --no-dir --exclude [".git"]
         | each { |n|
             let rel = ($n | str replace $"($src_root)/" "")
-            let target = ($nu.home-dir | path join $rel)
+            let target = ($env.HOME | path join $rel)
             mkdir ($target | path dirname)
             if not ($target | path exists) { ln -s $n $target }
         }
@@ -77,7 +77,7 @@ export def dotfiles [] {
 
 # 🚀 Update the entire system (Arch Linux)
 export def update-system [] {
-    let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+    let dotfiles_root = ($env.HOME | path join "dev/dotfiles")
     let saved_dir = $env.PWD
 
     # ✨ Sync dotfiles

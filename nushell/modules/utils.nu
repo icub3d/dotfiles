@@ -76,7 +76,7 @@ export def "select-folder" [path: path, depth: int = 0] {
 
 # Find and open a project in Neovim
 export def fp [] {
-      let dev_dir = ($nu.home-dir | path join "dev")
+      let dev_dir = ($env.HOME | path join "dev")
       let project = (
           fd --type d --hidden --exclude .git --max-depth 4 . $dev_dir
           | fzf --prompt="🚀 Project> " --border=rounded

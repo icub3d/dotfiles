@@ -34,7 +34,7 @@ $env.PAGER = "bat -p"
 $env.DELTA_FEATURES = "dark line-numbers decorations my-styles"
 
 # NPM
-$env.NPM_PACKAGES = ($nu.home-dir | path join ".npm-packages")
+$env.NPM_PACKAGES = ($env.HOME | path join ".npm-packages")
 let npm_bin = ($env.NPM_PACKAGES | path join "bin")
 if not ($npm_bin | path exists) { mkdir $npm_bin }
 
@@ -64,12 +64,12 @@ if (which fj | is-not-empty) {
 
 # Path setup
 let custom_paths = [
-    ($nu.home-dir | path join "bin"),
-    ($nu.home-dir | path join ".local/bin"),
-    ($nu.home-dir | path join ".cargo/bin"),
-    ($nu.home-dir | path join ".npm-packages/bin"),
-    ($nu.home-dir | path join "go/bin"),
-    ($nu.home-dir | path join ".local/share/fnm"),
+    ($env.HOME | path join "bin"),
+    ($env.HOME | path join ".local/bin"),
+    ($env.HOME | path join ".cargo/bin"),
+    ($env.HOME | path join ".npm-packages/bin"),
+    ($env.HOME | path join "go/bin"),
+    ($env.HOME | path join ".local/share/fnm"),
     "/usr/local/bin",
     "/usr/local/cargo/bin",
     "/usr/local/go/bin",
