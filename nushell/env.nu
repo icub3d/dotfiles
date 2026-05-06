@@ -22,7 +22,7 @@ $env.DISTRO = if ($nu.os-info.name == "linux") {
 $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"
-$env.ATWORK = (($nu.home-dir | path join ".atwork") | path exists)
+$env.ATWORK = (($env.HOME | path join ".atwork") | path exists)
 $env.DOCKER_COMMAND = "podman"
 $env.PODMAN_COMPOSE_WARNING_LOGS = "false"
 

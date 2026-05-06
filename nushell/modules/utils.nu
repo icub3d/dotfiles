@@ -42,7 +42,7 @@ export def "parse ini" [ path?: path ] {
             let parts = ($line | split column -n 2 -r '[:=]')
             let key = ($parts.0.column0 | str trim)
             let val = ($parts.0.column1 | str trim)
-            let current = ($acc.data | get -o $acc.current_section | default {})
+            let current = (try { $acc.data | get $acc.current_section } catch { {} })
             { current_section: $acc.current_section, data: ($acc.data | upsert $acc.current_section ($current | upsert $key $val)) }
         } else { $acc }
     } | get data
