@@ -213,3 +213,59 @@ def --env "sandbox disable" [] {
 # Source local completions
 source fj-completions.nu
 use completions *
+
+
+
+
+
+
+
+# --- Marshian Galaxy Maintenance ---
+# Updates all family servers (k8s nodes, storage, wireguard)
+def update-marshian-galaxy [] {
+    let hosts = [
+        "k8s0", "k8s1", "k8s2", "k8s3", "k8s4",
+        "srv2",
+        "wireguard",
+        "pihole"
+    ]
+    
+    print $"(ansi green)👽 Initiating Marshian Galaxy Update Protocol... (ansi reset)"
+    
+    # Check for latest Alpine version
+    print $"(ansi cyan)📡 Checking for latest Alpine release... (ansi reset)"
+    let latest_alpine = (try {
+        let release_json = (http get https://alpinelinux.org/releases.json)
+        let branch = ($release_json | get latest_stable)
+        $release_json | get release_branches | where rel_branch == $branch | get releases | flatten | first | get version
+    } catch { 
+        "unknown" 
+    })
+
+    if $latest_alpine != "unknown" {
+        print $"(ansi green)Current stable branch latest version: ($latest_alpine)(ansi reset)"
+    } else {
+        print $"(ansi yellow)⚠️ Could not fetch latest Alpine version info.(ansi reset)"
+    }
+
+    for host in $hosts {
+        # Check OS and Version in one shot
+        let os_report = (ssh $host "sh -c 'if [ -f /etc/alpine-release ]; then printf \"Alpine \"; cat /etc/alpine-release; elif [ -f /etc/arch-release ]; then printf \"Arch Linux\"; elif [ -f /etc/debian_version ]; then printf \"Debian \"; cat /etc/debian_version; else printf \"Unknown\"; fi'" | str trim)
+        
+        print $"\n(ansi blue)🚀 Updating Outpost: ($host) [($os_report)](ansi reset)"
+        
+        if ($os_report | str contains "Alpine") {
+            ssh $host "doas apk update; doas apk upgrade"
+        } else if ($os_report | str contains "Arch") {
+            ssh $host "sudo pacman -Syu --noconfirm"
+        } else if ($os_report | str contains "Debian") {
+            ssh $host "sudo apt update; sudo apt upgrade -y"
+            if $host == "pihole" {
+                print $"(ansi cyan)🕳️ Updating Pi-hole on ($host)...(ansi reset)"
+                ssh $host "sudo pihole -up"
+            }
+        }
+    }
+    
+    print $"\n(ansi green)✨ All Outposts secured. The Galaxy is up to date! 🪐(ansi reset)"
+}
