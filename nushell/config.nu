@@ -111,7 +111,7 @@ $env.config = {
         {
             name: "fzf_dir_cd_home",
             modifier: control, keycode: char_h, mode: [vi_insert, vi_normal],
-            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder $env.HOME 3); if ($f | is-not-empty) { cd $f }" }
+            event: { send: ExecuteHostCommand, cmd: "let f = (select-folder $env.HOME 1); if ($f | is-not-empty) { cd $f }" }
         },
         {
             name: "fzf_dir_cd_dev",
@@ -213,12 +213,6 @@ def --env "sandbox disable" [] {
 # Source local completions
 source fj-completions.nu
 use completions *
-
-
-
-
-
-
 
 # --- Marshian Galaxy Maintenance ---
 # Updates all family servers (k8s nodes, storage, wireguard)
