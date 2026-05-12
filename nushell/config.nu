@@ -263,3 +263,9 @@ def update-marshian-galaxy [] {
     
     print $"\n(ansi green)✨ All Outposts secured. The Galaxy is up to date! 🪐(ansi reset)"
 }
+
+# Safely reboot all family servers and K8s nodes
+def reboot-marshian-galaxy [] {
+    let script = ($env.HOME | path join "dev/dotfiles/helpers/reboot-galaxy.nu")
+    nu $script
+}
