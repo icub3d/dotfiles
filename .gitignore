@@ -2,3 +2,6 @@
 *~
 .nvimlog
 history.txt
+.antigravitycli/
+.claude/
+

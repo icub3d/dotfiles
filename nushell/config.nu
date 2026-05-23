@@ -124,9 +124,9 @@ $env.config = {
             event: { send: ExecuteHostCommand, cmd: "nvim ." }
         },
         {
-            name: "run_gemini",
+            name: "run_agy",
             modifier: alt, keycode: char_g, mode: [vi_insert, vi_normal, emacs],
-            event: { send: ExecuteHostCommand, cmd: "gemini" }
+            event: { send: ExecuteHostCommand, cmd: "agy" }
         },
         {
             name: paste_bash_as_nushell

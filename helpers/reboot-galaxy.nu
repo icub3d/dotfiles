@@ -14,13 +14,44 @@ def wait-for-ssh [host: string] {
 def wait-for-k8s-node [node: string] {
     print $"⏳ Waiting for K8s node ($node) to be Ready..."
     loop {
-        let status = (kubectl get node $node -o json | from json | get status.conditions | where type == "Ready" | first | get status)
+        let status = (try {
+            kubectl get node $node -o json | from json | get status.conditions | where type == "Ready" | first | get status
+        } catch {
+            "False"
+        })
         if $status == "True" {
             break
         }
         sleep 5sec
     }
     print $"✅ K8s node ($node) is Ready."
+}
+
+def verify-vips [] {
+    print $"🧪 (ansi cyan)Verifying Service VIP accessibility...(ansi reset)"
+    
+    # We check git.marsh.gg as the primary health indicator for the public gateway
+    let check = (do { curl -I -s --max-time 5 https://git.marsh.gg } | complete)
+    
+    if $check.exit_code != 0 {
+        print $"⚠️ (ansi yellow)VIP unreachable - exit code: ($check.exit_code). Triggering MetalLB re-announcement...(ansi reset)"
+        kubectl rollout restart ds -n metallb metallb-speaker
+        
+        print "⏳ Waiting for MetalLB rollout to settle..."
+        kubectl rollout status ds -n metallb metallb-speaker
+        
+        # Give it a few seconds to actually announce and the router to update ARP
+        sleep 10sec
+        
+        let final_check = (do { curl -I -s --max-time 5 https://git.marsh.gg } | complete)
+        if $final_check.exit_code == 0 {
+            print $"✨ (ansi green)Networking restored! (ansi reset)"
+        } else {
+            print $"❌ (ansi red)Networking still problematic. Manual intervention may be required.(ansi reset)"
+        }
+    } else {
+        print $"✅ (ansi green)Service VIPs are reachable.(ansi reset)"
+    }
 }
 
 def reboot-k8s-node [node: string] {
@@ -40,6 +71,9 @@ def reboot-k8s-node [node: string] {
     
     print $"🔓 Uncordoning ($node)..."
     kubectl uncordon $node
+
+    # Verify networking after each K8s node is back to ensure we don't proceed with a broken data plane
+    verify-vips
 }
 
 def reboot-generic-node [node: string, sudo_cmd: string = "doas"] {
