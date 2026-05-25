@@ -32,7 +32,51 @@ nu install.nu
 installs `paru`, the packages listed in `.selected_packages`, and runs the
 matching `packages/post-install/*.nu` scripts.
 
+# Boot & Login Manager (systemd-boot & greetd)
+
+We configure systemd-boot loader entries with specific PCIe performance profiles, standard system loglevels, and beautiful Catppuccin console (TTY) colors. In addition, we configure `greetd` with `tuigreet` as the login manager using a matching console theme that launches a `niri` session.
+
+## Configuration Files
+
+*   **systemd-boot entry:** `/boot/loader/entries/arch.conf` (sets kernel parameters and console palette)
+*   **greetd greeter:** `/etc/greetd/config.toml` (uses `tuigreet` configured to launch `niri-session`)
+
+## Helper Script
+
+A dedicated helper script is provided at `helpers/boot-login.nu` to audit and apply these configurations safely.
+
+### 🔍 Run status check / audit:
+
+To check if your local configurations are active and in-sync with the repository:
+
+```bash
+nu helpers/boot-login.nu check
+
+# Run with sudo to view full detailed kernel options and partition UUID audit:
+sudo nu helpers/boot-login.nu check
+```
+
+### ⚙️ Apply configurations:
+
+You can deploy the greetd configuration and the systemd-boot loader entry together or separately:
+
+```bash
+# Apply both configurations and check status (recommended)
+sudo nu -c "use helpers/boot-login.nu; boot-login apply-all"
+
+# Or apply them individually:
+sudo nu -c "use helpers/boot-login.nu; boot-login apply-boot"
+sudo nu -c "use helpers/boot-login.nu; boot-login apply-greetd"
+```
+
+> [!NOTE]
+> `apply-boot` dynamically auto-detects the root partition's UUID using `findmnt`. You can optionally override this by passing the `--uuid` parameter:
+> ```bash
+> sudo nu -c "use helpers/boot-login.nu; boot-login apply-boot --uuid 'your-custom-uuid'"
+> ```
+
 ## Setup Git
+
 
 Add this to `~/.gitconfig.local`:
 
