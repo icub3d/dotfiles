@@ -18,7 +18,7 @@ $env.config.shell_integration.osc7 = true
 if ($nu.os-info.name == "linux") {
     let profile_env = (bash -c "[ -f /etc/profile ] && source /etc/profile; [ -f $HOME/.profile ] && source $HOME/.profile; env" 
         | lines | parse "{n}={v}" 
-        | where { |x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION", "FILE_PWD", "PWD", "CURRENT_FILE"]) }
+        | where { |x| not ($x.n in ["_", "LAST_EXIT_CODE", "DIRS_POSITION", "FILE_PWD", "PWD", "CURRENT_FILE", "CMD_START_TIME", "CMD_LAST"]) }
         | transpose --header-row | into record)
     
     # Extract PATH from profile if it exists, and merge it with current PATH
@@ -46,8 +46,11 @@ if (which fnm | is-not-empty) {
 }
 
 # --- Prompt ---
-$env.PROMPT_INDICATOR = $"(ansi green)λ (ansi reset)"
-$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi green)λ (ansi reset)"
+let is_root = (try { (id -u | str trim) == "0" } catch { false })
+let insert_color = if $is_root { "red" } else { "green" }
+
+$env.PROMPT_INDICATOR = $"(ansi $insert_color)λ (ansi reset)"
+$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi $insert_color)λ (ansi reset)"
 $env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi blue)λ (ansi reset)"
 $env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow)|   (ansi reset)"
 $env.PROMPT_COMMAND = {||}
@@ -66,7 +69,7 @@ $env.config = {
     hooks: {
         pre_prompt: [{
             # Notify when the previous command took longer than 10s.
-            if ($env.CMD_START_TIME? | is-not-empty) {
+            if ($env.CMD_START_TIME? | describe) == "datetime" {
                 let duration = (date now) - $env.CMD_START_TIME
                 if $duration > 10sec {
                     let cmd = ($env.CMD_LAST? | default "")
@@ -307,4 +310,36 @@ def update-marshian-galaxy [] {
 def reboot-marshian-galaxy [] {
     let script = ($env.HOME | path join "dev/dotfiles/helpers/reboot-galaxy.nu")
     nu $script
+}
+
+# Set up Nushell configuration symlinks for the root user
+def setup-root-config [] {
+    let sudo_cmd = if (which doas | is-not-empty) { "doas" } else { "sudo" }
+    let dotfiles_dir = ($env.HOME | path join "dev/dotfiles")
+    let root_config_dir = "/root/.config/nushell"
+    
+    print-info $"Creating root configuration directory via ($sudo_cmd)..."
+    run-external $sudo_cmd "mkdir" "-p" $root_config_dir
+    
+    let files = [
+        "config.nu",
+        "env.nu",
+        "local.nu",
+        "linux.nu",
+        "macos.nu",
+        "windows.nu",
+        "fj-completions.nu",
+        "modules"
+    ]
+    
+    for f in $files {
+        let src = ($dotfiles_dir | path join "nushell" $f)
+        if ($src | path exists) {
+            let dest = ($root_config_dir | path join $f)
+            print-info $"Symlinking ($f) -> ($dest) via ($sudo_cmd)..."
+            run-external $sudo_cmd "ln" "-sf" $src $dest
+        }
+    }
+    
+    print-info "Root Nushell configuration setup complete!"
 }
