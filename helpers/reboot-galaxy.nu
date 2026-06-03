@@ -34,11 +34,11 @@ def verify-vips [] {
     let check = (do { curl -I -s --max-time 5 https://git.marsh.gg } | complete)
     
     if $check.exit_code != 0 {
-        print $"⚠️ (ansi yellow)VIP unreachable - exit code: ($check.exit_code). Triggering MetalLB re-announcement...(ansi reset)"
-        kubectl rollout restart ds -n metallb metallb-speaker
+        print $"⚠️ (ansi yellow)VIP unreachable - exit code: ($check.exit_code). Triggering Cilium re-announcement...(ansi reset)"
+        kubectl rollout restart ds -n kube-system cilium
         
-        print "⏳ Waiting for MetalLB rollout to settle..."
-        kubectl rollout status ds -n metallb metallb-speaker
+        print "⏳ Waiting for Cilium rollout to settle..."
+        kubectl rollout status ds -n kube-system cilium
         
         # Give it a few seconds to actually announce and the router to update ARP
         sleep 10sec

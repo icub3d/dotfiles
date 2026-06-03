@@ -17,15 +17,25 @@ export def "add-user-service" [name: string] {
 }
 
 # Ensure $target is a symlink pointing at $src. Replaces wrong targets.
+# Ensure $target is a symlink pointing at $src. Replaces wrong targets.
 export def "ensure-link" [src: path, target: path] {
     let src_real = ($src | path expand)
-    let current = if ($target | path exists) {
-        try { $target | path expand } catch { "" }
-    } else { "" }
-    if $current == $src_real {
-        print $"  ✅ ($target) already linked"
+    let target_exists = (try { ls -d $target | is-not-empty } catch { false })
+    let is_symlink = if $target_exists {
+        (try { ls -d $target | get 0.type } catch { "" }) == "symlink"
     } else {
-        if ($target | path exists) { rm -rf $target }
+        false
+    }
+    let current_target = if $is_symlink {
+        try { readlink $target | str trim } catch { "" }
+    } else {
+        ""
+    }
+
+    if $current_target == $src_real {
+        print $"  ✅ ($target) already linked to ($src_real)"
+    } else {
+        if $target_exists { rm -rf $target }
         mkdir ($target | path dirname)
         ln -s $src_real $target
         print $"  ✅ Linked ($target) → ($src_real)"
@@ -41,10 +51,7 @@ export def dotfiles [] {
     let config_dir = ($env.HOME | path join ".config")
     mkdir $config_dir
     let nvim_link = ($config_dir | path join "nvim")
-    if not ($nvim_link | path exists) {
-        ln -s ($dotfiles_root | path join "nvim") $nvim_link
-        print "  🏗  Linked nvim config"
-    }
+    ensure-link ($dotfiles_root | path join "nvim") $nvim_link
 
     # 🔐 gnupg
     let gnupg_dir = ($env.HOME | path join ".gnupg")
@@ -65,8 +72,7 @@ export def dotfiles [] {
         | each { |n|
             let rel = ($n | str replace $"($src_root)/" "")
             let target = ($env.HOME | path join $rel)
-            mkdir ($target | path dirname)
-            if not ($target | path exists) { ln -s $n $target }
+            ensure-link $n $target
         }
         | length
     )
@@ -124,7 +130,8 @@ export def update-system [] {
         $selected_packages
         | each { |p| open ($dotfiles_root | path join "packages/pacman" $p) | lines }
         | flatten
-        | where { |p| $p | is-not-empty }
+        | where { |p| ($p | is-not-empty) and not ($p | str starts-with "#") }
+        | uniq
     )
     let needed = ($packages | where { |p| not ($p in $installed) })
 

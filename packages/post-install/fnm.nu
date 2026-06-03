@@ -12,13 +12,15 @@ try {
     print "⚠️ Failed to fetch latest LTS version from remote."
 }
 
+let current_version = (try { fnm current | str trim } catch { "" })
+
 if ($latest_version | is-empty) {
     # Fallback to general v24 if remote check fails
     print "⚠️ Using fallback 'v24' installation."
-    fnm install v24
-    fnm use v24
+    $latest_version = "v24"
+    fnm install $latest_version
+    fnm use $latest_version
 } else {
-    let current_version = (fnm current | str trim)
     print $"Latest stable Node.js version: ($latest_version)"
     print $"Current active Node.js version: ($current_version)"
 
@@ -43,4 +45,8 @@ if ($latest_version | is-empty) {
     }
 }
 
-npm install --global typescript neovim
+let tsc_exists = (which tsc | is-not-empty)
+if (not $tsc_exists) or ($current_version != $latest_version) {
+    print "🚀 Installing/updating global npm packages..."
+    npm install --global typescript neovim
+}

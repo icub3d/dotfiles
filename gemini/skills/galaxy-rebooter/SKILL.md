@@ -56,7 +56,7 @@ The script automates:
 3. **Waiting** for SSH connectivity to return.
 4. **Waiting** for the node to report `Ready` in Kubernetes.
 5. **Uncordoning** the node (`kubectl uncordon <node>`).
-6. **Verifying** Service VIP accessibility (using `curl` to check `https://git.marsh.gg` via MetalLB).
+6. **Verifying** Service VIP accessibility (using `curl` to check `https://git.marsh.gg` via Cilium).
 
 ### 3. Handling Transient API Server Errors (Control Plane Reboots)
 When control plane nodes (`k8s2`, `k8s1`, `k8s0`) reboot, the Kubernetes API server may become temporarily unavailable or return auth/forbidden/refused errors while services restart.
