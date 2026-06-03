@@ -82,16 +82,57 @@ $env.config = {
         env_change: {
             PWD: [
                 { |before, after|
-                    let env_file = ($after | path join ".env.nu")
-                    if ($env_file | path exists) {
-                        print $"(ansi cyan)✨ Loading environment from ($env_file)(ansi reset)"
+                    # Load .env.nu if it exists (NUON format)
+                    let env_nu = ($after | path join ".env.nu")
+                    if ($env_nu | path exists) {
+                        print $"(ansi cyan)✨ Loading environment from ($env_nu)(ansi reset)"
                         try {
-                            # This works if .env.nu returns a record, e.g., { FOO: "BAR" }
-                            load-env (open $env_file | from nuon)
+                            load-env (open $env_nu | from nuon)
                         } catch {
                             print $"(ansi red)❌ Error: .env.nu must return a record \(e.g., { FOO: 'BAR' }\)(ansi reset)"
                         }
                     }
+
+                    # Load standard .env file if it exists (POSIX/dotenv format)
+                    let env_sh = ($after | path join ".env")
+                    if ($env_sh | path exists) {
+                        print $"(ansi cyan)✨ Loading environment from ($env_sh)(ansi reset)"
+                        try {
+                            let parsed = (
+                                open -r $env_sh
+                                | lines
+                                | each {|l| $l | str trim}
+                                | where {|l| not ($l | str starts-with '#') and ($l | is-not-empty)}
+                                | str replace -r '^export\s+' ''
+                                | parse "{key}={val}"
+                                | update val { |row| $row.val | str replace -r '^["\x27](.*)["\x27]$' '$1' }
+                                | transpose -r -d
+                            )
+                            load-env $parsed
+                        } catch {
+                            print $"(ansi red)❌ Error: Failed to parse .env file(ansi reset)"
+                        }
+                    }
+                }
+                # Hide old overlay if active
+                {
+                    condition: {|before, after| 'overlay' in (overlay list | get name) }
+                    code: "overlay hide overlay"
+                }
+                # Hide old .overlay if active
+                {
+                    condition: {|before, after| '.overlay' in (overlay list | get name) }
+                    code: "overlay hide .overlay"
+                }
+                # Load new overlay if exists in the new directory
+                {
+                    condition: {|before, after| $after | path join "overlay.nu" | path exists }
+                    code: "overlay use overlay.nu"
+                }
+                # Load new .overlay if exists in the new directory
+                {
+                    condition: {|before, after| $after | path join ".overlay.nu" | path exists }
+                    code: "overlay use .overlay.nu"
                 }
             ]
         },
