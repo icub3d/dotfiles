@@ -12,8 +12,7 @@ if not ($dotfiles_dir | path exists) {
 print "🔗 Symlinking nushell config..."
 ensure-link ($dotfiles_dir | path join "nushell") $nu.default-config-dir
 
-print "🔗 Symlinking Gemini skills..."
-ensure-link ($dotfiles_dir | path join "gemini/skills") ($nu.home-dir | path join ".gemini/skills")
+nu ($dotfiles_dir | path join "helpers/link-skills.nu")
 
 let local_file = ($nu.default-config-dir | path join "local.nu")
 if not ($local_file | path exists) {

@@ -20,6 +20,11 @@ export def "add-user-service" [name: string] {
 # Ensure $target is a symlink pointing at $src. Replaces wrong targets.
 export def "ensure-link" [src: path, target: path] {
     let src_real = ($src | path expand)
+    let target_real = (try { $target | path expand } catch { $target })
+    if $src_real == $target_real {
+        print $"  ✅ ($target) already linked to ($src_real)"
+        return
+    }
     let target_exists = (try { ls -d $target | is-not-empty } catch { false })
     let is_symlink = if $target_exists {
         (try { ls -d $target | get 0.type } catch { "" }) == "symlink"
