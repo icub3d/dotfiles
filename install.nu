@@ -15,10 +15,10 @@ ensure-link ($dotfiles_dir | path join "nushell") $nu.default-config-dir
 print "🔗 Symlinking Gemini skills..."
 ensure-link ($dotfiles_dir | path join "gemini/skills") ($nu.home-dir | path join ".gemini/skills")
 
-let env_file = ($nu.default-config-dir | path join ".env.nu")
-if not ($env_file | path exists) {
-    touch $env_file
-    print "✅ Created .env.nu"
+let local_file = ($nu.default-config-dir | path join "local.nu")
+if not ($local_file | path exists) {
+    touch $local_file
+    print "✅ Created local.nu"
 }
 
 # Everything else (rustup, fnm, node, system packages, post-install setup)

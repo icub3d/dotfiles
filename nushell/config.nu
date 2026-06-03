@@ -8,8 +8,6 @@ use modules/media.nu *
 use modules/cph.nu
 
 # --- Secrets & Integration ---
-const secrets_path = ($nu.default-config-dir | path join ".env.nu")
-if ($secrets_path | path exists) { source $secrets_path }
 
 $env.config.shell_integration.osc133 = ($nu.os-info.name != "windows")
 $env.config.shell_integration.osc2 = true
@@ -89,9 +87,9 @@ $env.config = {
                         print $"(ansi cyan)✨ Loading environment from ($env_file)(ansi reset)"
                         try {
                             # This works if .env.nu returns a record, e.g., { FOO: "BAR" }
-                            load-env (open $env_file)
+                            load-env (open $env_file | from nuon)
                         } catch {
-                            print $"(ansi red)❌ Error: .env.nu must return a record (e.g., { FOO: 'BAR' })(ansi reset)"
+                            print $"(ansi red)❌ Error: .env.nu must return a record \(e.g., { FOO: 'BAR' }\)(ansi reset)"
                         }
                     }
                 }
