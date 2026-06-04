@@ -1,0 +1,3 @@
+# iKKEGOL / PCsensor USB foot pedal (0x3553:0xb001)
+# Allows non-root HID access for footswitch.py
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="3553", ATTRS{idProduct}=="b001", MODE="0666"

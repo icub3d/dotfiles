@@ -1,5 +1,4 @@
 // https://yalter.github.io/niri/Configuration:-Introduction
-
 // No window decorations.
 prefer-no-csd
 
@@ -12,6 +11,9 @@ input {
     repeat-delay 200
     repeat-rate 35
     numlock
+    xkb {
+      file "/home/jmarsh/.config/niri/keymap.xkb"
+    }
   }
   touchpad {
     tap
@@ -185,7 +187,8 @@ binds {
     XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
     XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
-    F12 allow-when-locked=true { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "media" "playPause"; }
+    XF86AudioPlay allow-when-locked=true { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "media" "playPause"; }
+    F13           allow-when-locked=true { spawn "qs" "ipc" "-c" "noctalia-shell" "--any-display" "call" "media" "playPause"; }
 
     // Focus
     Mod+Left  { focus-column-left; }

@@ -1,0 +1,14 @@
+xkb_keymap {
+    xkb_keycodes  { include "evdev+aliases(qwerty)" };
+    xkb_types     { include "complete" };
+    xkb_compat    { include "complete" };
+    xkb_symbols   {
+        include "pc+us+inet(evdev)"
+        // Assign symbols to F13/F14 so Niri can bind them.
+        // These keys show as NoSymbol by default for HID devices
+        // that lack inet symbol mappings.
+        key <FK13> { [ F13 ] };
+        key <FK14> { [ F14 ] };
+    };
+    xkb_geometry  { include "pc(pc105)" };
+};

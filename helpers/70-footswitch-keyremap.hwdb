@@ -1,0 +1,8 @@
+# PCsensor foot pedal (0x3553:0xb001)
+# The consumer HID report always sets the Generic Desktop System Sleep bit
+# (bit1 of report byte 1) alongside the actual consumer key, because the
+# firmware places the type byte (0x07) directly into the system-buttons byte.
+# This remaps KEY_SLEEP from this device to KEY_RESERVED so it is silently
+# dropped, allowing Play/Pause and other consumer keys to work normally.
+evdev:input:b0003v3553pB001*
+ KEYBOARD_KEY_c00010082=reserved
