@@ -197,6 +197,16 @@ $env.config = {
                 "
             }
         }
+        {
+            name: "show_status_summary"
+            modifier: alt
+            keycode: char_s
+            mode: [emacs, vi_normal, vi_insert]
+            event: {
+                send: ExecuteHostCommand
+                cmd: "show-status-summary"
+            }
+        }
     ]
 }
 

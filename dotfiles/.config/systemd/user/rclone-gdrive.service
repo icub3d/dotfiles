@@ -1,0 +1,21 @@
+[Unit]
+Description=Rclone Google Drive Mount
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/rclone mount gdrive: %h/gdrive \
+  --config=%h/.config/rclone/rclone.conf \
+  --vfs-cache-mode full \
+  --vfs-cache-max-size 10G \
+  --vfs-cache-max-age 24h \
+  --vfs-cache-poll-interval 1m \
+  --dir-cache-time 1000h \
+  --log-level INFO \
+  --log-file=%h/.cache/rclone.log
+ExecStop=/bin/fusermount -u %h/gdrive
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

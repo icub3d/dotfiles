@@ -115,3 +115,44 @@ export def vd [] {
           nvim ($selected | str substring 3..)
       }
 }
+
+# Print a beautiful summary of current environment: host, cwd, time, and git status
+export def show-status-summary [] {
+    let host = (sys host | get hostname)
+    let cwd = $env.PWD
+    let time = (date now | format date "%Y-%m-%d %H:%M:%S")
+
+    let git_status = (try {
+        let is_repo = (git rev-parse --is-inside-work-tree err> /dev/null | str trim)
+        if $is_repo == "true" {
+            let status = (git status -s err> /dev/null | str trim)
+            if ($status | is-empty) {
+                $"(ansi green)clean(ansi reset)"
+            } else {
+                let lines = ($status | lines)
+                let count = ($lines | length)
+                let summary = ($lines | take 10 | str join "\n  ")
+                let truncated = if $count > 10 { $"\n  ... and ($count - 10) more changes" } else { "" }
+                $"\n  ($summary)($truncated)"
+            }
+        } else {
+            ""
+        }
+    } catch {
+        ""
+    })
+
+    let host_fmt = $"(ansi magenta)($host)(ansi reset)"
+    let cwd_fmt = $"(ansi blue)($cwd)(ansi reset)"
+    let time_fmt = $"(ansi yellow)($time)(ansi reset)"
+
+    print $"\n[($host_fmt)] ($cwd_fmt) @ ($time_fmt)"
+    if ($git_status | is-not-empty) {
+        if ($git_status | str contains "\n") {
+            print $"Git status:($git_status)"
+        } else {
+            print $"Git status: ($git_status)"
+        }
+    }
+}
+
