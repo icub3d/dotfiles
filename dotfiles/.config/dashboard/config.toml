@@ -1,6 +1,9 @@
 [settings]
 refresh_rate_secs = 10
 title = "🪐 MARSHIAN GALAXY HOMELAB DASHBOARD"
+secret_token = "marshian-secret-token"
+port = 8080
+
 
 [hosts.k8s0]
 name = "k8s0"

@@ -1,0 +1,74 @@
+# Stream Deck Controller Configuration
+
+[settings]
+polling_interval = 1.0
+font_regular = "/usr/share/fonts/TTF/JetBrainsMonoNerdFont-Regular.ttf"
+font_bold = "/usr/share/fonts/TTF/JetBrainsMonoNerdFont-Bold.ttf"
+
+[obs]
+host = "localhost"
+port = 4455
+password = ""
+
+[colors]
+bg = [30, 30, 46]
+crust = [17, 17, 27]
+overlay = [108, 112, 134]
+text = [205, 214, 244]
+blue = [137, 180, 250]
+mauve = [203, 166, 247]
+green = [166, 227, 161]
+red = [243, 139, 168]
+yellow = [249, 226, 175]
+peach = [250, 179, 135]
+teal = [148, 226, 213]
+
+[keys.0]
+title = "Normal Rec"
+icon = "󰕧"
+color = "teal"
+command = "nu /home/jmarsh/dev/dotfiles/helpers/toggle-aoc-recording.nu"
+
+[keys.1]
+title = "Vert Rec"
+icon = "󰕧"
+color = "mauve"
+command = "nu /home/jmarsh/dev/dotfiles/helpers/toggle-vertical-recording.nu"
+
+[keys.2]
+title = "Play/Pause"
+icon = "󰐊"
+color = "green"
+command = "qs ipc -c noctalia-shell --any-display call media playPause"
+
+[keys.3]
+title = "Mic Mute"
+icon = "󰍬"
+color = "red"
+command = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+[keys.4]
+title = "Ctrl Ctr"
+icon = "󰕮"
+color = "blue"
+command = "qs ipc -c noctalia-shell --any-display call controlCenter toggle"
+
+[keys.5]
+title = "OBS Rec"
+icon = "󰐍"
+color = "red"
+action = "toggle_obs_recording"
+icon_offset_x = -5
+
+[keys.6]
+title = "Terminal"
+icon = ""
+color = "text"
+command = "ghostty"
+icon_offset_x = -10
+
+[keys.7]
+title = "Lock"
+icon = "󰌾"
+color = "red"
+command = "qs ipc -c noctalia-shell --any-display call lockScreen lock"
