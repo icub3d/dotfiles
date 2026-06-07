@@ -86,9 +86,11 @@ export def check [] {
     print $"\n(cyan '🪐 Boot & Login Manager Status Check')"
     print (gray "==================================================")
     
-    let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+    let dotfiles_root = ($env.FILE_PWD | path dirname)
     let repo_greetd_path = ($dotfiles_root | path join "etc-greetd-config.toml")
     let sys_greetd_path = "/etc/greetd/config.toml"
+    let repo_pam_path = ($dotfiles_root | path join "etc-pam-d-greetd")
+    let sys_pam_path = "/etc/pam.d/greetd"
     
     # --- greetd Configuration Section ---
     print $"\n(bold '1. Greetd Configuration (Login Greeter)')"
@@ -130,6 +132,31 @@ export def check [] {
         
         print $"  Service State: ($service_status_str)"
         print $"  Service Boot:  ($service_enabled_str)"
+    }
+    
+    # --- greetd PAM Configuration Section ---
+    print $"\n(bold '1b. Greetd PAM Configuration (Keyring Auto-Unlock)')"
+    
+    if not ($repo_pam_path | path exists) {
+        print $"  ⚠️ Repository template (etc-pam-d-greetd) not found at: ($repo_pam_path)"
+    } else if not ($sys_pam_path | path exists) {
+        print $"  ❌ ($sys_pam_path) does not exist!"
+    } else {
+        let repo_pam = (open $repo_pam_path | str trim)
+        let sys_pam = (open $sys_pam_path | str trim)
+        
+        let pam_match = ($repo_pam == $sys_pam)
+        let pam_match_str = if $pam_match {
+            green 'MATCH'
+        } else {
+            red 'MISMATCH'
+        }
+        let pam_match_desc = if $pam_match {
+            gray '(/etc/pam.d/greetd matches repo)'
+        } else {
+            yellow '(System PAM configuration is out-of-sync with repo)'
+        }
+        print $"  PAM Match: ($pam_match_str) ($pam_match_desc)"
     }
     
     # --- systemd-boot Entry Section ---
@@ -224,9 +251,11 @@ export def check [] {
 
 # 🚀 Apply the greetd login configuration from the repository
 export def apply-greetd [] {
-    let dotfiles_root = ($nu.home-dir | path join "dev/dotfiles")
+    let dotfiles_root = ($env.FILE_PWD | path dirname)
     let repo_greetd_path = ($dotfiles_root | path join "etc-greetd-config.toml")
     let sys_greetd_path = "/etc/greetd/config.toml"
+    let repo_pam_path = ($dotfiles_root | path join "etc-pam-d-greetd")
+    let sys_pam_path = "/etc/pam.d/greetd"
     
     if not ($repo_greetd_path | path exists) {
         error make { msg: $"Repository etc-greetd-config.toml not found at: ($repo_greetd_path)" }
@@ -244,14 +273,25 @@ export def apply-greetd [] {
     do { sudo chmod 644 $sys_greetd_path } | complete
     do { sudo chown root:root $sys_greetd_path } | complete
     
+    # Handle greetd PAM configuration
+    if ($repo_pam_path | path exists) {
+        print $"🔄 Deploying greetd PAM configuration to ($sys_pam_path)..."
+        let res_pam = (do { sudo cp $repo_pam_path $sys_pam_path } | complete)
+        if $res_pam.exit_code != 0 {
+            error make { msg: $"Failed to copy greetd PAM config: ($res_pam.stderr)" }
+        }
+        do { sudo chmod 644 $sys_pam_path } | complete
+        do { sudo chown root:root $sys_pam_path } | complete
+    }
+    
     print "⚙️ Enabling and starting greetd.service..."
     let svc_enable = (do { sudo systemctl enable greetd } | complete)
     let svc_start = (do { sudo systemctl restart greetd } | complete)
     
     if $svc_start.exit_code == 0 {
-        print (green "✅ Greetd login configuration successfully updated and service is running.")
+        print (green "✅ Greetd login and PAM configurations successfully updated and service is running.")
     } else {
-        print (red $"⚠️ Config updated but service failed to restart: ($svc_start.stderr)")
+        print (red $"⚠️ Configs updated but service failed to restart: ($svc_start.stderr)")
     }
 }
 
@@ -295,7 +335,20 @@ export def apply-all [] {
     check
 }
 
-# Default entrypoint runs the audit check
-def main [] {
-    check
+# Default entrypoint runs the audit check or specified subcommand
+export def main [
+    subcommand?: string # The subcommand to run (check, apply-greetd, apply-boot, apply-all)
+    --uuid: string # The UUID of the root partition (only for apply-boot)
+] {
+    if $subcommand == "check" or ($subcommand | is-empty) {
+        check
+    } else if $subcommand == "apply-greetd" {
+        apply-greetd
+    } else if $subcommand == "apply-boot" {
+        apply-boot --uuid $uuid
+    } else if $subcommand == "apply-all" {
+        apply-all
+    } else {
+        error make { msg: $"Unknown subcommand: ($subcommand). Use check, apply-greetd, apply-boot, or apply-all." }
+    }
 }
