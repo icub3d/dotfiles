@@ -216,8 +216,8 @@ alias v = nvim
 alias g = git
 alias gd = git diff
 alias gds = git diff | delta --side-by-side
-alias p = podman
-alias pc = podman compose
+alias p = docker
+alias pc = docker compose
 alias d = docker
 alias dc = docker compose
 alias rg = rg --hidden --glob '!.git'
@@ -251,8 +251,7 @@ def --env "gw" [name?: string, --base: string = "main"] {
 
 # Sandbox toggles
 def --env "sandbox enable" [] {
-    $env.GEMINI_SANDBOX = "podman"
-    $env.SANDBOX_FLAGS = "--userns=keep-id"
+    $env.GEMINI_SANDBOX = "docker"
     print "Gemini sandbox enabled."
 }
 

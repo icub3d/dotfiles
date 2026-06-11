@@ -12,3 +12,4 @@ Maintains the categorical package lists in `packages/pacman/` (like `amdgpu`, `g
 - When adding a new package, categorize it accurately into the existing lists.
 - Check and update `.nu` scripts in `packages/post-install/` if the new software requires post-install configuration (e.g., enabling services, setting permissions).
 - Keep lists clean and alphabetized if possible, removing obsolete dependencies.
+- Note: The user uses Docker and Docker Compose for container management, NOT Podman. Do not audit, recommend, or add Podman-related packages to the pacman lists.

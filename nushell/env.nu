@@ -23,8 +23,8 @@ $env.ARCH = $nu.os-info.arch
 $env.HOSTNAME = (sys host | get hostname)
 $env.EDITOR = "nvim"
 $env.ATWORK = (($env.HOME | path join ".atwork") | path exists)
-$env.DOCKER_COMMAND = "podman"
-$env.PODMAN_COMPOSE_WARNING_LOGS = "false"
+$env.DOCKER_COMMAND = "docker"
+
 
 # bat
 $env.BAT_THEME = "ansi"
