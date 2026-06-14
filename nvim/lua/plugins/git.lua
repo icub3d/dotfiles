@@ -1,9 +1,13 @@
 return {
   "sindrets/diffview.nvim",
   lazy = false,
+  hg_config = {
+    enablde = false,
+  },
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     vim.keymap.set('n', '<leader>d', ':DiffviewOpen<cr>', { desc = 'Diffview' })
+
     -- Force Catppuccin Mocha background highlights for diffs
     local cp = require("catppuccin.palettes").get_palette("mocha")
 
