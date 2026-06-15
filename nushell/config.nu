@@ -166,6 +166,11 @@ $env.config = {
             event: { send: ExecuteHostCommand, cmd: "nvim ." }
         },
         {
+            name: "nvim_diffview",
+            modifier: alt, keycode: char_d, mode: [vi_insert, vi_normal],
+            event: { send: ExecuteHostCommand, cmd: "nvim +DiffviewOpen" }
+        },
+        {
             name: "run_agy",
             modifier: alt, keycode: char_g, mode: [vi_insert, vi_normal, emacs],
             event: { send: ExecuteHostCommand, cmd: "agy" }
