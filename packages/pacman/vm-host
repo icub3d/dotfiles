@@ -1,3 +1,4 @@
 qemu-full
 libvirt
 swtpm
+virt-install

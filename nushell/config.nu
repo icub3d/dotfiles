@@ -161,6 +161,11 @@ $env.config = {
             event: { send: ExecuteHostCommand, cmd: "let f = (select-folder ($env.HOME | path join dev) 3); if ($f | is-not-empty) { cd $f }" }
         },
         {
+            name: "git_cd_repo_root",
+            modifier: control, keycode: char_g, mode: [vi_insert, vi_normal],
+            event: { send: ExecuteHostCommand, cmd: "let r = (try { git rev-parse --show-toplevel | str trim } catch { '' }); if ($r | is-not-empty) { cd $r }" }
+        },
+        {
             name: "nvim_current_dir",
             modifier: control, keycode: char_w, mode: [vi_insert, vi_normal],
             event: { send: ExecuteHostCommand, cmd: "nvim ." }
