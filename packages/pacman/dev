@@ -21,3 +21,11 @@ python-lsp-server
 usbutils
 valgrind
 wasm-pack
+rustup
+z3
+github-cli
+forgejo-cli
+minio-client
+mermaid-cli
+gitleaks
+android-tools

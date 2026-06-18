@@ -1,3 +1,5 @@
 mesa
 vulkan-radeon
 linux-firmware-amdgpu
+amdgpu_top
+radeontop

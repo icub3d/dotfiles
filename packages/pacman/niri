@@ -1,4 +1,3 @@
-alacritty
 blender
 cava
 cliphist
@@ -12,7 +11,7 @@ imagemagick
 inkscape
 imv
 mpv
-nerd-fonts
+ttf-jetbrains-mono-nerd
 niri
 noctalia-shell
 noto-fonts
@@ -33,3 +32,4 @@ greetd-tuigreet
 yazi
 ghostty
 viu
+orca

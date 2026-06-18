@@ -2,3 +2,4 @@ qemu-full
 libvirt
 swtpm
 virt-install
+virt-viewer

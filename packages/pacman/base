@@ -59,3 +59,13 @@ wireguard-tools
 wpa_supplicant
 yq
 zip
+exfatprogs
+dosfstools
+mtools
+ntfs-3g
+ethtool
+rclone
+yt-dlp
+evtest
+wine
+winetricks
