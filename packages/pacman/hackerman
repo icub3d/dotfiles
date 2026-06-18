@@ -7,7 +7,6 @@ hydra
 foremost
 john
 ghidra
-skipfish
 sqlmap
 hping
 nikto

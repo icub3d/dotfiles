@@ -18,7 +18,6 @@ lua-language-server
 python
 python-pip
 python-lsp-server
-stern-bin
 usbutils
 valgrind
 wasm-pack
