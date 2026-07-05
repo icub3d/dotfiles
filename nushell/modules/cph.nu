@@ -116,12 +116,17 @@ def "run-with-summary" [file: string] {
 
 # --- Exported Commands ---
 
-# Run a competitive programming solution
-export def run [...patterns: string] {
+# Run a competitive programming solution internally
+def run-solution [...patterns: string] {
     let file = (find-file ...$patterns)
     if $file == null { return }
     let cmd = (build-cmd $file "run" "--release" "-q")
     ^$cmd
+}
+
+# Run a competitive programming solution
+export def run [...patterns: string] {
+    run-solution ...$patterns
 }
 
 # Test a competitive programming solution
@@ -155,7 +160,7 @@ export def debug [...patterns: string] {
     print "🧪 Tests 🧪"
     try { test ...$patterns }
     print "🚀 Solution 🚀"
-    try { run ...$patterns }
+    try { run-solution ...$patterns }
 }
 
 # Create a new competitive programming solution from template
