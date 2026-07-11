@@ -120,7 +120,7 @@ recognized?!?!?
 If you experience "bursty" typing lag in Firefox or Bitwarden popups on a multi-GPU setup (e.g., AMD + NVIDIA), it is likely due to the compositor trying to sync frames across GPUs.
 
 **The Fix:**
-Prioritize the AMD card (connected to monitors) for the Wayland compositor in `~/.config/environment.d/wayland.conf`:
+1. Prioritize the AMD card for wlroots-based compositors in `~/.config/environment.d/wayland.conf`:
 
 ```conf
 WLR_DRM_DEVICES=/dev/dri/card1:/dev/dri/card0
@@ -129,6 +129,15 @@ WLR_DRM_DEVICES=/dev/dri/card1:/dev/dri/card0
 *   `card1`: Primary AMD GPU (7900 XTX)
 *   `card0`: Integrated AMD GPU
 *   Excluded `card2`: NVIDIA GPU (reserved for AI/CUDA)
+
+2. For Niri (which uses the Smithay backend and ignores `WLR_DRM_DEVICES`), ignore the Nvidia GPU in `~/.config/niri/config.kdl`:
+
+```kdl
+debug {
+    ignore-drm-device "/dev/dri/renderD130" // Nvidia GPU
+}
+```
+
 
 **GPU Helper Script:**
 Use `nu helpers/gpu.nu` to check clocks and performance levels. If UI stuttering persists during video playback, you can force the AMD GPU into high-performance mode:

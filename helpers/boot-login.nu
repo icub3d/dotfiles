@@ -167,6 +167,7 @@ export def check [] {
     
     # Desired option parts to audit
     let expected_options = [
+        "video=DP-1:2560x1440@120"
         "pcie_port_pm=off"
         "pcie_aspm.policy=performance"
         "quiet"
@@ -312,7 +313,7 @@ export def apply-boot [--uuid: string] {
         "linux /vmlinuz-linux"
         "initrd /amd-ucode.img"
         "initrd /initramfs-linux.img"
-        $"options root=UUID=\"($resolved_uuid)\" rw pcie_port_pm=off pcie_aspm.policy=performance quiet loglevel=3 vt.default_red=48,231,166,229,140,244,129,181,98,231,166,229,140,244,129,165 vt.default_grn=52,130,209,200,170,184,200,191,104,130,209,200,170,184,200,173 vt.default_blu=70,132,137,144,238,228,190,226,128,132,137,144,238,228,190,206"
+        $"options root=UUID=\"($resolved_uuid)\" rw video=DP-1:2560x1440@120 pcie_port_pm=off pcie_aspm.policy=performance quiet loglevel=3 vt.default_red=48,231,166,229,140,244,129,181,98,231,166,229,140,244,129,165 vt.default_grn=52,130,209,200,170,184,200,191,104,130,209,200,170,184,200,173 vt.default_blu=70,132,137,144,238,228,190,226,128,132,137,144,238,228,190,206"
     ] | str join "\n"
     
     print $"🔄 Writing configuration to `/boot/loader/entries/arch.conf`..."

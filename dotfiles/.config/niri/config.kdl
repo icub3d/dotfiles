@@ -2,6 +2,11 @@
 // No window decorations.
 prefer-no-csd
 
+debug {
+    // Prevent niri from using the Nvidia GPU to avoid multi-GPU frame synchronization/typing lag.
+    ignore-drm-device "/dev/dri/renderD130"
+}
+
 // Input device configuration.
 input {
   tablet { 

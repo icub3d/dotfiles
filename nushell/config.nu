@@ -245,6 +245,13 @@ alias w = hwatch
 
 # --- Custom Commands ---
 
+# Run Ollama on the CUDA instance (2080 Ti, port 11435)
+def oc [...args: string] {
+    with-env { OLLAMA_HOST: "127.0.0.1:11435" } {
+        ^ollama ...$args
+    }
+}
+
 # Create and switch to a new git worktree
 def --env "gw" [name?: string, --base: string = "main"] {
     let repo_root = try { git rev-parse --show-toplevel | str trim } catch {

@@ -1,0 +1,28 @@
+[Unit]
+Description=Ollama CUDA Service
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+ExecStart=/usr/bin/ollama serve
+WorkingDirectory=/var/lib/ollama
+Environment="HOME=/var/lib/ollama"
+Environment="OLLAMA_MODELS=/var/lib/ollama"
+Environment="CUDA_VISIBLE_DEVICES=0"
+Environment="HIP_VISIBLE_DEVICES=-1"
+Environment="ROCR_VISIBLE_DEVICES=-1"
+Environment="OLLAMA_NUM_PARALLEL=4"
+Environment="OLLAMA_MAX_LOADED_MODELS=2"
+Environment="OLLAMA_HOST=0.0.0.0:11435"
+User=ollama
+Group=ollama
+Restart=on-failure
+RestartSec=3
+RestartPreventExitStatus=1
+Type=simple
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
