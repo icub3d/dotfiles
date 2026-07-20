@@ -245,6 +245,87 @@ alias w = hwatch
 
 # --- Custom Commands ---
 
+# Calculate workday and calendar progress for the current month to compare against usage percentages
+def workdays [
+    date?: string # Optional date to query (defaults to current time)
+] {
+    let now = if ($date | is-empty) {
+        date now
+    } else {
+        try {
+            $date | into datetime
+        } catch {
+            error make {msg: $"Invalid date format: '($date)'. Please provide a valid date string (e.g. YYYY-MM-DD)"}
+        }
+    }
+    let year = ($now | format date "%Y" | into int)
+    let month_str = ($now | format date "%m")
+    let start_of_month = ($now | format date "%Y-%m-01" | into datetime)
+    
+    # Generate all days in the current month
+    let month_days = (0..30 
+        | each { |i| $start_of_month + ($i * 1day) } 
+        | where { |d| ($d | format date "%m") == $month_str })
+        
+    let total_calendar_days = ($month_days | length)
+    
+    # Filter for workdays (Monday to Friday, i.e., %u is 1..5)
+    let work_days = ($month_days | where { |d| ($d | format date "%u" | into int) <= 5 })
+    let total_workdays = ($work_days | length)
+    
+    let today_day = ($now | format date "%d" | into int)
+    let today_is_workday = (($now | format date "%u" | into int) <= 5)
+    
+    # Calculate current day fraction (based on local time)
+    let hour = ($now | format date "%H" | into int)
+    let minute = ($now | format date "%M" | into int)
+    let second = ($now | format date "%S" | into int)
+    let today_fraction = (($hour * 3600 + $minute * 60 + $second) / 86400.0)
+    
+    # Completed workdays (days strictly before today)
+    let completed_workdays = ($work_days | where { |d| ($d | format date "%d" | into int) < $today_day } | length)
+    let elapsed_workdays = ($completed_workdays + (if $today_is_workday { $today_fraction } else { 0.0 }))
+    
+    # Completed calendar days
+    let completed_calendar_days = $today_day - 1
+    let elapsed_calendar_days = $completed_calendar_days + $today_fraction
+    
+    # Percentages (clamped to 0-100 range for display safety)
+    let workday_pct_raw = (($elapsed_workdays / $total_workdays) * 100)
+    let workday_pct = (if $workday_pct_raw < 0.0 { 0.0 } else if $workday_pct_raw > 100.0 { 100.0 } else { $workday_pct_raw })
+    
+    let calendar_pct_raw = (($elapsed_calendar_days / $total_calendar_days) * 100)
+    let calendar_pct = (if $calendar_pct_raw < 0.0 { 0.0 } else if $calendar_pct_raw > 100.0 { 100.0 } else { $calendar_pct_raw })
+    
+    # Visual progress bar generator using Catppuccin Mocha colors
+    let make_bar = { |pct, color|
+        let width = 20
+        let filled_raw = (($pct / 100.0) * $width | math round)
+        let filled = (if $filled_raw < 0 { 0 } else if $filled_raw > $width { $width } else { $filled_raw })
+        let empty = ($width - $filled)
+        let fill_str = (0..<$filled | each { "█" } | str join)
+        let empty_str = (0..<$empty | each { "░" } | str join)
+        $"(ansi -e { fg: $color })($fill_str)(ansi -e { fg: "#6c7086" })($empty_str)(ansi reset)"
+    }
+    
+    [
+        {
+            "Category": "Work Days",
+            "Total": $total_workdays,
+            "Elapsed": ($elapsed_workdays | math round --precision 2),
+            "Progress": $"($workday_pct | math round --precision 2)%",
+            "Visual": (do $make_bar $workday_pct "#89b4fa") # Catppuccin Mocha Blue
+        },
+        {
+            "Category": "Calendar Days",
+            "Total": $total_calendar_days,
+            "Elapsed": ($elapsed_calendar_days | math round --precision 2),
+            "Progress": $"($calendar_pct | math round --precision 2)%",
+            "Visual": (do $make_bar $calendar_pct "#cba6f7") # Catppuccin Mocha Mauve
+        }
+    ]
+}
+
 # Run Ollama on the CUDA instance (2080 Ti, port 11435)
 def oc [...args: string] {
     with-env { OLLAMA_HOST: "127.0.0.1:11435" } {
