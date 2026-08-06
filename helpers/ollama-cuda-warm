@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+# Preload the pinned model into the CUDA Ollama instance (port 11435) at startup.
+# Called from ollama-cuda.service as ExecStartPost. Never fails the unit.
+set -u
+
+HOST="http://127.0.0.1:11435"
+MODEL="${OLLAMA_PRELOAD_MODEL:-gemma4:12b}"
+
+# ollama serve forks immediately; wait for the API to actually accept connections.
+for _ in $(seq 1 60); do
+    if curl -sf "$HOST/api/version" >/dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+done
+
+# An empty prompt loads the model without generating. keep_alive=-1 pins it in VRAM.
+curl -sf --max-time 240 "$HOST/api/generate" \
+    -H 'Content-Type: application/json' \
+    -d "{\"model\":\"$MODEL\",\"keep_alive\":-1}" >/dev/null 2>&1 || true
+
+exit 0

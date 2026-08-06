@@ -9,12 +9,18 @@ def main [] {
     # Define source paths
     let cuda_service_src = ($dotfiles_root | path join "helpers/ollama-cuda.service")
     let amd_override_src = ($dotfiles_root | path join "helpers/ollama-amd-override.conf")
-    
+    let cuda_warm_src = ($dotfiles_root | path join "helpers/ollama-cuda-warm")
+
     # Define target paths
+    let cuda_warm_dest = "/usr/local/bin/ollama-cuda-warm"
     let cuda_service_dest = "/etc/systemd/system/ollama-cuda.service"
     let amd_override_dir = "/etc/systemd/system/ollama.service.d"
     let amd_override_dest = $"($amd_override_dir)/override.conf"
     
+    # Write CUDA model preload helper (ExecStartPost target)
+    print $"📦 Installing CUDA warm script to ($cuda_warm_dest)..."
+    sudo install -m 755 $cuda_warm_src $cuda_warm_dest
+
     # Write CUDA service
     print $"📦 Installing CUDA service to ($cuda_service_dest)..."
     sudo cp $cuda_service_src $cuda_service_dest

@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
 
     -- Only set up format on save if the client supports formatting
-    if client and client.server_capabilities.documentFormattingProvider then
+    if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_formatting) then
       vim.api.nvim_create_autocmd("BufWritePre", {
         buffer = bufnr,
         callback = function()

@@ -1,6 +1,3 @@
--- Netrw
-vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
-
 -- Go back
 vim.keymap.set("n", "gb", "<C-o>")
 

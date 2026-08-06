@@ -333,6 +333,26 @@ def oc [...args: string] {
     }
 }
 
+# One-shot prompt to the pinned model on the CUDA instance. Takes the prompt as
+# arguments or from the pipeline: `ocp explain this` / `open x.rs | ocp summarize this`
+def ocp [
+    ...prompt: string             # Prompt text; joined with spaces
+    --model (-m): string = "gemma4:12b"
+    --think                       # Show the model's reasoning instead of hiding it
+] {
+    let piped = $in
+    let text = match [($prompt | is-empty), ($piped | is-empty)] {
+        [true, true] => (error make { msg: "ocp: no prompt given" })
+        [true, false] => $piped
+        [false, true] => ($prompt | str join " ")
+        _ => $"($prompt | str join ' ')\n\n($piped)"
+    }
+    let think = if $think { "--think=true" } else { "--think=false" }
+    with-env { OLLAMA_HOST: "127.0.0.1:11435" } {
+        $text | ^ollama run $model $think
+    }
+}
+
 # Create and switch to a new git worktree
 def --env "gw" [name?: string, --base: string = "main"] {
     let repo_root = try { git rev-parse --show-toplevel | str trim } catch {
