@@ -11,15 +11,21 @@ Protocol recovered from Android HCI snoop captures of the vendor app. Frames are
 
 where len is len(payload) + 3, and the checksum is CRC-16/MODBUS over everything
 preceding it, emitted little-endian. The controller silently ignores every
-command until the two-frame "CCHIP" handshake completes -- which is why the
-vendor app takes ~20s to become responsive after connecting.
+command until the two-frame "CCHIP" handshake completes.
 
-The strip accepts a single BLE connection at a time, so it is unreachable while
-a phone has the vendor app connected.
+The strip accepts a single BLE connection at a time, and each connect costs a
+few seconds. So the normal deployment is `ledstrip.py daemon` (run by
+ledstrip.service), which holds the connection open and serves commands over a
+unix socket. Every other subcommand is a thin client: it talks to that socket if
+it exists, and otherwise falls back to connecting directly, so ad-hoc use still
+works with no daemon running.
 """
 
 import argparse
 import asyncio
+import os
+import shlex
+import signal
 import sys
 
 from bleak import BleakClient, BleakScanner
@@ -48,9 +54,13 @@ COLORS = {
     "white": (0xFF, 0xFF, 0xFF),
 }
 
-ATTEMPTS = 3
+SOCKET_PATH = os.environ.get("LEDSTRIP_SOCKET") or os.path.join(
+    os.environ.get("XDG_RUNTIME_DIR") or "/tmp", "ledstrip.sock"
+)
+
 SCAN_TIMEOUT = 15.0
 CONNECT_TIMEOUT = 20.0
+ATTEMPTS = 3
 
 
 def crc16_modbus(data):
@@ -81,18 +91,35 @@ def parse_color(text):
     hexpart = text.lstrip("#")
     if len(hexpart) != 6:
         raise ValueError(f"expected a name from {sorted(COLORS)} or #rrggbb, got {text!r}")
-    return tuple(int(hexpart[i : i + 2], 16) for i in (0, 2, 4))
+    try:
+        return tuple(int(hexpart[i : i + 2], 16) for i in (0, 2, 4))
+    except ValueError:
+        raise ValueError(f"not a hex colour: {text!r}") from None
 
 
-def clamp_percent(value, low=0):
-    number = int(value)
+def parse_percent(value, low=0):
+    try:
+        number = int(value)
+    except ValueError:
+        raise ValueError(f"expected a number, got {value!r}") from None
     if not low <= number <= 100:
         raise ValueError(f"expected {low}-100, got {number}")
     return number
 
 
+def describe(status):
+    # Layout confirmed by setting each field and reading it back:
+    # 0 power, 1-2 preset, 3 brightness, 4 speed, 6-8 RGB.
+    return (
+        f"power={'on' if status[0] else 'off'} "
+        f"brightness={status[3]} speed={status[4]} "
+        f"color=#{status[6]:02x}{status[7]:02x}{status[8]:02x} "
+        f"preset=0x{status[1]:02x}"
+    )
+
+
 class Strip:
-    """One connected session: handshake, then any number of commands."""
+    """A connected strip. One instance per BLE connection."""
 
     def __init__(self, client):
         self.client = client
@@ -100,16 +127,24 @@ class Strip:
         self.acks = []
 
     def _on_notify(self, _handle, data):
-        # a1 10 11 <14 bytes> is the status report; a1 <cmd> 04 <ok> is a
-        # per-command ack, which is the only feedback most commands produce.
+        # a1 10 11 <14 bytes> is a status report; a1 <cmd> 04 <ok> is a per-command
+        # ack. Preset changes are never pushed, so status must be polled.
         if len(data) >= 19 and data[0:3] == b"\xa1\x10\x11":
             self.status = data[3:-2]
         elif len(data) >= 4 and data[0] == 0xA1:
             self.acks.append((data[1], data[3]))
 
+    async def handshake(self):
+        await self.client.start_notify(CHAR_NOTIFY, self._on_notify)
+        for handshake_frame in HANDSHAKE:
+            await self.client.write_gatt_char(CHAR_WRITE, handshake_frame, response=True)
+            await asyncio.sleep(0.2)
+
     async def send(self, cmd, payload=b"", settle=0.4):
         self.acks.clear()
         await self.client.write_gatt_char(CHAR_WRITE, frame(cmd, payload), response=True)
+        if not settle:
+            return
         await asyncio.sleep(settle)
         for ack_cmd, ok in self.acks:
             if ack_cmd == cmd and ok != 1:
@@ -117,122 +152,251 @@ class Strip:
 
     async def refresh(self):
         self.status = None
-        await self.send(CMD_STATUS, b"\x01", settle=0.2)
+        await self.send(CMD_STATUS, b"\x01", settle=0)
         for _ in range(20):
+            await asyncio.sleep(0.15)
             if self.status is not None:
                 return self.status
-            await asyncio.sleep(0.15)
         raise RuntimeError("strip did not report status")
 
 
-async def session(action):
+async def open_strip():
+    """Scan, connect, and handshake. Caller owns the returned client."""
     device = await BleakScanner.find_device_by_address(ADDRESS, timeout=SCAN_TIMEOUT)
     if device is None:
         raise RuntimeError(
-            f"{ADDRESS} is not advertising -- it stops advertising while a phone is connected"
+            f"{ADDRESS} is not advertising -- it stops advertising while something else is connected"
         )
-
-    async with BleakClient(device, timeout=CONNECT_TIMEOUT) as client:
-        strip = Strip(client)
-        await client.start_notify(CHAR_NOTIFY, strip._on_notify)
-        for handshake_frame in HANDSHAKE:
-            await client.write_gatt_char(CHAR_WRITE, handshake_frame, response=True)
-            await asyncio.sleep(0.2)
-        return await action(strip)
+    client = BleakClient(device, timeout=CONNECT_TIMEOUT)
+    await client.connect()
+    strip = Strip(client)
+    await strip.handshake()
+    return client, strip
 
 
-async def with_retries(action):
-    for attempt in range(1, ATTEMPTS + 1):
+class Server:
+    """Holds the BLE connection and serves commands over a unix socket."""
+
+    def __init__(self):
+        self.client = None
+        self.strip = None
+        self.lock = asyncio.Lock()
+        self.effect = None
+
+    async def ensure_connected(self):
+        if self.client is not None and self.client.is_connected:
+            return
+        if self.client is not None:
+            try:
+                await self.client.disconnect()
+            except Exception:
+                pass
+            self.client = self.strip = None
+        delay = 2
+        while True:
+            try:
+                self.client, self.strip = await open_strip()
+                print("connected to strip", flush=True)
+                return
+            except Exception as exc:
+                # Keep retrying rather than exiting: at boot the adapter may not
+                # be ready, and the strip is unreachable while a phone holds it.
+                print(f"connect failed: {exc}; retrying in {delay}s", flush=True)
+                await asyncio.sleep(delay)
+                delay = min(delay * 2, 60)
+
+    async def stop_effect(self):
+        if self.effect is not None:
+            self.effect.cancel()
+            try:
+                await self.effect
+            except (asyncio.CancelledError, Exception):
+                pass
+            self.effect = None
+
+    async def _flash(self, palette, interval):
+        index = 0
+        while True:
+            red, green, blue = palette[index % len(palette)]
+            async with self.lock:
+                await self.ensure_connected()
+                await self.strip.send(CMD_COLOR, bytes((red, green, blue)) + b"\xff", settle=0)
+            await asyncio.sleep(interval)
+            index += 1
+
+    async def dispatch(self, argv):
+        if not argv:
+            return "empty command"
+        verb, rest = argv[0], argv[1:]
+
+        if verb == "status":
+            async with self.lock:
+                await self.ensure_connected()
+                return describe(await self.strip.refresh())
+
+        if verb == "stop":
+            await self.stop_effect()
+            return "effect stopped"
+
+        if verb == "flash":
+            options = [a for a in rest if a.startswith("--interval=")]
+            names = [a for a in rest if not a.startswith("--")]
+            interval = float(options[0].split("=", 1)[1]) if options else 0.5
+            if len(names) < 2:
+                return "flash needs at least two colours"
+            palette = [parse_color(n) for n in names]
+            await self.stop_effect()
+            async with self.lock:
+                await self.ensure_connected()
+                await self.strip.send(CMD_POWER, b"\x01")
+            self.effect = asyncio.create_task(self._flash(palette, interval))
+            return f"flashing {' '.join(names)} every {interval}s"
+
+        # Everything below is a one-shot setting, so any running effect would
+        # immediately overwrite it.
+        await self.stop_effect()
+        async with self.lock:
+            await self.ensure_connected()
+            if verb in ("on", "off"):
+                want = 1 if verb == "on" else 0
+                await self.strip.send(CMD_POWER, bytes([want]))
+                return f"strip is now {verb}"
+            if verb == "color":
+                rgb = parse_color(rest[0])
+                await self.strip.send(CMD_COLOR, bytes(rgb) + b"\xff")
+                return f"color set to #{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+            if verb == "brightness":
+                level = parse_percent(rest[0])
+                await self.strip.send(CMD_BRIGHTNESS, bytes([level]))
+                return f"brightness set to {level}"
+            if verb == "speed":
+                level = parse_percent(rest[0], low=1)
+                await self.strip.send(CMD_SPEED, bytes([level]))
+                return f"speed set to {level}"
+            if verb == "preset":
+                preset_id = int(rest[0], 0)
+                flag = int(rest[1], 0) if len(rest) > 1 else 0xFF
+                await self.strip.send(CMD_PRESET, bytes([preset_id, flag]))
+                return f"preset {preset_id} selected"
+        return f"unknown command: {verb}"
+
+    async def _handle(self, reader, writer):
         try:
-            return await session(action)
+            line = await reader.readline()
+            try:
+                reply = await self.dispatch(shlex.split(line.decode().strip()))
+            except Exception as exc:
+                reply = f"error: {type(exc).__name__}: {exc}"
+            writer.write(reply.encode() + b"\n")
+            await writer.drain()
+        finally:
+            writer.close()
+
+    async def serve(self):
+        if os.path.exists(SOCKET_PATH):
+            os.unlink(SOCKET_PATH)
+        server = await asyncio.start_unix_server(self._handle, path=SOCKET_PATH)
+        os.chmod(SOCKET_PATH, 0o600)
+        print(f"listening on {SOCKET_PATH}", flush=True)
+
+        await self.ensure_connected()
+        async with self.lock:
+            await self.strip.send(CMD_POWER, b"\x01")
+        print("strip is now on", flush=True)
+
+        stop = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(sig, stop.set)
+        await stop.wait()
+
+        print("shutting down", flush=True)
+        server.close()
+        await self.stop_effect()
+        try:
+            async with self.lock:
+                if self.client is not None and self.client.is_connected:
+                    await self.strip.send(CMD_POWER, b"\x00")
+                    print("strip is now off", flush=True)
+                    await self.client.disconnect()
+        finally:
+            if os.path.exists(SOCKET_PATH):
+                os.unlink(SOCKET_PATH)
+
+
+async def send_to_daemon(argv):
+    reader, writer = await asyncio.open_unix_connection(SOCKET_PATH)
+    writer.write(shlex.join(argv).encode() + b"\n")
+    await writer.drain()
+    reply = await reader.readline()
+    writer.close()
+    return reply.decode().strip()
+
+
+async def run_direct(argv):
+    """Fallback when no daemon is running: one connection, one command."""
+    last = None
+    for attempt in range(1, ATTEMPTS + 1):
+        client = None
+        try:
+            client, strip = await open_strip()
+            server = Server()
+            server.client, server.strip = client, strip
+            return await server.dispatch(argv)
         except Exception as exc:
+            last = exc
             print(f"attempt {attempt}/{ATTEMPTS} failed: {type(exc).__name__}: {exc}", flush=True)
-            if attempt == ATTEMPTS:
-                return None
-            await asyncio.sleep(2 * attempt)
-
-
-def build_action(args):
-    if args.command in ("on", "off"):
-        want = 1 if args.command == "on" else 0
-
-        async def action(strip):
-            await strip.send(CMD_POWER, bytes([want]))
-            status = await strip.refresh()
-            if status[0] != want:
-                raise RuntimeError(f"strip still reports power={status[0]}")
-            return f"strip is now {args.command}"
-
-    elif args.command == "color":
-        rgb = parse_color(args.value)
-
-        async def action(strip):
-            # Fourth byte is a constant the app always sends alongside RGB.
-            await strip.send(CMD_COLOR, bytes(rgb) + b"\xff")
-            return f"color set to #{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
-
-    elif args.command == "brightness":
-        level = clamp_percent(args.value)
-
-        async def action(strip):
-            await strip.send(CMD_BRIGHTNESS, bytes([level]))
-            return f"brightness set to {level}"
-
-    elif args.command == "speed":
-        level = clamp_percent(args.value, low=1)
-
-        async def action(strip):
-            await strip.send(CMD_SPEED, bytes([level]))
-            return f"speed set to {level}"
-
-    elif args.command == "preset":
-        preset_id = int(args.value, 0)
-        flag = int(args.flag, 0)
-
-        async def action(strip):
-            await strip.send(CMD_PRESET, bytes([preset_id, flag]))
-            return f"preset {preset_id} selected"
-
-    elif args.command == "status":
-
-        async def action(strip):
-            s = await strip.refresh()
-            # Layout confirmed by setting each field and re-reading:
-            # 0 power, 1-2 preset, 3 brightness, 4 speed, 6-8 RGB.
-            return (
-                f"power={'on' if s[0] else 'off'} "
-                f"brightness={s[3]} speed={s[4]} "
-                f"color=#{s[6]:02x}{s[7]:02x}{s[8]:02x} "
-                f"preset=0x{s[1]:02x}"
-            )
-
-    return action
+            if attempt < ATTEMPTS:
+                await asyncio.sleep(2 * attempt)
+        finally:
+            if client is not None:
+                try:
+                    await client.disconnect()
+                except Exception:
+                    pass
+    raise SystemExit(1) from last
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("daemon", help="hold the connection and serve commands (used by ledstrip.service)")
     sub.add_parser("on", help="turn the strip on")
     sub.add_parser("off", help="turn the strip off")
-    sub.add_parser("status", help="report current power and brightness")
+    sub.add_parser("status", help="report power, brightness, speed, colour, preset")
+    sub.add_parser("stop", help="stop a running effect")
     sub.add_parser("color", help="set colour").add_argument("value", help="name or #rrggbb")
     sub.add_parser("brightness", help="set brightness").add_argument("value", help="0-100")
     sub.add_parser("speed", help="set effect speed").add_argument("value", help="1-100")
+    flash = sub.add_parser("flash", help="alternate colours until stopped")
+    flash.add_argument("colors", nargs="+", help="two or more colours to cycle")
+    flash.add_argument("--interval", default="0.5", help="seconds per colour (default 0.5)")
     preset = sub.add_parser("preset", help="select a built-in preset")
     preset.add_argument("value", help="preset id, e.g. 7 or 0x1c")
     preset.add_argument("--flag", default="0xff", help="preset variant byte (default 0xff)")
 
     args = parser.parse_args()
-    try:
-        action = build_action(args)
-    except ValueError as exc:
-        print(exc, file=sys.stderr)
-        return 2
 
-    result = asyncio.run(with_retries(action))
-    if result is None:
-        return 1
-    print(result, flush=True)
+    if args.command == "daemon":
+        try:
+            asyncio.run(Server().serve())
+        except KeyboardInterrupt:
+            pass
+        return 0
+
+    argv = [args.command]
+    if args.command == "flash":
+        argv += args.colors + [f"--interval={args.interval}"]
+    elif args.command == "preset":
+        argv += [args.value, args.flag]
+    elif hasattr(args, "value"):
+        argv.append(args.value)
+
+    if os.path.exists(SOCKET_PATH):
+        print(asyncio.run(send_to_daemon(argv)), flush=True)
+        return 0
+
+    print(asyncio.run(run_direct(argv)), flush=True)
     return 0
 
 

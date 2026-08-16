@@ -1,16 +1,18 @@
 [Unit]
-Description=DayBetter LED Strip Power (Bluetooth LE)
+Description=DayBetter LED Strip (Bluetooth LE)
 Documentation=https://github.com/icub3d/dotfiles
 
 [Service]
-Type=oneshot
-RemainAfterExit=true
-# --offline keeps boot and shutdown from waiting on the network; the environment
-# is built ahead of time by install-ledstrip.nu.
-ExecStart=/usr/bin/uv run --script --offline %h/dev/dotfiles/helpers/ledstrip.py on
-ExecStop=/usr/bin/uv run --script --offline %h/dev/dotfiles/helpers/ledstrip.py off
-TimeoutStartSec=150
-TimeoutStopSec=75
+# The daemon holds the strip's single BLE connection for the life of the
+# session: it powers the strip on at startup, serves commands over a unix
+# socket, and powers it back off when it receives SIGTERM.
+Type=simple
+# --offline keeps startup from waiting on the network; the environment is built
+# ahead of time by install-ledstrip.nu.
+ExecStart=/usr/bin/uv run --script --offline %h/dev/dotfiles/helpers/ledstrip.py daemon
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
 
 [Install]
 WantedBy=default.target
