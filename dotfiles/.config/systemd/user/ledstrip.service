@@ -1,0 +1,16 @@
+[Unit]
+Description=DayBetter LED Strip Power (Bluetooth LE)
+Documentation=https://github.com/icub3d/dotfiles
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+# --offline keeps boot and shutdown from waiting on the network; the environment
+# is built ahead of time by install-ledstrip.nu.
+ExecStart=/usr/bin/uv run --script --offline %h/dev/dotfiles/helpers/ledstrip.py on
+ExecStop=/usr/bin/uv run --script --offline %h/dev/dotfiles/helpers/ledstrip.py off
+TimeoutStartSec=150
+TimeoutStopSec=75
+
+[Install]
+WantedBy=default.target
