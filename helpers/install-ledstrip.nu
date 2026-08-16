@@ -1,26 +1,25 @@
 #!/usr/bin/env nu
 
-# Run this as yourself, NOT with sudo. Under sudo the systemctl --user calls have
-# no session bus to talk to, and enable-linger would name root instead of you.
-# The one privileged step prompts for a password on its own.
+# Run this as yourself, NOT with sudo. Under sudo the uv cache would be built for
+# root rather than the account the unit runs as. The privileged steps prompt for
+# a password on their own.
 if (^id -u | str trim | into int) == 0 {
-    error make { msg: "Run this without sudo -- it prompts for the one step that needs it." }
+    error make { msg: "Run this without sudo -- it prompts for the steps that need it." }
 }
-
-# Lingering lets the user manager start at boot and stop at shutdown without an
-# interactive login, which is what makes the daemon run at all outside a session.
-sudo loginctl enable-linger $env.USER
 
 # Build the script's dependency environment ahead of time, so that startup never
 # spends time resolving. bleak comes from uv rather than a system pacman package.
 uv sync --script ./ledstrip.py
 
-let user_service_dir = ($env.HOME | path join ".config" "systemd" "user")
-mkdir $user_service_dir
+# Retire the old user unit: it could not order itself against bluetooth.service,
+# so at shutdown BlueZ was already gone and the strip stayed on.
+let stale = ($env.HOME | path join ".config/systemd/user/ledstrip.service")
+if ($stale | path exists) {
+    systemctl --user disable --now ledstrip.service
+    rm $stale
+    systemctl --user daemon-reload
+}
 
-let src = ($env.HOME | path join "dev/dotfiles/dotfiles/.config/systemd/user/ledstrip.service")
-let dst = ($user_service_dir | path join "ledstrip.service")
-ln -sf $src $dst
-
-systemctl --user daemon-reload
-systemctl --user enable --now ledstrip.service
+sudo cp ./ledstrip.service /etc/systemd/system/ledstrip.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now ledstrip.service

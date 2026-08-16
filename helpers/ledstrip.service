@@ -1,0 +1,25 @@
+[Unit]
+Description=DayBetter LED Strip (Bluetooth LE)
+Documentation=https://github.com/icub3d/dotfiles
+# This is a system unit purely for shutdown ordering. As a user unit the daemon
+# was torn down after bluetooth.service had already stopped, so its power-off
+# write failed with org.bluez.Error.Failed "Not connected" and the strip stayed
+# lit. After= gives us the reverse order on the way down.
+Requires=bluetooth.service
+After=bluetooth.service
+
+[Service]
+Type=simple
+# Runs as the login user, not root: BLE needs no privileges, and this keeps the
+# socket and the uv cache owned by the same account that uses them.
+User=jmarsh
+RuntimeDirectory=ledstrip
+RuntimeDirectoryMode=0755
+Environment=LEDSTRIP_SOCKET=/run/ledstrip/ledstrip.sock
+ExecStart=/usr/bin/uv run --script --offline /home/jmarsh/dev/dotfiles/helpers/ledstrip.py daemon
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

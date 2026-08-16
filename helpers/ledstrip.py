@@ -54,9 +54,41 @@ COLORS = {
     "white": (0xFF, 0xFF, 0xFF),
 }
 
-SOCKET_PATH = os.environ.get("LEDSTRIP_SOCKET") or os.path.join(
-    os.environ.get("XDG_RUNTIME_DIR") or "/tmp", "ledstrip.sock"
-)
+def _socket_dirs():
+    """Where the daemon socket may live, most specific first.
+
+    /run/ledstrip is systemd's RuntimeDirectory for the packaged unit; the
+    XDG path is what an ad-hoc `ledstrip.py daemon` in a login session uses.
+    """
+    dirs = ["/run/ledstrip"]
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    if runtime:
+        dirs.append(runtime)
+    dirs.append("/tmp")
+    return dirs
+
+
+def server_socket_path():
+    explicit = os.environ.get("LEDSTRIP_SOCKET")
+    if explicit:
+        return explicit
+    for directory in _socket_dirs():
+        if os.path.isdir(directory) and os.access(directory, os.W_OK):
+            return os.path.join(directory, "ledstrip.sock")
+    raise RuntimeError("no writable directory for the socket")
+
+
+def client_socket_path():
+    explicit = os.environ.get("LEDSTRIP_SOCKET")
+    candidates = (
+        [explicit]
+        if explicit
+        else [os.path.join(d, "ledstrip.sock") for d in _socket_dirs()]
+    )
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
 
 SCAN_TIMEOUT = 15.0
 CONNECT_TIMEOUT = 20.0
@@ -293,11 +325,12 @@ class Server:
             writer.close()
 
     async def serve(self):
-        if os.path.exists(SOCKET_PATH):
-            os.unlink(SOCKET_PATH)
-        server = await asyncio.start_unix_server(self._handle, path=SOCKET_PATH)
-        os.chmod(SOCKET_PATH, 0o600)
-        print(f"listening on {SOCKET_PATH}", flush=True)
+        socket_path = server_socket_path()
+        if os.path.exists(socket_path):
+            os.unlink(socket_path)
+        server = await asyncio.start_unix_server(self._handle, path=socket_path)
+        os.chmod(socket_path, 0o600)
+        print(f"listening on {socket_path}", flush=True)
 
         await self.ensure_connected()
         async with self.lock:
@@ -320,12 +353,12 @@ class Server:
                     print("strip is now off", flush=True)
                     await self.client.disconnect()
         finally:
-            if os.path.exists(SOCKET_PATH):
-                os.unlink(SOCKET_PATH)
+            if os.path.exists(socket_path):
+                os.unlink(socket_path)
 
 
-async def send_to_daemon(argv):
-    reader, writer = await asyncio.open_unix_connection(SOCKET_PATH)
+async def send_to_daemon(socket_path, argv):
+    reader, writer = await asyncio.open_unix_connection(socket_path)
     writer.write(shlex.join(argv).encode() + b"\n")
     await writer.drain()
     reply = await reader.readline()
@@ -392,8 +425,9 @@ def main():
     elif hasattr(args, "value"):
         argv.append(args.value)
 
-    if os.path.exists(SOCKET_PATH):
-        print(asyncio.run(send_to_daemon(argv)), flush=True)
+    socket_path = client_socket_path()
+    if socket_path is not None:
+        print(asyncio.run(send_to_daemon(socket_path, argv)), flush=True)
         return 0
 
     print(asyncio.run(run_direct(argv)), flush=True)
