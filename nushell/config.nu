@@ -3,7 +3,7 @@ use modules/utils.nu *
 use modules/system.nu *
 use modules/kubernetes.nu *
 use modules/media.nu *
-# cph is namespaced (cph run, cph test, ...) to avoid clashing with the
+# cph is namespaced (cph exec, cph test, ...) to avoid clashing with the
 # top-level `d`, `n`, `w` aliases below.
 use modules/cph.nu
 

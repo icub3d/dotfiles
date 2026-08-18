@@ -125,7 +125,9 @@ def run-solution [...patterns: string] {
 }
 
 # Run a competitive programming solution
-export def run [...patterns: string] {
+# Named `exec` rather than `run`: `run` is a nushell parser keyword and cannot
+# be shadowed, even via a module export.
+export def exec [...patterns: string] {
     run-solution ...$patterns
 }
 
@@ -194,7 +196,7 @@ export def watch-run-debug [...patterns: string] {
 }
 
 # --- Aliases ---
-export alias r = run
+export alias r = exec
 export alias t = test
 export alias w = watch-run
 export alias d = debug
