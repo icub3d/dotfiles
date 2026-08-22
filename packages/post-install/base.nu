@@ -16,3 +16,8 @@ if (not ($inotify_conf | path exists)) or ((open $inotify_conf) != $inotify_desi
     $reload = true
 }
 if $reload { sudo sysctl --system }
+
+# systemd-boot: keep the ESP bootloader in sync with the systemd package.
+# Replaces the systemd-boot-pacman-hook AUR package, which only restarted
+# this same unit; systemd ships it natively (preset: enabled).
+add-service systemd-boot-update

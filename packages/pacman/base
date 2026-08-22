@@ -25,7 +25,7 @@ git-delta
 gnupg
 hex
 hyperfine
-iptables-nft
+iptables
 jq
 linux
 linux-firmware
@@ -50,7 +50,6 @@ reflector
 sd
 smbclient
 sudo
-systemd-boot-pacman-hook
 texinfo
 tmux
 unzip
@@ -70,3 +69,5 @@ yt-dlp
 evtest
 wine
 winetricks
+nushell
+pdftk

@@ -30,3 +30,5 @@ mermaid-cli
 gitleaks
 android-tools
 uv
+overmind
+postgresql

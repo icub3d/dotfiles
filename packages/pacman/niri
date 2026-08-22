@@ -6,7 +6,6 @@ ffmpeg
 firefox-developer-edition
 gimp
 cfitsio
-google-chrome
 imagemagick
 inkscape
 imv
@@ -33,3 +32,5 @@ yazi
 ghostty
 viu
 orca
+zoom
+obs-shaderfilter-git
