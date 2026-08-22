@@ -39,7 +39,7 @@ command = "nu /home/jmarsh/dev/dotfiles/helpers/toggle-vertical-recording.nu"
 title = "Play/Pause"
 icon = "󰐊"
 color = "green"
-command = "qs ipc -c noctalia-shell --any-display call media playPause"
+command = "noctalia msg media toggle"
 
 [keys.3]
 title = "Mic Mute"
@@ -51,7 +51,7 @@ command = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 title = "Ctrl Ctr"
 icon = "󰕮"
 color = "blue"
-command = "qs ipc -c noctalia-shell --any-display call controlCenter toggle"
+command = "noctalia msg panel-toggle control-center"
 
 [keys.5]
 title = "OBS Rec"
@@ -71,4 +71,4 @@ icon_offset_x = -10
 title = "Lock"
 icon = "󰌾"
 color = "red"
-command = "qs ipc -c noctalia-shell --any-display call lockScreen lock"
+command = "noctalia msg session lock"

@@ -165,4 +165,4 @@ https://color.firefox.com/?theme=XQAAAAINAQAAAAAAAABBKYhm849SCia2CaaEGccwS-xMDPr
 
 - [Niri](https://yalter.github.io/niri/)
 - [Niri Screencasting](https://github.com/YaLTeR/niri/wiki/Screencasting)
-- [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell)
+- [Noctalia](https://github.com/noctalia-dev/noctalia)
