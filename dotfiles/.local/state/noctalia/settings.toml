@@ -113,16 +113,16 @@ wallpaper_scheme = "m3-content"
 enabled = true
 
 [wallpaper.default]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_001_wallpaper_10.png"
+path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
 
 [wallpaper.last]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_001_wallpaper_10.png"
+path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
 
 [wallpaper.monitors.DP-1]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_001_wallpaper_10.png"
+path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
 
 [wallpaper.monitors.DP-2]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_001_wallpaper_10.png"
+path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
 
 [wallpaper.monitors.DP-3]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_001_wallpaper_10.png"
+path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
