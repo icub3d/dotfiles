@@ -4,7 +4,12 @@ After=suspend.target
 
 [Service]
 Type=oneshot
-ExecStart=liquidctl initialize all
+# The Corsair devices are reached through a logind "uaccess" ACL on /dev/hidraw*,
+# which is applied asynchronously once the seat activates. This unit used to race
+# that and fail at boot with "could not open, possibly due to insufficient
+# permissions" -- leaving the fans on firmware-persisted curves and silently
+# skipping the LED settings. Retry initialize for up to 30s before continuing.
+ExecStartPre=/usr/bin/bash -c 'for i in $(seq 30); do liquidctl initialize all >/dev/null 2>&1 && exit 0; sleep 1; done; echo "liquidctl: devices never became accessible" >&2; exit 1'
 ExecStart=liquidctl set --serial 1305006473291217 fan1 speed 20 600 30 600 40 1000 50 1000 60 1000 --temperature-sensor 2
 ExecStart=liquidctl set --serial 1305006473291217 led1 color fixed a9dc76
 ExecStart=liquidctl set --serial 1305006473291217 led2 color fixed a9dc76

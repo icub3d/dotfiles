@@ -6,7 +6,11 @@ After=network.target network-online.target
 [Service]
 ExecStart=/usr/bin/ollama serve
 # Warm gemma4:12b into VRAM as soon as the server is listening, and pin it there.
-ExecStartPost=/usr/local/bin/ollama-cuda-warm
+# Backgrounded on purpose: run synchronously this blocked "started" for ~7.3s,
+# and since this unit is WantedBy=multi-user.target that delayed graphical.target
+# by the same amount. The child stays in this unit's cgroup, so the warm still
+# runs to completion (~7s after boot) and still dies with the service.
+ExecStartPost=-/usr/bin/bash -c '/usr/local/bin/ollama-cuda-warm &'
 WorkingDirectory=/var/lib/ollama
 Environment="HOME=/var/lib/ollama"
 Environment="OLLAMA_MODELS=/var/lib/ollama"
@@ -21,7 +25,7 @@ User=ollama
 Group=ollama
 Restart=on-failure
 RestartSec=3
-# ExecStartPost blocks "started" until the model is resident; allow for a cold read.
+# The warm no longer blocks startup, but keep a generous timeout for the server.
 TimeoutStartSec=300
 RestartPreventExitStatus=1
 Type=simple
