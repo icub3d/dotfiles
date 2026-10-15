@@ -1,12 +1,21 @@
-config_version = 13
+config_version = 15
 
 [bar.default]
+end = [
+    "media",
+    "tray",
+    "notifications",
+    "clipboard",
+    "bluetooth",
+    "volume",
+    "brightness",
+    "battery",
+    "control-center",
+    "session"
+]
 margin_ends = 0
 start = [ "theme_mode", "launcher", "wallpaper", "workspaces", "temp" ]
 thickness = 30
-
-    [bar.default.monitor.DP-1]
-    enabled = false
 
 [lockscreen_widgets]
 enabled = false
@@ -105,24 +114,79 @@ font_family = "JetBrainsMono NF"
 
 [theme]
 builtin = "Catppuccin"
+community_palette = "Oxocarbon"
 mode = "dark"
 source = "builtin"
 wallpaper_scheme = "m3-content"
 
-[wallpaper.automation]
-enabled = true
+[wallpaper]
+directory = "/home/jmarsh/Pictures/Wallpapers"
 
-[wallpaper.default]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    [wallpaper.automation]
+    enabled = true
 
-[wallpaper.last]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    [wallpaper.default]
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
 
-[wallpaper.monitors.DP-1]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    [wallpaper.last]
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
 
-[wallpaper.monitors.DP-2]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    [wallpaper.monitors.DP-1]
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
 
-[wallpaper.monitors.DP-3]
-path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    [wallpaper.monitors.DP-2]
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
+
+    [wallpaper.monitors.DP-3]
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_002_wallpaper_10.png"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_003_wallpaper_dark.png"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_004_wallpaper.jpg"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_005_wallpaper.jpg"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_RC_wallpaper.jpg"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_008_wallpaper.jpg"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_006_wallpaper.jpg"
+    theme_mode = "dark"
+
+    [[wallpaper.favorite]]
+    builtin_palette = "Catppuccin"
+    palette_source = "builtin"
+    path = "/home/jmarsh/Pictures/Wallpapers/PagedOut_007_wallpaper.jpg"
+    theme_mode = "dark"
+
+[widget.clock]
+format = "{:%Y-%m-%d %H:%M}"
