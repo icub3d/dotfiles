@@ -52,8 +52,13 @@ if ($nu.os-info.name == "linux") {
 let fj_cache = ($nu.default-config-dir | path join "fj-completions.nu")
 if (which fj | is-not-empty) {
     if not ($fj_cache | path exists) or ((ls $fj_cache | get 0.modified) < (ls (which fj | get 0.path) | get 0.modified)) {
-        fj completion nushell 
-        | str replace --all '[OWNER]/NAME' 'owner_name' 
+        # fj can print notices (e.g. "Could not find keys file...") to stdout
+        # ahead of the script, so drop anything before the module.
+        fj completion nushell
+        | lines
+        | skip until {|l| $l starts-with "module " }
+        | str join "\n"
+        | str replace --all '[OWNER]/NAME' 'owner_name'
         | save --force $fj_cache
     }
 } else {
