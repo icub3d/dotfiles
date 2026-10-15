@@ -340,3 +340,13 @@ binds {
     // Powers off the monitors.
     Mod+Shift+P { power-off-monitors; }
 }
+
+// wine-sni-bridge creates a real (managed) X11 container window to XEmbed
+// Wine tray icons into. Without these rules niri would tile it as a normal
+// window. Upstream ships hyprland/sway/dwl examples but no niri one.
+window-rule {
+  match app-id=r#"^wine-sni-bridge$"#
+  open-floating true
+  open-focused false
+  opacity 0.0
+}
