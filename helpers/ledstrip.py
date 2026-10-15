@@ -54,7 +54,7 @@ COLORS = {
     "white": (0xFF, 0xFF, 0xFF),
     # The strip's green and blue emitters overpower the red one, so nominal
     # yellow reads green and nominal white reads blue. These are compensated.
-    "gold": (0xFF, 0xB4, 0x00),
+    "gold": (0xFF, 0x80, 0x00),
     "warmwhite": (0xFF, 0xB0, 0x60),
 }
 
