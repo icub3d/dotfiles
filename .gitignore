@@ -5,3 +5,6 @@ history.txt
 .antigravitycli/
 .claude/
 
+
+# Claude Code auto-synced skill cache (per-account UUID bucket)
+agents/skills/synced/
