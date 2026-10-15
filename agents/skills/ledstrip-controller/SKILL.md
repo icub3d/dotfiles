@@ -28,6 +28,7 @@ directly, which costs ~7s per command.
 ~/dev/dotfiles/helpers/ledstrip.py speed <1-100>
 ~/dev/dotfiles/helpers/ledstrip.py preset <id> [--flag 0xff]
 ~/dev/dotfiles/helpers/ledstrip.py flash <color> <color> [...] [--interval 0.5]
+~/dev/dotfiles/helpers/ledstrip.py cycle <color> <color> [...] [--hold 1.0] [--fade 1.0] [--fps 20]
 ~/dev/dotfiles/helpers/ledstrip.py stop
 ```
 
@@ -37,13 +38,20 @@ directly, which costs ~7s per command.
 | `brightness` | 0–100 |
 | `speed` | 1–100 (how fast the controller's own presets animate) |
 | `preset` | known ids: `0x01` (static), `0x02`, `0x07`, `0x0b`, `0x1c`, and `0x0c` `0x20` `0xd3` `0xd5` (the IR remote's effect buttons, not yet individually identified) |
-| `flash` | two or more colours, alternated by the daemon |
+| `flash` | two or more colours, alternated by the daemon (hard cuts) |
+| `cycle` | two or more colours; sits on each for `--hold` seconds then fades over `--fade` seconds |
 
 ## Guidelines
-- **`flash` is driven from this machine, not the controller.** The strip has no
-  two-colour flash effect of its own, so the daemon pushes a new colour every
-  interval. It therefore stops if the daemon stops. `preset` effects run on the
-  controller itself and survive independently.
+- **`flash` and `cycle` are driven from this machine, not the controller.** The
+  strip has no multi-colour effect of its own, so the daemon pushes a new colour
+  every interval. They therefore stop if the daemon stops. `preset` effects run
+  on the controller itself and survive independently.
+- **The protocol only sets the whole strip to one colour.** There is no
+  per-pixel or segment command, so `cycle` is a glow drifting through the
+  palette, not a spatial chase. A real chase can only come from a controller
+  `preset`, and those are single-palette effects the vendor chose.
+- Seasonal example: `cycle orange yellow white --hold 0.8 --fade 1.2` for
+  Halloween; `cycle red green --hold 2 --fade 1` for December.
 - `stop` ends a running `flash`; so does any other one-shot command, since an
   effect would otherwise immediately overwrite it.
 - **The strip accepts only one BLE connection.** If the phone's DayBetter app is

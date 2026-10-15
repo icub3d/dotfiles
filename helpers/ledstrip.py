@@ -246,14 +246,36 @@ class Server:
                 pass
             self.effect = None
 
+    async def _set_color(self, rgb):
+        async with self.lock:
+            await self.ensure_connected()
+            await self.strip.send(CMD_COLOR, bytes(rgb) + b"\xff", settle=0)
+
     async def _flash(self, palette, interval):
         index = 0
         while True:
-            red, green, blue = palette[index % len(palette)]
-            async with self.lock:
-                await self.ensure_connected()
-                await self.strip.send(CMD_COLOR, bytes((red, green, blue)) + b"\xff", settle=0)
+            await self._set_color(palette[index % len(palette)])
             await asyncio.sleep(interval)
+            index += 1
+
+    async def _cycle(self, palette, hold, fade, fps):
+        """Hold each colour, then fade smoothly into the next.
+
+        The strip only takes one whole-strip colour at a time, so this is a
+        glow that drifts through the palette rather than a spatial chase.
+        """
+        steps = max(1, round(fade * fps))
+        index = 0
+        while True:
+            start = palette[index % len(palette)]
+            end = palette[(index + 1) % len(palette)]
+            await self._set_color(start)
+            await asyncio.sleep(hold)
+            for step in range(1, steps + 1):
+                t = step / steps
+                rgb = tuple(round(a + (b - a) * t) for a, b in zip(start, end))
+                await self._set_color(rgb)
+                await asyncio.sleep(fade / steps)
             index += 1
 
     async def dispatch(self, argv):
@@ -270,19 +292,25 @@ class Server:
             await self.stop_effect()
             return "effect stopped"
 
-        if verb == "flash":
-            options = [a for a in rest if a.startswith("--interval=")]
+        if verb in ("flash", "cycle"):
+            options = dict(a[2:].split("=", 1) for a in rest if a.startswith("--"))
             names = [a for a in rest if not a.startswith("--")]
-            interval = float(options[0].split("=", 1)[1]) if options else 0.5
             if len(names) < 2:
-                return "flash needs at least two colours"
+                return f"{verb} needs at least two colours"
             palette = [parse_color(n) for n in names]
             await self.stop_effect()
             async with self.lock:
                 await self.ensure_connected()
                 await self.strip.send(CMD_POWER, b"\x01")
-            self.effect = asyncio.create_task(self._flash(palette, interval))
-            return f"flashing {' '.join(names)} every {interval}s"
+            if verb == "flash":
+                interval = float(options.get("interval", 0.5))
+                self.effect = asyncio.create_task(self._flash(palette, interval))
+                return f"flashing {' '.join(names)} every {interval}s"
+            hold = float(options.get("hold", 1.0))
+            fade = float(options.get("fade", 1.0))
+            fps = float(options.get("fps", 20))
+            self.effect = asyncio.create_task(self._cycle(palette, hold, fade, fps))
+            return f"cycling {' '.join(names)}: hold {hold}s, fade {fade}s"
 
         # Everything below is a one-shot setting, so any running effect would
         # immediately overwrite it.
@@ -404,6 +432,11 @@ def main():
     flash = sub.add_parser("flash", help="alternate colours until stopped")
     flash.add_argument("colors", nargs="+", help="two or more colours to cycle")
     flash.add_argument("--interval", default="0.5", help="seconds per colour (default 0.5)")
+    cycle = sub.add_parser("cycle", help="fade smoothly through colours until stopped")
+    cycle.add_argument("colors", nargs="+", help="two or more colours to cycle")
+    cycle.add_argument("--hold", default="1.0", help="seconds to sit on each colour (default 1.0)")
+    cycle.add_argument("--fade", default="1.0", help="seconds to fade to the next (default 1.0)")
+    cycle.add_argument("--fps", default="20", help="colour updates per second during a fade (default 20)")
     preset = sub.add_parser("preset", help="select a built-in preset")
     preset.add_argument("value", help="preset id, e.g. 7 or 0x1c")
     preset.add_argument("--flag", default="0xff", help="preset variant byte (default 0xff)")
@@ -420,6 +453,8 @@ def main():
     argv = [args.command]
     if args.command == "flash":
         argv += args.colors + [f"--interval={args.interval}"]
+    elif args.command == "cycle":
+        argv += args.colors + [f"--hold={args.hold}", f"--fade={args.fade}", f"--fps={args.fps}"]
     elif args.command == "preset":
         argv += [args.value, args.flag]
     elif hasattr(args, "value"):
