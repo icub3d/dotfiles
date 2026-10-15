@@ -34,7 +34,7 @@ directly, which costs ~7s per command.
 
 | Command | Range / values |
 | :--- | :--- |
-| `color` | `red` `orange` `yellow` `green` `cyan` `blue` `purple` `magenta` `pink` `white`, or any `#rrggbb` |
+| `color` | `red` `orange` `yellow` `green` `cyan` `blue` `purple` `magenta` `pink` `white` `gold` `warmwhite`, or any `#rrggbb` |
 | `brightness` | 0–100 |
 | `speed` | 1–100 (how fast the controller's own presets animate) |
 | `preset` | known ids: `0x01` (static), `0x02`, `0x07`, `0x0b`, `0x1c`, and `0x0c` `0x20` `0xd3` `0xd5` (the IR remote's effect buttons, not yet individually identified) |
@@ -50,7 +50,10 @@ directly, which costs ~7s per command.
   per-pixel or segment command, so `cycle` is a glow drifting through the
   palette, not a spatial chase. A real chase can only come from a controller
   `preset`, and those are single-palette effects the vendor chose.
-- Seasonal example: `cycle orange yellow white --hold 0.8 --fade 1.2` for
+- **The strip's green and blue LEDs are much brighter than red**, so `yellow`
+  looks green and `white` looks blue. Use `gold` and `warmwhite` (or hex with
+  green/blue pulled down) when the colour has to read as warm.
+- Seasonal example: `cycle orange gold warmwhite --hold 0.8 --fade 1.2` for
   Halloween; `cycle red green --hold 2 --fade 1` for December.
 - `stop` ends a running `flash`; so does any other one-shot command, since an
   effect would otherwise immediately overwrite it.
