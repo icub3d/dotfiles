@@ -13,4 +13,16 @@ if (not ($conf_dest | path exists)) or ((open $conf_dest) != (open $conf_src)) {
     print "  ✅ Copied reflector.conf to /etc/xdg/reflector/reflector.conf"
 }
 
+# Retry drop-in; see helpers/reflector-override.conf for why.
+let override_src = ($dotfiles_root | path join "helpers/reflector-override.conf")
+let override_dir = "/etc/systemd/system/reflector.service.d"
+let override_path = $"($override_dir)/override.conf"
+
+if (not ($override_path | path exists)) or ((open $override_path) != (open $override_src)) {
+    sudo mkdir -p $override_dir
+    sudo cp $override_src $override_path
+    sudo systemctl daemon-reload
+    print "  ✅ Installed reflector retry override from helpers/reflector-override.conf"
+}
+
 add-service reflector
