@@ -88,11 +88,17 @@ def reboot-generic-node [node: string, sudo_cmd: string = "doas"] {
     wait-for-ssh $node
 }
 
-export def main [] {
-    let workers = ["k8s4", "k8s3"]
-    let control_planes = ["k8s2", "k8s1", "k8s0"]
-    let generic_alpine = ["srv2", "wireguard"]
-    let generic_debian = ["pihole"]
+export def main [
+    --skip: list<string> = []  # hosts to leave untouched, e.g. --skip [pihole]
+] {
+    let workers = (["k8s4", "k8s3"] | where $it not-in $skip)
+    let control_planes = (["k8s2", "k8s1", "k8s0"] | where $it not-in $skip)
+    let generic_alpine = (["srv2", "wireguard"] | where $it not-in $skip)
+    let generic_debian = (["pihole"] | where $it not-in $skip)
+
+    if ($skip | is-not-empty) {
+        print $"(ansi yellow)⏭️  Skipping: ($skip | str join ', ')(ansi reset)"
+    }
 
     print $"(ansi green)🪐 Starting Marshian Galaxy Safe Reboot Protocol...(ansi reset)"
 
